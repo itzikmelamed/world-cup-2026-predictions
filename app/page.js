@@ -1620,16 +1620,16 @@ return true;
   </section>
 )}
                         {page === "all" && (
-          <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
+          <section className="bg-slate-900 border border-slate-800 rounded-3xl p-2 md:p-4">
             <h2 className="text-2xl font-black mb-4">כל ההימורים</h2>
 
             <div className="overflow-auto max-h-[75vh] rounded-2xl border border-slate-800">
               <table className="border-collapse min-w-max">
                 <thead>
                   <tr className="bg-slate-950 text-slate-300 text-sm sticky top-0 z-20">
-                    <th className="sticky right-0 z-30 bg-slate-950 text-right p-3 border-l border-slate-800 w-[240px] min-w-[240px] max-w-[240px]">
-                      משחק
-                    </th>
+                    <th className="sticky right-0 z-30 bg-slate-950 text-right p-3 border-l border-slate-800 w-[170px] md:w-[240px]">
+  משחק
+</th>
 
                     {activePlayers.map((player) => {
   let total = 0;
@@ -1671,7 +1671,7 @@ return true;
 
                     return (
                       <tr key={match.id} className="border-t border-slate-800">
-                        <td className="sticky right-0 z-10 bg-slate-900 p-3 border-l border-slate-800 w-[240px] min-w-[240px] max-w-[240px]">
+                        <td className="sticky right-0 z-10 bg-slate-900 p-3 border-l border-slate-800 w-[170px] min-w-[170px] max-w-[170px] md:w-[240px] md:min-w-[240px] md:max-w-[240px]">
                           <div className="font-black">
                             {match.home} נגד {match.away}
                           </div>
