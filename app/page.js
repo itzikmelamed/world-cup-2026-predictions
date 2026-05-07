@@ -1734,7 +1734,7 @@ return true;
             </div>
             <div className="md:hidden space-y-4">
   {matches.map((match) => {
-    const result = matchResults[match.id];
+    const result = results[match.id];
 
     return (
       <div
@@ -1764,7 +1764,7 @@ return true;
 
             const points =
               prediction && result
-                ? calculateMatchPoints(prediction, result)
+                ? calculatePoints(prediction, result)
                 : 0;
 
             return (
