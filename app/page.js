@@ -758,8 +758,7 @@ async function signUp() {
     return;
   }
 
-  showMessage("נרשמת בהצלחה");
-}
+ 
 
 
 showMessage("נרשמת בהצלחה");
@@ -923,7 +922,7 @@ return true;
   </div>
 </div>
 
-{authUser && (
+<div className={authUser ? "" : "hidden"}>
 
         <section className="mb-6 bg-slate-900 border border-slate-800 rounded-3xl p-4">
           {role === "admin" && (
@@ -973,8 +972,7 @@ return true;
 </div>
 
 </section>
-<div className="mt-3 text-yellow-400 font-black">
-</div>
+
         <nav className="mb-6 flex gap-3 overflow-x-auto">
           <button
           
@@ -1819,35 +1817,33 @@ return true;
           </section>
         )}
         {page === "rules" && (
-          <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
-            <h2 className="text-2xl font-black mb-4">חוקי המשחק</h2>
+  <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
+    <h2 className="text-2xl font-black mb-4">חוקי המשחק</h2>
 
-            <div className="space-y-3 font-bold">
-              <div className="bg-slate-800 rounded-2xl p-4">בול פגיעה - 4.5 נק'</div>
-              <div className="bg-slate-800 rounded-2xl p-4">ניחוש ניצחון/תיקו - 2 נק'</div>
-              <div className="bg-slate-800 rounded-2xl p-4">
-                ניחוש 2 עולות מכל בית - על כל ניחוש נק' אחת
-              </div>
-              <div className="bg-slate-800 rounded-2xl p-4">ניחוש אלופה - 9 נק'</div>
-              <div className="bg-slate-800 rounded-2xl p-4">ניחוש מלך שערים - 8 נק'</div>
-            </div>
+    <div className="space-y-3 font-bold">
+      <div className="bg-slate-800 rounded-2xl p-4">בול פגיעה - 4.5 נק'</div>
+      <div className="bg-slate-800 rounded-2xl p-4">ניחוש ניצחון/תיקו - 2 נק'</div>
+      <div className="bg-slate-800 rounded-2xl p-4">
+        ניחוש 2 עולות מכל בית - על כל ניחוש נק' אחת
+      </div>
+      <div className="bg-slate-800 rounded-2xl p-4">ניחוש אלופה - 9 נק'</div>
+      <div className="bg-slate-800 rounded-2xl p-4">ניחוש מלך שערים - 8 נק'</div>
+    </div>
 
-            <h3 className="text-xl font-black mt-8 mb-4">שוברי שיוויון</h3>
+    <h3 className="text-xl font-black mt-8 mb-4">שוברי שיוויון</h3>
 
-            <ol className="space-y-3 list-decimal pr-6 font-bold">
-              <li>מספר ניחושי בול פגיעה</li>
-              <li>מספר ניחושי ניצחון/תיקו</li>
-              <li>סך הנקודות מהימורי בונוס</li>
-              <li>ניחוש נכון של אלופה</li>
-              <li>ניחוש נכון של מלך שערים</li>
-              <li>במידה ועדיין קיים שוויון - חלוקת המקום</li>
-                        </ol>
-                </section>
-    )}
-  </div>
-
+    <ol className="space-y-3 list-decimal pr-6 font-bold">
+      <li>מספר ניחושי בול פגיעה</li>
+      <li>מספר ניחושי ניצחון/תיקו</li>
+      <li>סך הנקודות מהימורי בונוס</li>
+      <li>ניחוש נכון של אלופה</li>
+      <li>ניחוש נכון של מלך שערים</li>
+      <li>במידה ועדיין קיים שוויון - חלוקת המקום</li>
+    </ol>
+  </section>
 )}
-
+</div>
+</div>
 </main>
 );
 }
