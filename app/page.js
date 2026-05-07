@@ -1781,9 +1781,13 @@ return true;
                 </div>
 
                 <div className="text-center text-slate-300 text-sm">
-                  {prediction
-                    ? `${prediction.home} - ${prediction.away}`
-                    : "-"}
+                  {prediction &&
+ prediction.home !== null &&
+ prediction.away !== null &&
+ prediction.home !== "" &&
+ prediction.away !== ""
+  ? `${prediction.home} - ${prediction.away}`
+  : "-"}
                 </div>
 
                 <div className="font-black text-sky-300 min-w-[45px] text-left">
