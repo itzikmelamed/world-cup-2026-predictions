@@ -723,6 +723,15 @@ function isBonusLocked(bonusManuallyUnlocked) {
   groups,
 ]);
 async function signUp() {
+  const existingPlayer = dbPlayers.find(
+    (player) => player.email === authEmail
+  );
+
+  if (existingPlayer) {
+    showMessage("המייל כבר קיים במערכת", "error");
+    return;
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email: authEmail,
     password: authPassword,
@@ -733,17 +742,8 @@ async function signUp() {
     showMessage("שגיאה: " + error.message, "error");
     return;
   }
-  const existingPlayer = dbPlayers.find(
-  (player) => player.email === authEmail
-);
 
-if (existingPlayer) {
-  alert("המייל כבר קיים במערכת");
-  return;
-}
-  const { error: playerError } = await supabase
-  .from("players")
-  .insert([
+  const { error: playerError } = await supabase.from("players").insert([
     {
       name: participantName,
       email: authEmail,
@@ -752,10 +752,13 @@ if (existingPlayer) {
     },
   ]);
 
-if (playerError) {
-  console.error("Player insert error:", playerError);
-  alert(playerError.message);
-  return;
+  if (playerError) {
+    console.error("Player insert error:", playerError);
+    showMessage("המשתמש נרשם, אבל הייתה שגיאה בהוספה לטבלת המשתתפים", "error");
+    return;
+  }
+
+  showMessage("נרשמת בהצלחה");
 }
 
 
@@ -919,6 +922,9 @@ return true;
     )}
   </div>
 </div>
+
+{authUser && (
+  <>
 
         <section className="mb-6 bg-slate-900 border border-slate-800 rounded-3xl p-4">
           {role === "admin" && (
@@ -1837,9 +1843,13 @@ return true;
               <li>ניחוש נכון של מלך שערים</li>
               <li>במידה ועדיין קיים שוויון - חלוקת המקום</li>
             </ol>
-          </section>
-        )}
-      </div>
-    </main>
-  );
+      </section>
+)}
+</div>
+
+</>
+)}
+
+</main>
+);
 }
