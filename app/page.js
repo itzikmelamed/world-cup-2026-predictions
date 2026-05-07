@@ -924,7 +924,6 @@ return true;
 </div>
 
 {authUser && (
-  <>
 
         <section className="mb-6 bg-slate-900 border border-slate-800 rounded-3xl p-4">
           {role === "admin" && (
@@ -1842,12 +1841,11 @@ return true;
               <li>ניחוש נכון של אלופה</li>
               <li>ניחוש נכון של מלך שערים</li>
               <li>במידה ועדיין קיים שוויון - חלוקת המקום</li>
-            </ol>
-      </section>
-)}
-</div>
+                        </ol>
+                </section>
+    )}
+  </div>
 
-</>
 )}
 
 </main>
