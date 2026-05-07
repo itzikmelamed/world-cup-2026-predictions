@@ -83,6 +83,7 @@ if (
 
 export default function Home() {
  const [selectedPlayer, setSelectedPlayer] = useState("");
+ const [openMatchId, setOpenMatchId] = useState(null);
   const [role, setRole] = useState("");
   const [dbPlayers, setDbPlayers] = useState([]);
   const [authEmail, setAuthEmail] = useState("");
@@ -1759,7 +1760,10 @@ return true;
         </div>
 
         <div className="space-y-2">
-          {activePlayers.map((player) => {
+  {(openMatchId === match.id
+    ? activePlayers
+    : activePlayers.slice(0, 4)
+  ).map((player) => {
             const prediction = predictions[player.name]?.[match.id];
 
             const points =
@@ -1788,7 +1792,20 @@ return true;
               </div>
             );
           })}
-        </div>
+               </div>
+
+        {activePlayers.length > 4 && (
+          <button
+            onClick={() =>
+              setOpenMatchId(openMatchId === match.id ? null : match.id)
+            }
+            className="w-full mt-2 text-sm text-sky-400 font-bold"
+          >
+            {openMatchId === match.id
+              ? "הסתר"
+              : `הצג עוד ${activePlayers.length - 4} משתתפים`}
+          </button>
+        )}
       </div>
     );
   })}
