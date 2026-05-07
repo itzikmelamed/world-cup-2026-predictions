@@ -1759,7 +1759,7 @@ return true;
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
   {(openMatchId === match.id
     ? activePlayers
     : activePlayers.slice(0, 4)
