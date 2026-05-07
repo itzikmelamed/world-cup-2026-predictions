@@ -1076,7 +1076,9 @@ return true;
                     <th className="text-right p-2">תאריך</th>
                     <th className="text-right p-2">שעה</th>
                     <th className="text-right p-2">בית</th>
-                    <th className="text-right p-2">משחק</th>
+                   <th className="sticky right-0 z-30 bg-slate-900 text-right p-2 border-l border-slate-700 w-[170px] min-w-[170px] max-w-[170px]">
+  משחק
+</th>
                     <th className="text-center p-2">הימור</th>
                     <th className="text-center p-2">תוצאה</th>
                     <th className="text-center p-2">סטטוס</th>
@@ -1097,9 +1099,9 @@ return true;
                         <td className="p-3">{match.date}</td>
                         <td className="p-3">{match.time}</td>
                         <td className="p-3">{match.group}</td>
-                        <td className="p-3 font-bold">
-                          {match.home} נגד {match.away}
-                        </td>
+                        <td className="sticky right-0 z-20 bg-slate-800 p-3 font-bold border-l border-slate-700 w-[170px] min-w-[170px] max-w-[170px]">
+  {match.home} נגד {match.away}
+</td>
                         <td className="p-3">
                           <div className="flex justify-center items-center gap-2">
                             <input
