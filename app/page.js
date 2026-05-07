@@ -1623,7 +1623,7 @@ return true;
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-2 md:p-4">
             <h2 className="text-2xl font-black mb-4">כל ההימורים</h2>
 
-            <div className="overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
+            <div className="hidden md:block overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
               <table className="border-collapse min-w-max">
                 <thead>
                   <tr className="bg-slate-950 text-slate-300 text-xs md:text-sm sticky top-0 z-20">
@@ -1732,6 +1732,67 @@ return true;
                 </tbody>
               </table>
             </div>
+            <div className="md:hidden space-y-4">
+  {matches.map((match) => {
+    const result = matchResults[match.id];
+
+    return (
+      <div
+        key={match.id}
+        className="bg-slate-950 border border-slate-800 rounded-2xl p-3"
+      >
+        <div className="mb-3">
+          <div className="font-black text-base text-white mb-1">
+            {match.home} - {match.away}
+          </div>
+
+          <div className="text-slate-400 text-xs">
+            {match.date} | {match.time} | {match.group}
+          </div>
+
+          <div className="mt-2 text-sm font-bold text-yellow-300">
+            תוצאת אמת:{" "}
+            {result
+              ? `${result.home_score} - ${result.away_score}`
+              : "טרם עודכן"}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {activePlayers.map((player) => {
+            const prediction = predictions[player.name]?.[match.id];
+
+            const points =
+              prediction && result
+                ? calculateMatchPoints(prediction, result)
+                : 0;
+
+            return (
+              <div
+                key={player.id}
+                className="flex items-center justify-between gap-2 bg-slate-900 rounded-xl p-2 border border-slate-800"
+              >
+                <div className="font-bold text-slate-100 truncate">
+                  {player.name}
+                </div>
+
+                <div className="text-center text-slate-300 text-sm">
+                  {prediction
+                    ? `${prediction.home} - ${prediction.away}`
+                    : "-"}
+                </div>
+
+                <div className="font-black text-sky-300 min-w-[45px] text-left">
+                  {points} נק׳
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  })}
+</div>
           </section>
         )}
         {page === "groups" && (
