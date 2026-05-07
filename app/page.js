@@ -758,7 +758,7 @@ async function signUp() {
     return;
   }
 
- 
+  
 
 
 showMessage("נרשמת בהצלחה");
@@ -837,7 +837,7 @@ return true;
 }
   return (
     
-    <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
+    <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-2 md:p-8 text-sm md:text-base">
       {message && (
   <div
     className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 px-6 py-4 rounded-2xl font-black shadow-2xl ${
@@ -850,8 +850,8 @@ return true;
   </div>
 )}
       <div className="max-w-7xl mx-auto">
-        <header className="mb-6 bg-gradient-to-l from-yellow-400 to-sky-400 text-slate-950 rounded-3xl p-6">
-          <h1 className="text-3xl md:text-5xl font-black mb-2">
+       <header className="mb-4 bg-gradient-to-l from-yellow-400 to-sky-400 text-slate-950 rounded-3xl p-4 md:p-6">
+         <h1 className="text-2xl md:text-5xl font-black mb-2">
             World Cup Predictor 2026
           </h1>
           <p className="font-bold">
@@ -862,6 +862,11 @@ return true;
   <div className="text-xl font-black mb-4">
     התחברות
   </div>
+  {!authUser && (
+  <div className="text-center text-slate-300 mb-4 font-bold">
+    יש להתחבר כדי לצפות ולהשתתף בהימורים
+  </div>
+)}
 
   <div className="flex flex-col gap-3 max-w-md">
     <input
