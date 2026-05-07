@@ -1276,16 +1276,16 @@ return true;
             <div className="overflow-x-auto rounded-2xl border border-slate-800">
               <table className="border-collapse table-fixed w-auto">
                 <colgroup>
-  <col style={{ width: "110px" }} />
+  <col style={{ width: "95px" }} />
   {activePlayers.map((player) => (
-    <col key={player.id} style={{ width: "80px" }} />
+   <col key={player.id} style={{ width: "90px" }} />
   ))}
 </colgroup>
                 <thead>
                   <tr className="bg-slate-950 text-slate-300 sticky top-0 z-20">
-                    <th className="sticky right-0 bg-slate-950 z-30 p-3 text-right border-l border-slate-800 min-w-[180px]">
-                      קטגוריה
-                    </th>
+                    <th className="sticky right-0 bg-slate-950 z-30 p-2 text-right border-l border-slate-800 w-[95px] min-w-[95px] max-w-[95px] text-xs">
+  קטגוריה
+</th>
 
                     {activePlayers.map((player) => (
   <th
@@ -1302,7 +1302,7 @@ return true;
                   {Object.keys(groups).map((groupName) => (
   <Fragment key={groupName}>
     <tr className="border-t border-slate-800">
-      <td className="sticky right-0 bg-slate-900 z-10 p-3 border-l border-slate-800 font-black">
+      <td className="sticky right-0 bg-slate-900 z-10 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] text-xs leading-tight">
         בית {groupName} - עולה 1
       </td>
 
@@ -1317,7 +1317,7 @@ return true;
     </tr>
 
     <tr className="border-t border-slate-800">
-      <td className="sticky right-0 bg-slate-900 z-10 p-3 border-l border-slate-800 font-black">
+      <td className="sticky right-0 bg-slate-900 z-10 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] text-xs leading-tight">
         בית {groupName} - עולה 2
       </td>
 
