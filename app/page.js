@@ -837,7 +837,7 @@ return true;
 }
   return (
     
-    <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-2 md:p-8 text-sm md:text-base">
+    <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-2 md:p-8 text-xs md:text-base">
       {message && (
   <div
     className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 px-6 py-4 rounded-2xl font-black shadow-2xl ${
@@ -1623,10 +1623,10 @@ return true;
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-2 md:p-4">
             <h2 className="text-2xl font-black mb-4">כל ההימורים</h2>
 
-            <div className="overflow-auto max-h-[75vh] rounded-2xl border border-slate-800">
+            <div className="overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
               <table className="border-collapse min-w-max">
                 <thead>
-                  <tr className="bg-slate-950 text-slate-300 text-sm sticky top-0 z-20">
+                  <tr className="bg-slate-950 text-slate-300 text-xs md:text-sm sticky top-0 z-20">
                     <th className="sticky right-0 z-30 bg-slate-950 text-right p-3 border-l border-slate-800 w-[170px] md:w-[240px]">
   משחק
 </th>
@@ -1644,7 +1644,7 @@ return true;
   return (
     <th
      key={player.id}
-      className="p-2 text-center border-l border-slate-800 w-[85px] min-w-[85px] max-w-[85px]"
+      className="p-1 md:p-2 text-center border-l border-slate-800 w-[62px] min-w-[62px] max-w-[62px] md:w-[85px] md:min-w-[85px] md:max-w-[85px]"
     >
       <div className="font-black">
         {player.name}
@@ -1704,7 +1704,7 @@ return true;
                           return (
                             <td
                               key={player}
-                              className="p-3 text-center border-l border-slate-800"
+                             className="p-1 md:p-3 text-center border-l border-slate-800"
                             >
                               <div className="font-bold">
                                 {prediction.home !== "" && prediction.away !== "" ? (
