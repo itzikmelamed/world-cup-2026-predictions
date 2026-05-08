@@ -1579,11 +1579,11 @@ return true;
               #
             </th>
 
-            <th className="sticky right-[45px] z-40 bg-slate-950 text-right p-2 border-l border-slate-800 w-[115px] min-w-[115px] max-w-[115px]">
+            <th className="sticky right-[45px] z-40 bg-slate-950 text-right p-2 border-l border-slate-800 w-[95px] min-w-[95px] max-w-[95px]">
               משתתף
             </th>
 
-            <th className="sticky right-[160px] z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[65px] min-w-[65px] max-w-[65px]">
+            <th className="sticky right-[140px] z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[65px] min-w-[65px] max-w-[65px]">
               סה״כ
             </th>
 
@@ -1612,11 +1612,11 @@ return true;
                 {index + 1}
               </td>
 
-              <td className="sticky right-[45px] z-20 bg-slate-900 p-2 border-l border-slate-800 font-black w-[115px] min-w-[115px] max-w-[115px] truncate">
+              <td className="sticky right-[45px] z-20 bg-slate-900 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px]truncate">
                 {row.player}
               </td>
 
-              <td className="sticky right-[160px] z-20 bg-slate-900 text-center p-2 border-l border-slate-800 text-yellow-400 font-black text-lg w-[65px] min-w-[65px] max-w-[65px]">
+              <td className="sticky right-[140px] z-20 bg-slate-900 text-center p-2 border-l border-slate-800 text-yellow-400 font-black text-lg w-[65px] min-w-[65px] max-w-[65px]">
                 {row.total}
               </td>
 
