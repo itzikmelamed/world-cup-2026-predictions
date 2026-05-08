@@ -731,6 +731,7 @@ function isBonusLocked(bonusManuallyUnlocked) {
   groups,
 ]);
 async function signUp() {
+  const cleanName = participantName.trim();
   const existingPlayer = dbPlayers.find(
     (player) => player.email === authEmail
   );
@@ -753,7 +754,7 @@ async function signUp() {
 
   const { error: playerError } = await supabase.from("players").insert([
     {
-      name: participantName,
+      name: cleanName,
       email: authEmail,
       role: "player",
       is_active: true,
@@ -771,7 +772,7 @@ async function signUp() {
 await refreshAllData();
 
 setAuthUser(data.user);
-setSelectedPlayer(participantName);
+setSelectedPlayer(cleanName);
 setRole("player");
 showMessage("נרשמת בהצלחה");
 }
