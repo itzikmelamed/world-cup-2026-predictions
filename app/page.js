@@ -1788,7 +1788,11 @@ return true;
             return (
               <div
                 key={player.id}
-                className="flex items-center justify-between gap-2 bg-slate-900 rounded-xl p-2 border border-slate-800"
+               className={`flex items-center justify-between gap-2 rounded-xl p-2 border ${
+  player.name === selectedPlayer
+    ? "bg-yellow-500/10 border-yellow-400"
+    : "bg-slate-900 border-slate-800"
+}`}
               >
                 <div className="font-bold text-slate-100 truncate">
                   {player.name}
