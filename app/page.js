@@ -234,6 +234,13 @@ async function loadAppSettings() {
     console.error("Error loading app settings:", error);
     return;
   }
+  async function refreshAllData() {
+  await loadPlayers();
+  await loadPredictions();
+  await loadBonusPredictions();
+  await loadResults();
+  await loadAppSettings();
+}
 
   setManuallyUnlockedMatches(data.manually_unlocked_matches || []);
   setBonusManuallyUnlocked(data.bonus_manually_unlocked || false);
@@ -761,7 +768,11 @@ async function signUp() {
 
   
 
+await refreshAllData();
 
+setAuthUser(data.user);
+setSelectedPlayer(participantName);
+setRole("player");
 showMessage("נרשמת בהצלחה");
 }
 
@@ -781,6 +792,7 @@ async function signIn() {
   }
 
   setAuthUser(data.user);
+  await refreshAllData();
 
   const matchingPlayer = dbPlayers.find(
     (player) => player.email === data.user.email
