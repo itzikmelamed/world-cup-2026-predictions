@@ -1568,52 +1568,72 @@ return true;
         )}
 
         {page === "leaderboard" && (
-  <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
+  <section className="bg-slate-900 border border-slate-800 rounded-3xl p-2 md:p-4">
     <h2 className="text-2xl font-black mb-4">טבלת דירוג</h2>
 
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[850px] border-separate border-spacing-y-2">
+    <div className="overflow-x-auto rounded-2xl border border-slate-800">
+      <table className="border-collapse min-w-[760px] text-xs md:text-sm">
         <thead>
-          <tr className="text-slate-400 text-sm">
-            <th className="text-right p-2">מיקום</th>
-            <th className="text-right p-2">משתתף</th>
-            <th className="text-center p-2">נק׳ משחקים</th>
-            <th className="text-center p-2">נק׳ עולות</th>
-            <th className="text-center p-2">אלופה</th>
-            <th className="text-center p-2">מלך שערים</th>
-            <th className="text-center p-2">סה״כ</th>
+          <tr className="bg-slate-950 text-slate-300 sticky top-0 z-30">
+            <th className="sticky right-0 z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[45px] min-w-[45px] max-w-[45px]">
+              #
+            </th>
+
+            <th className="sticky right-[45px] z-40 bg-slate-950 text-right p-2 border-l border-slate-800 w-[115px] min-w-[115px] max-w-[115px]">
+              משתתף
+            </th>
+
+            <th className="sticky right-[160px] z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[65px] min-w-[65px] max-w-[65px]">
+              סה״כ
+            </th>
+
+            <th className="text-center p-2 border-l border-slate-800 w-[80px] min-w-[80px]">
+              משחקים
+            </th>
+
+            <th className="text-center p-2 border-l border-slate-800 w-[80px] min-w-[80px]">
+              עולות
+            </th>
+
+            <th className="text-center p-2 border-l border-slate-800 w-[80px] min-w-[80px]">
+              אלופה
+            </th>
+
+            <th className="text-center p-2 border-l border-slate-800 w-[90px] min-w-[90px]">
+              מלך שערים
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {leaderboard.map((row, index) => (
-            <tr key={row.player} className="bg-slate-800">
-              <td className="p-3 rounded-r-xl font-black">
+            <tr key={row.player} className="border-t border-slate-800 bg-slate-900">
+              <td className="sticky right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px]">
                 {index + 1}
               </td>
 
-              <td className="p-3 font-black">
+              <td className="sticky right-[45px] z-20 bg-slate-900 p-2 border-l border-slate-800 font-black w-[115px] min-w-[115px] max-w-[115px] truncate">
                 {row.player}
               </td>
 
-              <td className="p-3 text-center">
+              <td className="sticky right-[160px] z-20 bg-slate-900 text-center p-2 border-l border-slate-800 text-yellow-400 font-black text-lg w-[65px] min-w-[65px] max-w-[65px]">
+                {row.total}
+              </td>
+
+              <td className="p-2 text-center border-l border-slate-800">
                 {row.matchPoints}
               </td>
 
-              <td className="p-3 text-center">
+              <td className="p-2 text-center border-l border-slate-800">
                 {row.qualifiersPoints}
               </td>
 
-              <td className="p-3 text-center">
+              <td className="p-2 text-center border-l border-slate-800">
                 {row.championPoints}
               </td>
 
-              <td className="p-3 text-center">
+              <td className="p-2 text-center border-l border-slate-800">
                 {row.topScorerPoints}
-              </td>
-
-              <td className="p-3 rounded-l-xl text-center text-yellow-400 font-black text-xl">
-                {row.total}
               </td>
             </tr>
           ))}
