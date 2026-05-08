@@ -1746,7 +1746,7 @@ return true;
       >
         <div className="mb-3">
           <div className="font-black text-base text-white mb-1">
-            {match.home} - {match.away}
+           {match.away} - {match.home}
           </div>
 
           <div className="text-slate-400 text-xs">
@@ -1756,7 +1756,7 @@ return true;
           <div className="mt-2 text-sm font-bold text-yellow-300">
             תוצאת אמת:{" "}
            {result
-  ? `${result.away} - ${result.home}`
+  ? `${result.home} - ${result.away}`
   : "טרם עודכן"}
           </div>
         </div>
