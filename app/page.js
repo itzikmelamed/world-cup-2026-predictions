@@ -1738,6 +1738,18 @@ return true;
             <div className="md:hidden space-y-4">
   {matches.map((match) => {
     const result = results[match.id];
+    const sortedPlayers = [...activePlayers].sort((a, b) => {
+  const predictionA = predictions[a.name]?.[match.id];
+  const predictionB = predictions[b.name]?.[match.id];
+
+  const pointsA =
+    predictionA && result ? calculatePoints(predictionA, result) : 0;
+
+  const pointsB =
+    predictionB && result ? calculatePoints(predictionB, result) : 0;
+
+  return pointsB - pointsA;
+});
 
     return (
       <div
@@ -1763,8 +1775,8 @@ return true;
 
         <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
   {(openMatchId === match.id
-    ? activePlayers
-    : activePlayers.slice(0, 4)
+    ? sortedPlayers
+: sortedPlayers.slice(0, 4)
   ).map((player) => {
             const prediction = predictions[player.name]?.[match.id];
 
