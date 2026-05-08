@@ -1756,7 +1756,7 @@ return true;
           <div className="mt-2 text-sm font-bold text-yellow-300">
             תוצאת אמת:{" "}
            {result
-  ? `${result.home} - ${result.away}`
+  ? `${result.away} - ${result.home}`
   : "טרם עודכן"}
           </div>
         </div>
