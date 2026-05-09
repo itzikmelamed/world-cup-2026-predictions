@@ -752,20 +752,26 @@ async function signUp() {
     return;
   }
 
-  const { error: playerError } = await supabase.from("players").insert([
+  const { data: newPlayer, error: playerError } = await supabase
+  .from("players")
+  .insert([
     {
       name: cleanName,
       email: authEmail,
       role: "player",
       is_active: true,
     },
-  ]);
+  ])
+  .select()
+  .single();
 
-  if (playerError) {
-    console.error("Player insert error:", playerError);
-    showMessage("המשתמש נרשם, אבל הייתה שגיאה בהוספה לטבלת המשתתפים", "error");
-    return;
-  }
+if (playerError) {
+  console.error("Player insert error:", playerError);
+  showMessage("המשתמש נרשם, אבל הייתה שגיאה בהוספה לטבלת המשתתפים", "error");
+  return;
+}
+
+setDbPlayers((prev) => [...prev, newPlayer]);
 
   
 
