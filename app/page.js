@@ -883,13 +883,13 @@ return true;
 )}
       <div className="max-w-7xl mx-auto">
        <header
-  className="relative mb-4 overflow-hidden rounded-3xl border border-yellow-400/20 p-6 md:p-10 shadow-2xl bg-cover bg-center"
+  className="relative mb-4 overflow-hidden rounded-3xl border border-yellow-400/20 p-6 md:px-10 md:py-16 shadow-2xl bg-cover bg-top"
   style={{
     backgroundImage:
       "linear-gradient(rgba(2,6,23,0.35), rgba(2,6,23,0.65)), url('/hero-bg.png')",
   }}
 >
-  <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
     <div>
       <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1 text-xs md:text-sm font-black text-yellow-300 border border-yellow-400/30 mb-3">
         🏆 מונדיאל 2026
