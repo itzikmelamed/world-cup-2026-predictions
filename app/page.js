@@ -883,10 +883,10 @@ return true;
 )}
       <div className="max-w-7xl mx-auto">
        <header
-  className="relative mb-4 overflow-hidden rounded-3xl border border-yellow-400/20 p-4 md:p-6 shadow-2xl bg-cover bg-center"
+  className="relative mb-4 overflow-hidden rounded-3xl border border-yellow-400/20 p-6 md:p-10 shadow-2xl bg-cover bg-center"
   style={{
     backgroundImage:
-      "linear-gradient(rgba(2,6,23,0.78), rgba(2,6,23,0.88)), url('/legends-bg.png')",
+      "linear-gradient(rgba(2,6,23,0.35), rgba(2,6,23,0.65)), url('/hero-bg.png')",
   }}
 >
   <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
