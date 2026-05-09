@@ -778,8 +778,17 @@ setDbPlayers((prev) => [...prev, newPlayer]);
 await refreshAllData();
 
 setAuthUser(data.user);
-setSelectedPlayer(cleanName);
-setRole("player");
+
+const freshPlayer = await supabase
+  .from("players")
+  .select("*")
+  .eq("email", authEmail)
+  .single();
+
+if (freshPlayer.data) {
+  setSelectedPlayer(freshPlayer.data.name);
+  setRole(freshPlayer.data.role || "player");
+}
 showMessage("נרשמת בהצלחה");
 }
 
