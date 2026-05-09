@@ -868,11 +868,7 @@ return true;
     
     <main
   dir="rtl"
-  className="min-h-screen text-white p-2 md:p-8 text-xs md:text-base bg-slate-950 bg-cover bg-center bg-fixed"
-  style={{
-    backgroundImage:
-      "linear-gradient(rgba(2, 6, 23, 0.88), rgba(2, 6, 23, 0.94)), url('/legends-bg.png')",
-  }}
+  className="min-h-screen bg-slate-950 text-white p-2 md:p-8 text-xs md:text-base"
 >
       {message && (
   <div
@@ -886,8 +882,14 @@ return true;
   </div>
 )}
       <div className="max-w-7xl mx-auto">
-       <header className="mb-4 overflow-hidden rounded-3xl border border-yellow-400/30 bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 p-4 md:p-6 shadow-2xl">
-  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+       <header
+  className="relative mb-4 overflow-hidden rounded-3xl border border-yellow-400/20 p-4 md:p-6 shadow-2xl bg-cover bg-center"
+  style={{
+    backgroundImage:
+      "linear-gradient(rgba(2,6,23,0.78), rgba(2,6,23,0.88)), url('/legends-bg.png')",
+  }}
+>
+  <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
     <div>
       <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1 text-xs md:text-sm font-black text-yellow-300 border border-yellow-400/30 mb-3">
         🏆 מונדיאל 2026
@@ -902,9 +904,14 @@ return true;
       </p>
     </div>
 
-    <div className="bg-white/10 border border-white/10 rounded-2xl p-3 text-white text-sm font-black min-w-[150px]">
-      <div className="text-slate-300 text-xs mb-1">סטטוס מערכת</div>
-      <div className="text-green-400">● פעילה</div>
+    <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-3 text-white text-sm font-black min-w-[150px]">
+      <div className="text-slate-300 text-xs mb-1">
+        סטטוס מערכת
+      </div>
+
+      <div className="text-green-400">
+        ● פעילה
+      </div>
     </div>
   </div>
 </header>
