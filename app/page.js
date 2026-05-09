@@ -866,7 +866,14 @@ return true;
 }
   return (
     
-    <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-2 md:p-8 text-xs md:text-base">
+    <main
+  dir="rtl"
+  className="min-h-screen text-white p-2 md:p-8 text-xs md:text-base bg-slate-950 bg-cover bg-center bg-fixed"
+  style={{
+    backgroundImage:
+      "linear-gradient(rgba(2, 6, 23, 0.88), rgba(2, 6, 23, 0.94)), url('/legends-bg.png')",
+  }}
+>
       {message && (
   <div
     className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 px-6 py-4 rounded-2xl font-black shadow-2xl ${
