@@ -879,14 +879,28 @@ return true;
   </div>
 )}
       <div className="max-w-7xl mx-auto">
-       <header className="mb-4 bg-gradient-to-l from-yellow-400 to-sky-400 text-slate-950 rounded-3xl p-4 md:p-6">
-         <h1 className="text-2xl md:text-5xl font-black mb-2">
-            World Cup Predictor 2026
-          </h1>
-          <p className="font-bold">
-          מערכת ניחושים למונדיאל 2026 - משחקים, בונוסים, טבלאות ודירוג.
-          </p>
-        </header>
+       <header className="mb-4 overflow-hidden rounded-3xl border border-yellow-400/30 bg-gradient-to-br from-slate-900 via-slate-800 to-sky-950 p-4 md:p-6 shadow-2xl">
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1 text-xs md:text-sm font-black text-yellow-300 border border-yellow-400/30 mb-3">
+        🏆 מונדיאל 2026
+      </div>
+
+      <h1 className="text-3xl md:text-5xl font-black text-white leading-tight">
+        World Cup Predictor 2026
+      </h1>
+
+      <p className="mt-2 text-sm md:text-base font-bold text-slate-300 max-w-2xl">
+        מערכת ניחושים למונדיאל 2026 - משחקים, בונוסים, טבלאות ודירוג בזמן אמת.
+      </p>
+    </div>
+
+    <div className="bg-white/10 border border-white/10 rounded-2xl p-3 text-white text-sm font-black min-w-[150px]">
+      <div className="text-slate-300 text-xs mb-1">סטטוס מערכת</div>
+      <div className="text-green-400">● פעילה</div>
+    </div>
+  </div>
+</header>
         <div className="bg-slate-900 border border-slate-700 rounded-2xl p-4 mb-6">
   <div className="text-xl font-black mb-4">
     התחברות
