@@ -882,35 +882,53 @@ return true;
   </div>
 )}
       <div className="max-w-7xl mx-auto">
-       <header
-  className="relative mb-4 overflow-hidden rounded-3xl border border-yellow-400/20 p-6 md:px-10 md:py-16 shadow-2xl bg-cover bg-top"
-  style={{
-    backgroundImage:
-      "linear-gradient(rgba(2,6,23,0.35), rgba(2,6,23,0.65)), url('/hero-bg.png')",
-  }}
->
-  <div className="relative z-10 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-    <div>
-      <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1 text-xs md:text-sm font-black text-yellow-300 border border-yellow-400/30 mb-3">
+       <header className="mb-4">
+  {/* Desktop Hero */}
+  <div
+    className="hidden md:block relative overflow-hidden rounded-3xl border border-yellow-400/25 shadow-2xl bg-cover bg-top min-h-[280px]"
+    style={{
+      backgroundImage:
+        "linear-gradient(to left, rgba(2,6,23,0.10), rgba(2,6,23,0.25), rgba(2,6,23,0.90)), url('/hero-bg.png')",
+    }}
+  >
+    <div className="absolute left-6 top-6 bottom-6 w-[280px] rounded-3xl bg-black/55 border border-yellow-400/20 backdrop-blur-sm p-6 flex flex-col justify-between">
+      <div>
+        <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1 text-sm font-black text-yellow-300 border border-yellow-400/30 mb-5">
+          🏆 מונדיאל 2026
+        </div>
+
+        <h1 className="text-4xl font-black text-white leading-tight">
+          World Cup Predictor 2026
+        </h1>
+      </div>
+
+      <div className="rounded-2xl bg-black/35 border border-white/10 p-4">
+        <div className="text-slate-300 text-sm mb-1">סטטוס מערכת</div>
+        <div className="text-green-400 text-2xl font-black">● פעילה</div>
+      </div>
+    </div>
+  </div>
+
+  {/* Mobile Hero */}
+  <div
+    className="md:hidden relative overflow-hidden rounded-3xl border border-yellow-400/25 shadow-2xl bg-cover bg-top min-h-[520px]"
+    style={{
+      backgroundImage:
+        "linear-gradient(to bottom, rgba(2,6,23,0.05), rgba(2,6,23,0.25), rgba(2,6,23,0.95)), url('/hero-bg.png')",
+    }}
+  >
+    <div className="absolute inset-x-4 bottom-5">
+      <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/20 px-4 py-2 text-base font-black text-yellow-300 border border-yellow-400/30 mb-4">
         🏆 מונדיאל 2026
       </div>
 
-      <h1 className="text-3xl md:text-5xl font-black text-white leading-tight">
+      <h1 className="text-4xl font-black text-white leading-tight drop-shadow-2xl">
         World Cup Predictor 2026
       </h1>
 
-      <p className="mt-2 text-sm md:text-base font-bold text-slate-300 max-w-2xl">
-        מערכת ניחושים למונדיאל 2026 - משחקים, בונוסים, טבלאות ודירוג בזמן אמת.
-      </p>
-    </div>
-
-    <div className="bg-black/40 backdrop-blur-sm border border-white/10 rounded-2xl p-3 text-white text-sm font-black min-w-[150px]">
-      <div className="text-slate-300 text-xs mb-1">
-        סטטוס מערכת
-      </div>
-
-      <div className="text-green-400">
-        ● פעילה
+      <div className="mt-5 rounded-2xl bg-black/55 border border-white/10 backdrop-blur-sm p-4">
+        <div className="text-slate-300 text-base mb-1">סטטוס מערכת</div>
+        <div className="text-green-400 text-3xl font-black">● פעילה</div>
       </div>
     </div>
   </div>
