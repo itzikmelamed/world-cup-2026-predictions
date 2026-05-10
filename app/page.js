@@ -934,75 +934,116 @@ return true;
     </div>
   </div>
 </header>
-        <div className="bg-slate-900 border border-slate-700 rounded-2xl p-4 mb-6">
-  <div className="text-xl font-black mb-4">
-    התחברות
+        <div className="mb-6 grid gap-4 md:grid-cols-2">
+  <div className="bg-slate-900/90 border border-slate-700 rounded-3xl p-5 shadow-2xl">
+    <div className="flex items-center justify-between gap-3 mb-4">
+      <div>
+        <div className="text-2xl font-black">כניסה למערכת</div>
+        <div className="text-slate-400 font-bold mt-1">
+          התחבר כדי לצפות, להמר ולעקוב אחרי הדירוג
+        </div>
+      </div>
+
+      <div className="hidden md:flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400 text-slate-950 text-2xl font-black">
+        🏆
+      </div>
+    </div>
+
+    {!authUser ? (
+      <div className="space-y-3">
+        <input
+          type="text"
+          placeholder="שם המשתתף - נדרש להרשמה"
+          value={participantName}
+          onChange={(e) => setParticipantName(e.target.value)}
+          className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
+        />
+
+        <input
+          type="email"
+          placeholder="אימייל"
+          value={authEmail}
+          onChange={(e) => setAuthEmail(e.target.value)}
+          className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
+        />
+
+        <input
+          type="password"
+          placeholder="סיסמה"
+          value={authPassword}
+          onChange={(e) => setAuthPassword(e.target.value)}
+          className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
+        />
+
+        <div className="grid grid-cols-2 gap-3 pt-2">
+          <button
+            onClick={signUp}
+            className="bg-green-500 hover:bg-green-600 text-black px-4 py-3 rounded-2xl font-black shadow-lg"
+          >
+            הרשמה
+          </button>
+
+          <button
+            onClick={signIn}
+            className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl font-black shadow-lg"
+          >
+            התחברות
+          </button>
+        </div>
+      </div>
+    ) : (
+      <div className="rounded-2xl bg-green-500/10 border border-green-400/30 p-4">
+        <div className="text-green-400 font-black text-lg mb-1">
+          מחובר למערכת
+        </div>
+
+        <div className="text-slate-300 font-bold break-all">
+          {authUser.email}
+        </div>
+
+        <button
+          onClick={signOut}
+          className="mt-4 w-full bg-red-600 hover:bg-red-700 px-4 py-3 rounded-2xl font-black"
+        >
+          התנתקות
+        </button>
+      </div>
+    )}
   </div>
-  {!authUser && (
-  <div className="text-center text-slate-300 mb-4 font-bold">
-    יש להתחבר כדי לצפות ולהשתתף בהימורים
-  </div>
-)}
 
-  <div className="flex flex-col gap-3 max-w-md">
-    <input
-  type="text"
-  placeholder="שם המשתתף"
-  value={participantName}
-  onChange={(e) => setParticipantName(e.target.value)}
-  className="bg-slate-800 rounded-xl p-3"
-/>
-    <input
-      type="email"
-      placeholder="אימייל"
-      value={authEmail}
-      onChange={(e) => setAuthEmail(e.target.value)}
-      className="bg-slate-800 rounded-xl p-3"
-    />
+  <div className="bg-slate-900/90 border border-slate-700 rounded-3xl p-5 shadow-2xl">
+    <div className="text-2xl font-black mb-4">פרטי משתתף</div>
 
-    <input
-      type="password"
-      placeholder="סיסמה"
-      value={authPassword}
-      onChange={(e) => setAuthPassword(e.target.value)}
-      className="bg-slate-800 rounded-xl p-3"
-    />
+    {authUser && loggedInPlayer ? (
+      <div className="space-y-3">
+        <div className="rounded-2xl bg-slate-800 border border-slate-700 p-4">
+          <div className="text-slate-400 font-bold mb-1">מחובר כמשתתף</div>
+          <div className="text-2xl font-black text-yellow-300">
+            {loggedInPlayer.name}
+          </div>
+        </div>
 
-    <div className="flex gap-3">
-  {!authUser ? (
-    <>
-      <button
-        onClick={signUp}
-        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl font-black"
-      >
-        הרשמה
-      </button>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl bg-slate-800 border border-slate-700 p-4">
+            <div className="text-slate-400 font-bold mb-1">הרשאה</div>
+            <div className="font-black text-sky-300">{role}</div>
+          </div>
 
-      <button
-        onClick={signIn}
-        className="bg-sky-600 hover:bg-sky-700 px-4 py-2 rounded-xl font-black"
-      >
-        התחברות
-      </button>
-    </>
-  ) : (
-    <button
-      onClick={signOut}
-      className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl font-black"
-    >
-      התנתקות
-    </button>
-  )}
-</div>
-
-    {authUser && (
-      <div className="text-green-400 font-black">
-        מחובר: {authUser.email}
+          <div className="rounded-2xl bg-slate-800 border border-slate-700 p-4">
+            <div className="text-slate-400 font-bold mb-1">משתתפים</div>
+            <div className="font-black text-green-400">
+              {activePlayers.length}
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div className="rounded-2xl bg-slate-800 border border-slate-700 p-4 text-slate-300 font-bold leading-7">
+        אחרי התחברות יוצגו כאן שם המשתתף, ההרשאה ומצב המשתמש.
       </div>
     )}
   </div>
 </div>
-
 <div className={authUser ? "" : "hidden"}>
 
         <section className="mb-6 bg-slate-900 border border-slate-800 rounded-3xl p-4">
