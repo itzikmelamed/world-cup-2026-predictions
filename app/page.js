@@ -1251,20 +1251,24 @@ return true;
                           </div>
                         </td>
                         <td className="p-3 text-center">
-                          {result.home !== "" && result.away !== "" ? (
-  <span>{result.away}:{result.home}</span>
-) : (
-  "-"
-)}
-                        </td>
+  {result.home !== "" && result.away !== "" ? (
+    <div className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 border border-slate-700 px-4 py-2 font-black text-green-400 shadow-lg">
+      <span>{result.home}</span>
+      <span className="text-slate-500">:</span>
+      <span>{result.away}</span>
+    </div>
+  ) : (
+    <span className="text-slate-500 font-bold">טרם עודכן</span>
+  )}
+</td>
                         <td className="p-3 text-center">
   {isMatchLocked(match, manuallyUnlockedMatches) ? (
-    <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-black">
-      נעול
+    <span className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-300 px-4 py-2 rounded-2xl text-sm font-black">
+      🔒 נעול
     </span>
   ) : (
-    <span className="bg-green-500 text-black px-3 py-1 rounded-full text-sm font-black">
-      פתוח
+    <span className="inline-flex items-center gap-2 bg-green-500/20 border border-green-500/40 text-green-300 px-4 py-2 rounded-2xl text-sm font-black">
+      🟢 פתוח
     </span>
   )}
 </td>
