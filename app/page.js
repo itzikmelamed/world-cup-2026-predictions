@@ -1210,7 +1210,14 @@ return true;
                     const points = calculatePoints(prediction, result);
 
                     return (
-                      <tr key={match.id} className="bg-slate-800">
+                      <tr
+  key={match.id}
+  className={`transition-all duration-200 hover:bg-slate-700/80 ${
+    isMatchLocked(match, manuallyUnlockedMatches)
+      ? "bg-red-950/30"
+      : "bg-green-950/20"
+  }`}
+>
                         <td className="p-3 rounded-r-xl font-bold">{match.id}</td>
                         <td className="p-3">{match.date}</td>
                         <td className="p-3">{match.time}</td>
@@ -1261,9 +1268,17 @@ return true;
     </span>
   )}
 </td>
-                        <td className="p-3 rounded-l-xl text-center text-yellow-400 font-black">
-                          {points}
-                        </td>
+                        <td
+  className={`p-3 rounded-l-xl text-center font-black ${
+    points === 4.5
+      ? "text-yellow-300"
+      : points === 2
+      ? "text-sky-300"
+      : "text-slate-500"
+  }`}
+>
+  {points}
+</td>
                       </tr>
                     );
                   })}
