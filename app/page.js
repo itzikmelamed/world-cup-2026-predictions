@@ -1095,32 +1095,32 @@ return true;
 
 </section>
 
-        <nav className="mb-6 flex gap-3 overflow-x-auto">
+        <nav className="mb-6 flex gap-2 overflow-x-auto rounded-3xl border border-slate-800 bg-slate-900/70 backdrop-blur-md p-2 shadow-2xl scrollbar-hide">
           <button
           
             onClick={() => setPage("matches")}
-            className={`px-5 py-3 rounded-xl font-bold ${
-              page === "matches" ? "bg-yellow-400 text-slate-950" : "bg-slate-800"
+            className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
+              page === "matches" ? "bg-yellow-400 text-slate-950" : "bg-slate-800 hover:bg-slate-700 text-slate-200"
             }`}
           >
             הימורי משחקים
           </button>
           <button
   onClick={() => setPage("bonus")}
-  className={`px-5 py-3 rounded-xl font-bold ${
+  className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
     page === "bonus"
       ? "bg-yellow-400 text-slate-950"
-      : "bg-slate-800"
+      : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
   הימורי בונוס
 </button>
 <button
   onClick={() => setPage("bonusAll")}
-  className={`px-5 py-3 rounded-xl font-bold ${
+  className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
     page === "bonusAll"
       ? "bg-yellow-400 text-slate-950"
-      : "bg-slate-800"
+      : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
   כל הימורי הבונוס
@@ -1129,10 +1129,10 @@ return true;
           {role === "admin" && (
   <button
     onClick={() => setPage("admin")}
-    className={`px-5 py-3 rounded-xl font-bold ${
+   className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
       page === "admin"
         ? "bg-yellow-400 text-slate-950"
-        : "bg-slate-800"
+        : "bg-slate-800 hover:bg-slate-700 text-slate-200"
     }`}
   >
     ניהול תוצאות
@@ -1140,18 +1140,18 @@ return true;
 )}
 <button
   onClick={() => setPage("leaderboard")}
-  className={`px-5 py-3 rounded-xl font-bold ${
-    page === "leaderboard" ? "bg-yellow-400 text-slate-950" : "bg-slate-800"
+  className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
+    page === "leaderboard" ? "bg-yellow-400 text-slate-950" : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
   טבלת דירוג
 </button>
 <button
   onClick={() => setPage("groups")}
-  className={`px-5 py-3 rounded-xl font-bold ${
+  className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
     page === "groups"
       ? "bg-yellow-400 text-slate-950"
-      : "bg-slate-800"
+      : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
   טבלאות בתים
@@ -1159,10 +1159,10 @@ return true;
 
 <button
   onClick={() => setPage("all")}
-  className={`px-5 py-3 rounded-xl font-bold ${
+  className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
     page === "all"
       ? "bg-yellow-400 text-slate-950"
-      : "bg-slate-800"
+      : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
   כל ההימורים
@@ -1170,8 +1170,8 @@ return true;
 
           <button
             onClick={() => setPage("rules")}
-            className={`px-5 py-3 rounded-xl font-bold ${
-              page === "rules" ? "bg-yellow-400 text-slate-950" : "bg-slate-800"
+            className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
+              page === "rules" ? "bg-yellow-400 text-slate-950" : "bg-slate-800 hover:bg-slate-700 text-slate-200"
             }`}
           >
             חוקים
