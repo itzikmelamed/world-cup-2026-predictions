@@ -1196,9 +1196,9 @@ return true;
 </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[850px] border-separate border-spacing-y-2">
+              <table className="w-full min-w-[950px] border-separate border-spacing-y-3">
                 <thead>
-                  <tr className="text-slate-400 text-sm">
+                  <tr className="text-slate-300 text-sm bg-slate-950/80 backdrop-blur sticky top-0 z-10">
                     <th className="text-right p-2">מס'</th>
                     <th className="text-right p-2">תאריך</th>
                     <th className="text-right p-2">שעה</th>
@@ -1230,9 +1230,13 @@ return true;
   }`}
 >
                         <td className="p-3 rounded-r-xl font-bold">{match.id}</td>
-                        <td className="p-3">{match.date}</td>
-                        <td className="p-3">{match.time}</td>
-                        <td className="p-3">{match.group}</td>
+                        <td className="p-3 font-bold text-slate-300">{match.date}</td>
+                        <td className="p-3 font-black text-sky-300">{match.time}</td>
+                        <td className="p-3">
+  <span className="inline-flex items-center justify-center min-w-[40px] px-3 py-1 rounded-full bg-yellow-400 text-slate-950 font-black">
+    {match.group}
+  </span>
+</td>
                         <td className="sticky right-0 z-20 bg-slate-800 p-3 font-bold border-l border-slate-700 w-[170px] min-w-[170px] max-w-[170px]">
   {match.home} נגד {match.away}
 </td>
