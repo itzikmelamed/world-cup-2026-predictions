@@ -1237,7 +1237,7 @@ return true;
     {match.group}
   </span>
 </td>
-                        <td className="sticky right-0 z-20 bg-slate-900/95 p-3 border-l border-slate-800 w-[180px] min-w-[180px] max-w-[180px]">
+                        <td className="sticky right-0 z-20 bg-inherit p-3 border-l border-slate-800 w-[180px] min-w-[180px] max-w-[180px]">
   <div className="flex flex-col items-center justify-center text-center leading-5">
     <span className="font-bold text-slate-100 text-sm">
       {match.home}
