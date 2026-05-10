@@ -885,22 +885,25 @@ return true;
        <header className="mb-4">
   {/* Desktop Hero */}
 <div
-  className="hidden md:block relative overflow-hidden rounded-3xl border border-yellow-400/25 shadow-2xl bg-cover bg-center min-h-[300px]"
+  className="hidden md:block relative overflow-hidden rounded-3xl border border-yellow-400/25 shadow-2xl min-h-[300px]"
   style={{
     backgroundImage:
-      "linear-gradient(to bottom, rgba(2,6,23,0.05), rgba(2,6,23,0.15), rgba(2,6,23,0.55)), url('/hero-bg.png')",
+      "linear-gradient(to bottom, rgba(2,6,23,0.00), rgba(2,6,23,0.05), rgba(2,6,23,0.35)), url('/hero-bg.png')",
+    backgroundSize: "100% 100%",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
   }}
 >
-  <div className="absolute top-5 right-6 z-10 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 px-4 py-2 text-sm font-black text-yellow-300 border border-yellow-400/40 backdrop-blur-sm">
+  <div className="absolute top-5 right-6 z-10 inline-flex items-center gap-2 rounded-full bg-yellow-400/25 px-5 py-2 text-sm font-black text-yellow-300 border border-yellow-400/40 backdrop-blur-sm">
     🏆 מונדיאל 2026
   </div>
 
-  <div className="absolute top-5 left-6 z-10 rounded-2xl bg-black/35 border border-white/10 backdrop-blur-sm px-4 py-2 text-sm font-black">
+  <div className="absolute top-5 left-6 z-10 rounded-2xl bg-black/45 border border-white/10 backdrop-blur-sm px-4 py-2 text-sm font-black">
     <span className="text-slate-300 ml-2">סטטוס מערכת</span>
     <span className="text-green-400">● פעילה</span>
   </div>
 
-  <div className="absolute bottom-5 right-6 z-10">
+  <div className="absolute bottom-6 left-8 z-10">
     <h1 className="text-4xl md:text-5xl font-black text-white leading-tight drop-shadow-2xl">
       World Cup Predictor 2026
     </h1>
