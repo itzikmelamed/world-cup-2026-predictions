@@ -1237,15 +1237,11 @@ return true;
     {match.group}
   </span>
 </td>
-                        <td className="sticky right-0 z-20 bg-slate-900 p-3 border-l border-slate-700 w-[190px] min-w-[190px] max-w-[190px]">
-  <div className="font-black text-white leading-6">
-    {match.home}
-  </div>
-  <div className="text-xs text-slate-400 font-bold my-1">
-    נגד
-  </div>
-  <div className="font-black text-white leading-6">
-    {match.away}
+                        <td className="sticky right-0 z-20 bg-slate-900 p-3 border-l border-slate-700 w-[220px] min-w-[220px] max-w-[220px]">
+  <div className="flex items-center gap-2 font-black text-white whitespace-nowrap">
+    <span>{match.home}</span>
+    <span className="text-slate-500 text-xs">vs</span>
+    <span>{match.away}</span>
   </div>
 </td>
                         <td className="p-3">
