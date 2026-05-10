@@ -1237,8 +1237,16 @@ return true;
     {match.group}
   </span>
 </td>
-                        <td className="sticky right-0 z-20 bg-slate-800 p-3 font-bold border-l border-slate-700 w-[170px] min-w-[170px] max-w-[170px]">
-  {match.home} נגד {match.away}
+                        <td className="sticky right-0 z-20 bg-slate-900 p-3 border-l border-slate-700 w-[190px] min-w-[190px] max-w-[190px]">
+  <div className="font-black text-white leading-6">
+    {match.home}
+  </div>
+  <div className="text-xs text-slate-400 font-bold my-1">
+    נגד
+  </div>
+  <div className="font-black text-white leading-6">
+    {match.away}
+  </div>
 </td>
                         <td className="p-3">
                           <div className="flex justify-center items-center gap-2">
