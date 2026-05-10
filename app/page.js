@@ -884,30 +884,34 @@ return true;
       <div className="max-w-7xl mx-auto">
        <header className="mb-4">
   {/* Desktop Hero */}
-  <div
-    className="hidden md:block relative overflow-hidden rounded-3xl border border-yellow-400/25 shadow-2xl bg-cover bg-top min-h-[280px]"
-    style={{
-      backgroundImage:
-        "linear-gradient(to left, rgba(2,6,23,0.10), rgba(2,6,23,0.25), rgba(2,6,23,0.90)), url('/hero-bg.png')",
-    }}
-  >
-    <div className="absolute left-6 top-6 bottom-6 w-[280px] rounded-3xl bg-black/55 border border-yellow-400/20 backdrop-blur-sm p-6 flex flex-col justify-between">
-      <div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/15 px-3 py-1 text-sm font-black text-yellow-300 border border-yellow-400/30 mb-5">
-          🏆 מונדיאל 2026
-        </div>
+<div
+  className="hidden md:block relative overflow-hidden rounded-3xl border border-yellow-400/25 shadow-2xl bg-cover bg-top min-h-[290px]"
+  style={{
+    backgroundImage:
+      "linear-gradient(to bottom, rgba(2,6,23,0.20), rgba(2,6,23,0.05), rgba(2,6,23,0.82)), url('/hero-bg.png')",
+  }}
+>
+  <div className="absolute top-5 right-6 left-6 z-10 flex items-center justify-between gap-4">
+    <div className="inline-flex items-center gap-2 rounded-full bg-yellow-400/20 px-4 py-2 text-sm font-black text-yellow-300 border border-yellow-400/40 backdrop-blur-sm">
+      🏆 מונדיאל 2026
+    </div>
 
-        <h1 className="text-4xl font-black text-white leading-tight">
-          World Cup Predictor 2026
-        </h1>
-      </div>
-
-      <div className="rounded-2xl bg-black/35 border border-white/10 p-4">
-        <div className="text-slate-300 text-sm mb-1">סטטוס מערכת</div>
-        <div className="text-green-400 text-2xl font-black">● פעילה</div>
-      </div>
+    <div className="rounded-2xl bg-black/45 border border-white/10 backdrop-blur-sm px-4 py-2 text-sm font-black">
+      <span className="text-slate-300 ml-2">סטטוס מערכת</span>
+      <span className="text-green-400">● פעילה</span>
     </div>
   </div>
+
+  <div className="absolute bottom-5 right-6 left-6 z-10 rounded-2xl bg-black/35 border border-white/10 backdrop-blur-sm px-6 py-4">
+    <h1 className="text-4xl md:text-5xl font-black text-white leading-tight drop-shadow-2xl">
+      World Cup Predictor 2026
+    </h1>
+
+    <p className="mt-1 text-sm md:text-base font-bold text-slate-200">
+      מערכת ניחושים למונדיאל 2026 - משחקים, בונוסים, טבלאות ודירוג בזמן אמת.
+    </p>
+  </div>
+</div>
 
   {/* Mobile Hero */}
   <div
