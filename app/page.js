@@ -1235,7 +1235,7 @@ return true;
                               onChange={(e) =>
                                 updatePrediction(match.id, "home", e.target.value)
                               }
-                              className="w-14 bg-slate-700 rounded-xl p-2 text-center"
+                              className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
                             />
                             <span>:</span>
                             <input
@@ -1246,7 +1246,7 @@ return true;
                               onChange={(e) =>
                                 updatePrediction(match.id, "away", e.target.value)
                               }
-                              className="w-14 bg-slate-700 rounded-xl p-2 text-center"
+                              className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
                             />
                           </div>
                         </td>
