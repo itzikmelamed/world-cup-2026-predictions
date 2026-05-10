@@ -1253,40 +1253,28 @@ return true;
   </div>
 </td>
                         <td className="p-3">
-                          <div className="flex flex-col gap-2 items-center">
-  <div className="flex items-center justify-between gap-3 w-full max-w-[170px]">
-    <span className="font-bold text-slate-300 text-sm">
-      {match.home}
-    </span>
-
-    <input
-      type="number"
-      min="0"
-      value={prediction.home ?? ""}
-      disabled={isMatchLocked(match, manuallyUnlockedMatches)}
-      onChange={(e) =>
-        updatePrediction(match.id, "home", e.target.value)
-      }
-      className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
-    />
-  </div>
-
-  <div className="flex items-center justify-between gap-3 w-full max-w-[170px]">
-    <span className="font-bold text-slate-300 text-sm">
-      {match.away}
-    </span>
-
-    <input
-      type="number"
-      min="0"
-      value={prediction.away ?? ""}
-      disabled={isMatchLocked(match, manuallyUnlockedMatches)}
-      onChange={(e) =>
-        updatePrediction(match.id, "away", e.target.value)
-      }
-      className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
-    />
-  </div>
+                          <div className="flex justify-center items-center gap-2">
+  <input
+    type="number"
+    min="0"
+    value={prediction.home ?? ""}
+    disabled={isMatchLocked(match, manuallyUnlockedMatches)}
+    onChange={(e) =>
+      updatePrediction(match.id, "home", e.target.value)
+    }
+    className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
+  />
+  <span>:</span>
+  <input
+    type="number"
+    min="0"
+    value={prediction.away ?? ""}
+    disabled={isMatchLocked(match, manuallyUnlockedMatches)}
+    onChange={(e) =>
+      updatePrediction(match.id, "away", e.target.value)
+    }
+    className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
+  />
 </div>
                         </td>
                         <td className="p-3 text-center">
