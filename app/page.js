@@ -1180,9 +1180,20 @@ return true;
 
         {page === "matches" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
-            <h2 className="text-2xl font-black mb-4">
-              הימורי משחקים - {selectedPlayer}
-            </h2>
+            <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+  <div>
+    <h2 className="text-2xl font-black">
+      הימורי משחקים
+    </h2>
+    <div className="text-slate-400 font-bold mt-1">
+      משתתף נוכחי: <span className="text-yellow-300">{selectedPlayer}</span>
+    </div>
+  </div>
+
+  <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
+    סה״כ משחקים: <span className="text-yellow-300">{matches.length}</span>
+  </div>
+</div>
 
             <div className="overflow-x-auto">
               <table className="w-full min-w-[850px] border-separate border-spacing-y-2">
