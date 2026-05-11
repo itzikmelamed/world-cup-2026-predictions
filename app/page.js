@@ -1770,9 +1770,25 @@ return true;
         <tbody>
           {leaderboard.map((row, index) => (
             <tr key={row.player} className="border-t border-slate-800 bg-slate-900">
-              <td className="sticky right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px]">
-                {index + 1}
-              </td>
+              <td
+  className={`sticky right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px] ${
+    index === 0
+      ? "text-yellow-300"
+      : index === 1
+      ? "text-slate-300"
+      : index === 2
+      ? "text-amber-600"
+      : "text-white"
+  }`}
+>
+  {index === 0
+    ? "🥇"
+    : index === 1
+    ? "🥈"
+    : index === 2
+    ? "🥉"
+    : index + 1}
+</td>
 
               <td className="sticky right-[45px] z-20 bg-slate-900 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px]truncate">
                 {row.player}
