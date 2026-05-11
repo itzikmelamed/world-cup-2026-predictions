@@ -1279,9 +1279,9 @@ return true;
                         </td>
                         <td className="p-3 text-center">
   {result.home !== "" && result.away !== "" ? (
-    <div className="inline-flex items-center gap-2 rounded-2xl bg-slate-950 border border-slate-700 px-4 py-2 font-black text-green-400 shadow-lg">
+    <div className="inline-flex flex-col items-center gap-2 rounded-2xl bg-slate-950 border border-slate-700 px-4 py-2 font-black text-green-400 shadow-lg">
       <span>{result.home}</span>
-      <span className="text-slate-500">:</span>
+      <span className="text-[10px] text-slate-500">VS</span>
       <span>{result.away}</span>
     </div>
   ) : (
