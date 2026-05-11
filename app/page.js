@@ -1347,12 +1347,17 @@ return true;
                 return (
                   <div
                     key={groupName}
-                    className="bg-slate-800 rounded-3xl p-4 border border-slate-700"
+                    className="bg-slate-800/90 rounded-3xl p-5 border border-slate-700 shadow-xl hover:border-yellow-400/30 transition-all duration-200"
                   >
-                    <h3 className="text-xl font-black mb-4">
-                      בית {groupName}
-                    </h3>
+                    <div className="flex items-center justify-between mb-4">
+  <h3 className="text-xl font-black">
+    בית {groupName}
+  </h3>
 
+  <div className="rounded-full bg-yellow-400 text-slate-950 px-3 py-1 text-xs font-black">
+    2 עולות
+  </div>
+</div>
                     <div className="space-y-3">
                       <select
                         value={selectedGroup[0]}
