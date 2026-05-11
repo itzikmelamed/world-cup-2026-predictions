@@ -1808,7 +1808,7 @@ return true;
                         {match.home} נגד {match.away}
                       </div>
                       <div className="text-slate-400 text-sm">
-                        {match.date} | {match.time} | בית {match.group}
+                        {match.date} | {match.time} | בית {match.group ? `בית ${match.group}` : match.stage}
                       </div>
                     </div>
 
@@ -2075,7 +2075,7 @@ return true;
                             {match.home} נגד {match.away}
                           </div>
                           <div className="text-slate-400 text-sm">
-                            {match.date} | {match.time} | בית {match.group}
+                            {match.date} | {match.time} | בית {match.group ? `בית ${match.group}` : match.stage}
                           </div>
                           <div className="text-green-400 text-sm font-black mt-1">
   תוצאת אמת:{" "}
@@ -2174,7 +2174,7 @@ return true;
           </div>
 
           <div className="text-slate-400 text-xs">
-            {match.date} | {match.time} | {match.group}
+            {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
           </div>
 
           <div className="mt-2 text-sm font-bold text-yellow-300">
