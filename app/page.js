@@ -1829,7 +1829,11 @@ return true;
   return (
     <th
      key={player.id}
-      className="p-1 md:p-2 text-center border-l border-slate-800 w-[62px] min-w-[62px] max-w-[62px] md:w-[85px] md:min-w-[85px] md:max-w-[85px]"
+      className={`p-1 md:p-2 text-center border-l border-slate-800 w-[62px] min-w-[62px] max-w-[62px] md:w-[85px] md:min-w-[85px] md:max-w-[85px] ${
+  player.name === selectedPlayer
+    ? "bg-yellow-500/10"
+    : "bg-slate-950"
+}`}
     >
       <div className="font-black">
         {player.name}
@@ -1889,7 +1893,11 @@ return true;
                           return (
                             <td
                               key={player}
-                             className="p-1 md:p-3 text-center border-l border-slate-800"
+                             className={`p-1 md:p-3 text-center border-l border-slate-800 ${
+  player.name === selectedPlayer
+    ? "bg-yellow-500/5"
+    : ""
+}`}
                             >
                               <div className="font-bold">
                                 {prediction.home !== "" && prediction.away !== "" ? (
