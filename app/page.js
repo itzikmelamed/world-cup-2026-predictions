@@ -801,9 +801,6 @@ if (playerError) {
 setDbPlayers((prev) => [...prev, newPlayer]);
 
   
-
-await refreshAllData();
-
 setAuthUser(data.user);
 
 const freshPlayer = await supabase
@@ -816,6 +813,8 @@ if (freshPlayer.data) {
   setSelectedPlayer(freshPlayer.data.name);
   setRole(freshPlayer.data.role || "player");
 }
+await refreshAllData();
+
 showMessage("נרשמת בהצלחה");
 }
 
