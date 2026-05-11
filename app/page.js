@@ -1368,7 +1368,7 @@ return true;
                         <td className="p-3 font-black text-sky-300">{match.time}</td>
                         <td className="p-3">
   <span className="inline-flex items-center justify-center min-w-[40px] px-3 py-1 rounded-full bg-yellow-400 text-slate-950 font-black">
-    {match.group}
+    {match.group ? `בית ${match.group}` : match.stage}
   </span>
 </td>
                         <td className="sticky right-0 z-30 bg-slate-900 p-3 border-l border-slate-800 w-[180px] min-w-[180px] max-w-[180px]">
