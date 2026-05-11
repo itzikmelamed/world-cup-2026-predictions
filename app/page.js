@@ -820,14 +820,10 @@ showMessage("נרשמת בהצלחה");
 }
 
 async function signIn() {
-  
-
   const { data, error } = await supabase.auth.signInWithPassword({
     email: authEmail,
     password: authPassword,
   });
-
-  
 
   if (error) {
     showMessage(error.message, "error");
@@ -835,9 +831,21 @@ async function signIn() {
   }
 
   setAuthUser(data.user);
-  await refreshAllData();
 
-  const matchingPlayer = dbPlayers.find(
+  const { data: freshPlayers, error: playersError } = await supabase
+    .from("players")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (playersError) {
+    console.error("Error loading players after signin:", playersError);
+    showMessage("התחברת, אבל הייתה שגיאה בטעינת המשתתפים", "error");
+    return;
+  }
+
+  setDbPlayers(freshPlayers);
+
+  const matchingPlayer = freshPlayers.find(
     (player) => player.email === data.user.email
   );
 
@@ -845,6 +853,8 @@ async function signIn() {
     setSelectedPlayer(matchingPlayer.name);
     setRole(matchingPlayer.role || "player");
   }
+
+  await refreshAllData();
 
   showMessage("התחברת בהצלחה");
 }
