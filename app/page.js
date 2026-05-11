@@ -1731,7 +1731,21 @@ return true;
 
         {page === "leaderboard" && (
   <section className="bg-slate-900 border border-slate-800 rounded-3xl p-2 md:p-4">
-    <h2 className="text-2xl font-black mb-4">טבלת דירוג</h2>
+    <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+  <div>
+    <h2 className="text-2xl font-black">טבלת דירוג</h2>
+    <div className="text-slate-400 font-bold mt-1">
+      דירוג המשתתפים לפי ניקוד כולל ושוברי שוויון
+    </div>
+  </div>
+
+  <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
+    מוביל כרגע:{" "}
+    <span className="text-yellow-300">
+      {leaderboard[0]?.player || "-"}
+    </span>
+  </div>
+</div>
 
     <div className="overflow-x-auto rounded-2xl border border-slate-800">
       <table className="border-collapse min-w-[760px] text-xs md:text-sm">
