@@ -1334,7 +1334,7 @@ return true;
     <thead>
       <tr className="text-slate-300 bg-slate-950/80 backdrop-blur sticky top-0 z-10">
         <th className="text-center p-2 w-[45px]">מס׳</th>
-        <th className="text-right p-2 w-[210px] min-w-[210px]">
+        <th className="sticky right-0 z-30 bg-slate-900 text-center p-2 border-l border-slate-700 w-[150px] min-w-[150px] max-w-[150px]">
           משחק
         </th>
         <th className="text-center p-2 w-[130px]">הימור</th>
@@ -1362,7 +1362,7 @@ return true;
               {match.id}
             </td>
 
-            <td className="p-2 w-[210px] min-w-[210px]">
+            <td className="sticky right-0 z-30 bg-slate-900 p-2 border-l border-slate-800 w-[150px] min-w-[150px] max-w-[150px]">
               <div className="flex flex-col gap-1">
                 <div className="font-black text-slate-100 leading-5">
                   {locked ? "🔒 " : "🟢 "}
