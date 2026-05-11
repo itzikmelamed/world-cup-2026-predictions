@@ -2181,7 +2181,7 @@ return true;
 
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="text-slate-400 border-b border-slate-700">
+                        <tr className="text-slate-300 border-b border-slate-700 bg-slate-950/70">
                           <th className="text-right py-2">#</th>
                           <th className="text-right py-2">נבחרת</th>
                           <th className="text-center py-2">מש'</th>
@@ -2237,9 +2237,11 @@ return true;
                               {team.wins}
                             </td>
 
-                            <td className="text-center font-black text-yellow-400">
-                              {team.points}
-                            </td>
+                            <td className="text-center">
+  <span className="inline-flex items-center justify-center min-w-[36px] rounded-full bg-yellow-400 text-slate-950 px-2 py-1 font-black">
+    {team.points}
+  </span>
+</td>
                           </tr>
                         ))}
                       </tbody>
