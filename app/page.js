@@ -144,6 +144,11 @@ useEffect(() => {
   };
 }, []);
 useEffect(() => {
+  if (!authUser) return;
+
+  refreshAllData();
+}, [authUser]);
+useEffect(() => {
   if (!authUser || dbPlayers.length === 0) return;
 
   const matchingPlayer = dbPlayers.find(
