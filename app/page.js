@@ -2341,6 +2341,15 @@ return true;
 )}
 </div>
 </div>
+<footer className="mt-10 border-t border-slate-800 pt-6 pb-2 text-center">
+  <div className="text-slate-400 font-bold">
+    World Cup Predictor 2026
+  </div>
+
+  <div className="text-slate-600 text-sm mt-2">
+    Built for the ultimate World Cup experience
+  </div>
+</footer>
 </main>
 );
 }
