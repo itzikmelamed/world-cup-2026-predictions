@@ -2187,7 +2187,13 @@ return true;
   }`}
 >
                             <td className="py-3 font-black">
-  {index < 2 ? "✅" : index + 1}
+  {index + 1}
+
+  {index < 2 && (
+    <span className="mr-2 text-green-400">
+      ✓
+    </span>
+  )}
 </td>
 
                             <td className="py-3 font-bold">
