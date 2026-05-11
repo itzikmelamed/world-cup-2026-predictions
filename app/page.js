@@ -1930,9 +1930,21 @@ return true;
 )}
                               </div>
 
-                              <div className="text-yellow-400 text-sm font-black">
-                                {points} נק'
-                              </div>
+                              <div
+  className={`text-sm font-black mt-1 ${
+    points === 4.5
+      ? "text-yellow-300"
+      : points === 2
+      ? "text-sky-300"
+      : "text-slate-500"
+  }`}
+>
+  {points === 4.5
+    ? "🎯 4.5"
+    : points === 2
+    ? "✓ 2"
+    : "0"}
+</div>
                             </td>
                           );
                         })}
