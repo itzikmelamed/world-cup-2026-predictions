@@ -1964,8 +1964,8 @@ return true;
                       <tr key={match.id} className="border-t border-slate-800">
                         <td className="sticky right-0 z-10 bg-slate-900 p-3 border-l border-slate-800 w-[170px] min-w-[170px] max-w-[170px] md:w-[240px] md:min-w-[240px] md:max-w-[240px]">
                           <div className="font-black">
-  {teamFlags[match.home]} {match.home} נגד {teamFlags[match.away]} {match.away}
-</div>
+                            {match.home} נגד {match.away}
+                          </div>
                           <div className="text-slate-400 text-sm">
                             {match.date} | {match.time} | בית {match.group}
                           </div>
