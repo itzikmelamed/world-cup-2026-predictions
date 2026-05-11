@@ -2308,16 +2308,35 @@ return true;
   </div>
 </div>
 
-    <h3 className="text-xl font-black mt-8 mb-4">שוברי שיוויון</h3>
+    <div className="mt-8 rounded-3xl bg-slate-950 border border-slate-800 p-5">
+  <h3 className="text-xl font-black mb-4">
+    שוברי שוויון
+  </h3>
 
-    <ol className="space-y-3 list-decimal pr-6 font-bold">
-      <li>מספר ניחושי בול פגיעה</li>
-      <li>מספר ניחושי ניצחון/תיקו</li>
-      <li>סך הנקודות מהימורי בונוס</li>
-      <li>ניחוש נכון של אלופה</li>
-      <li>ניחוש נכון של מלך שערים</li>
-      <li>במידה ועדיין קיים שוויון - חלוקת המקום</li>
-    </ol>
+  <div className="space-y-3">
+    {[
+      "מספר ניחושי בול פגיעה",
+      "מספר ניחושי ניצחון/תיקו",
+      "סך הנקודות מהימורי בונוס",
+      "ניחוש נכון של אלופה",
+      "ניחוש נכון של מלך שערים",
+      "במידה ועדיין קיים שוויון - חלוקת המקום",
+    ].map((rule, index) => (
+      <div
+        key={rule}
+        className="flex items-center gap-3 rounded-2xl bg-slate-900 border border-slate-800 p-3 font-bold"
+      >
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-400 text-slate-950 font-black">
+          {index + 1}
+        </span>
+
+        <span className="text-slate-200">
+          {rule}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
   </section>
 )}
 </div>
