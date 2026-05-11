@@ -1237,7 +1237,7 @@ return true;
     {match.group}
   </span>
 </td>
-                        <td className="sticky right-0 z-20 bg-inherit p-3 border-l border-slate-800 w-[180px] min-w-[180px] max-w-[180px]">
+                        <td className="sticky right-0 z-30 bg-slate-900 p-3 border-l border-slate-800 w-[180px] min-w-[180px] max-w-[180px]">
   <div className="flex flex-col items-center justify-center text-center leading-5">
     <span className="font-bold text-slate-100 text-sm">
       {match.home}
@@ -1253,7 +1253,7 @@ return true;
   </div>
 </td>
                         <td className="p-3">
-                          <div className="flex justify-center items-center gap-2">
+                          <div className="flex flex-col items-center gap-2">
   <input
     type="number"
     min="0"
@@ -1264,7 +1264,7 @@ return true;
     }
     className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
   />
-  <span>:</span>
+
   <input
     type="number"
     min="0"
