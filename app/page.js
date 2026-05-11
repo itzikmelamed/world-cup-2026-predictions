@@ -260,14 +260,7 @@ async function loadAppSettings() {
     console.error("Error loading app settings:", error);
     return;
   }
-  async function refreshAllData() {
-  await loadPlayers();
-  await loadPredictions();
-  await loadBonusPredictions();
-  await loadResults();
-  await loadAppSettings();
-}
-
+  
   setManuallyUnlockedMatches(data.manually_unlocked_matches || []);
   setBonusManuallyUnlocked(data.bonus_manually_unlocked || false);
   setGroupStageFinished(data.group_stage_finished || false);
@@ -277,6 +270,13 @@ async function loadAppSettings() {
     topScorer: "",
   }
 );
+}
+async function refreshAllData() {
+  await loadPlayers();
+  await loadPredictions();
+  await loadBonusPredictions();
+  await loadResults();
+  await loadAppSettings();
 }
 loadPlayers();
 loadPredictions();
