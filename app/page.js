@@ -44,6 +44,32 @@ const groups = {
   E: ["Germany", "Curacao", "Ivory Coast", "Ecuador"],
   F: ["Netherlands", "Japan", "Sweden", "Tunisia"],
 };
+const teamFlags = {
+  Mexico: "🇲🇽",
+  "South Africa": "🇿🇦",
+  "South Korea": "🇰🇷",
+  "Czech Republic": "🇨🇿",
+  Canada: "🇨🇦",
+  "Bosnia & Herzegovina": "🇧🇦",
+  Qatar: "🇶🇦",
+  Switzerland: "🇨🇭",
+  Brazil: "🇧🇷",
+  Morocco: "🇲🇦",
+  Haiti: "🇭🇹",
+  Scotland: "🏴",
+  USA: "🇺🇸",
+  Paraguay: "🇵🇾",
+  Australia: "🇦🇺",
+  Turkey: "🇹🇷",
+  Germany: "🇩🇪",
+  Curacao: "🇨🇼",
+  "Ivory Coast": "🇨🇮",
+  Ecuador: "🇪🇨",
+  Netherlands: "🇳🇱",
+  Japan: "🇯🇵",
+  Sweden: "🇸🇪",
+  Tunisia: "🇹🇳",
+};
 
 function getDirection(home, away) {
   if (home === "" || away === "") return "";
@@ -1370,8 +1396,8 @@ return true;
                         <option value="">בחר עולה ראשונה</option>
                         {teams.map((team) => (
                           <option key={team} value={team}>
-                            {team}
-                          </option>
+  {teamFlags[team]} {team}
+</option>
                         ))}
                       </select>
 
@@ -1386,8 +1412,8 @@ return true;
                         <option value="">בחר עולה שנייה</option>
                         {teams.map((team) => (
                           <option key={team} value={team}>
-                            {team}
-                          </option>
+  {teamFlags[team]} {team}
+</option>
                         ))}
                       </select>
                     </div>
