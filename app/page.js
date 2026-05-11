@@ -1846,13 +1846,21 @@ return true;
     : "bg-slate-950"
 }`}
     >
-      <div className="font-black">
-        {player.name}
-      </div>
+      <div className="flex flex-col items-center gap-1">
+  <div
+    className={`font-black text-xs md:text-sm ${
+      player.name === selectedPlayer
+        ? "text-yellow-300"
+        : "text-white"
+    }`}
+  >
+    {player.name}
+  </div>
 
-      <div className="text-yellow-400 text-sm font-black mt-1">
-        {total} נק'
-      </div>
+  <div className="rounded-full bg-slate-800 px-2 py-1 text-[10px] md:text-xs font-black text-yellow-400 border border-slate-700">
+    {total} נק'
+  </div>
+</div>
     </th>
   );
 })}
