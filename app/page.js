@@ -1848,11 +1848,11 @@ return true;
               <td
   className={`sticky right-[45px] z-20 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] truncate ${
     index === 0
-      ? "bg-yellow-500/15 text-yellow-300"
+      ? "bg-slate-900 text-yellow-300"
       : index === 1
-      ? "bg-slate-300/10 text-slate-200"
+      ? "bg-slate-900 text-slate-200"
       : index === 2
-      ? "bg-amber-700/15 text-amber-400"
+      ? "bg-slate-900 text-amber-400"
       : "bg-slate-900 text-white"
   }`}
 >
@@ -1862,11 +1862,11 @@ return true;
               <td
   className={`sticky right-[140px] z-20 text-center p-2 border-l border-slate-800 font-black text-lg w-[65px] min-w-[65px] max-w-[65px] ${
     index === 0
-      ? "bg-yellow-500/15 text-yellow-300"
+      ? "bg-slate-900 text-yellow-300"
       : index === 1
-      ? "bg-slate-300/10 text-slate-200"
+      ? "bg-slate-900 text-slate-200"
       : index === 2
-      ? "bg-amber-700/15 text-amber-400"
+      ? "bg-slate-900 text-amber-400"
       : "bg-slate-900 text-yellow-400"
   }`}
 >
