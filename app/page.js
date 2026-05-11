@@ -1330,126 +1330,106 @@ return true;
 </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[950px] border-separate border-spacing-y-3">
-                <thead>
-                  <tr className="text-slate-300 text-sm bg-slate-950/80 backdrop-blur sticky top-0 z-10">
-                    <th className="text-right p-2">מס'</th>
-                    <th className="text-right p-2">תאריך</th>
-                    <th className="text-right p-2">שעה</th>
-                    <th className="text-right p-2">בית</th>
-                   <th className="sticky right-0 z-30 bg-slate-900 text-right p-2 border-l border-slate-700 w-[170px] min-w-[170px] max-w-[170px]">
-  משחק
-</th>
-                    <th className="text-center p-2">הימור</th>
-                    <th className="text-center p-2">תוצאה</th>
-                    <th className="text-center p-2">סטטוס</th>
-                    <th className="text-center p-2">ניקוד</th>
-                  </tr>
-                </thead>
+  <table className="w-full min-w-[620px] border-separate border-spacing-y-2 text-xs md:text-sm">
+    <thead>
+      <tr className="text-slate-300 bg-slate-950/80 backdrop-blur sticky top-0 z-10">
+        <th className="text-center p-2 w-[45px]">מס׳</th>
+        <th className="sticky right-0 z-30 bg-slate-900 text-right p-2 border-l border-slate-700 w-[260px] min-w-[260px]">
+          משחק
+        </th>
+        <th className="text-center p-2 w-[130px]">הימור</th>
+        <th className="text-center p-2 w-[90px]">אמת</th>
+        <th className="text-center p-2 w-[65px]">ניקוד</th>
+      </tr>
+    </thead>
 
-                <tbody>
-                  {matches.map((match) => {
-                    const prediction =
-                      predictions[selectedPlayer]?.[match.id] || { home: "", away: "" };
-                    const result = results[match.id] || { home: "", away: "" };
-                    const points = calculatePoints(prediction, result);
+    <tbody>
+      {matches.map((match) => {
+        const prediction =
+          predictions[selectedPlayer]?.[match.id] || { home: "", away: "" };
+        const result = results[match.id] || { home: "", away: "" };
+        const points = calculatePoints(prediction, result);
+        const locked = isMatchLocked(match, manuallyUnlockedMatches);
 
-                    return (
-                      <tr
-  key={match.id}
-  className={`transition-all duration-200 hover:bg-slate-700/80 ${
-    isMatchLocked(match, manuallyUnlockedMatches)
-      ? "bg-red-950/30"
-      : "bg-green-950/20"
-  }`}
->
-                        <td className="p-3 rounded-r-xl font-bold">{match.id}</td>
-                        <td className="p-3 font-bold text-slate-300">{match.date}</td>
-                        <td className="p-3 font-black text-sky-300">{match.time}</td>
-                        <td className="p-3">
-  <span className="inline-flex items-center justify-center min-w-[40px] px-3 py-1 rounded-full bg-yellow-400 text-slate-950 font-black">
-    {match.group ? `בית ${match.group}` : match.stage}
-  </span>
-</td>
-                        <td className="sticky right-0 z-30 bg-slate-900 p-3 border-l border-slate-800 w-[180px] min-w-[180px] max-w-[180px]">
-  <div className="flex flex-col items-center justify-center text-center leading-5">
-    <span className="font-bold text-slate-100 text-sm">
-      {match.home}
-    </span>
+        return (
+          <tr
+            key={match.id}
+            className={`transition-all duration-200 hover:bg-slate-700/80 ${
+              locked ? "bg-red-950/30" : "bg-green-950/20"
+            }`}
+          >
+            <td className="p-2 rounded-r-xl text-center font-black text-slate-300">
+              {match.id}
+            </td>
 
-    <span className="text-[10px] uppercase tracking-widest text-slate-500 my-1">
-      VS
-    </span>
+            <td className="sticky right-0 z-30 bg-slate-900 p-2 border-l border-slate-800 w-[260px] min-w-[260px]">
+              <div className="flex flex-col gap-1">
+                <div className="font-black text-slate-100 leading-5">
+                  {locked ? "🔒 " : "🟢 "}
+                  {match.home} <span className="text-slate-500">vs</span> {match.away}
+                </div>
 
-    <span className="font-bold text-slate-100 text-sm">
-      {match.away}
-    </span>
-  </div>
-</td>
-                        <td className="p-3">
-                          <div className="flex flex-col items-center gap-2">
-  <input
-    type="number"
-    min="0"
-    value={prediction.home ?? ""}
-    disabled={isMatchLocked(match, manuallyUnlockedMatches)}
-    onChange={(e) =>
-      updatePrediction(match.id, "home", e.target.value)
-    }
-    className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
-  />
+                <div className="text-[11px] text-slate-400 font-bold">
+                  {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
+                </div>
+              </div>
+            </td>
 
-  <input
-    type="number"
-    min="0"
-    value={prediction.away ?? ""}
-    disabled={isMatchLocked(match, manuallyUnlockedMatches)}
-    onChange={(e) =>
-      updatePrediction(match.id, "away", e.target.value)
-    }
-    className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
-  />
+            <td className="p-2">
+              <div className="flex items-center justify-center gap-1">
+                <input
+                  type="number"
+                  min="0"
+                  value={prediction.home ?? ""}
+                  disabled={locked}
+                  onChange={(e) =>
+                    updatePrediction(match.id, "home", e.target.value)
+                  }
+                  className="w-12 bg-slate-950 border border-slate-600 rounded-xl p-2 text-center font-black text-base outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                />
+
+                <span className="text-slate-500 font-black">-</span>
+
+                <input
+                  type="number"
+                  min="0"
+                  value={prediction.away ?? ""}
+                  disabled={locked}
+                  onChange={(e) =>
+                    updatePrediction(match.id, "away", e.target.value)
+                  }
+                  className="w-12 bg-slate-950 border border-slate-600 rounded-xl p-2 text-center font-black text-base outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                />
+              </div>
+            </td>
+
+            <td className="p-2 text-center">
+              {result.home !== "" && result.away !== "" ? (
+                <span className="inline-flex items-center justify-center rounded-xl bg-slate-950 border border-slate-700 px-3 py-2 font-black text-green-400">
+                  {result.home}-{result.away}
+                </span>
+              ) : (
+                <span className="text-slate-500 font-bold text-xs">-</span>
+              )}
+            </td>
+
+            <td
+              className={`p-2 rounded-l-xl text-center font-black ${
+                points === 4.5
+                  ? "text-yellow-300"
+                  : points === 2
+                  ? "text-sky-300"
+                  : "text-slate-500"
+              }`}
+            >
+              {points}
+            </td>
+          </tr>
+        );
+      })}
+    </tbody>
+  </table>
 </div>
-                        </td>
-                        <td className="p-3 text-center">
-  {result.home !== "" && result.away !== "" ? (
-    <div className="inline-flex flex-col items-center gap-2 rounded-2xl bg-slate-950 border border-slate-700 px-4 py-2 font-black text-green-400 shadow-lg">
-      <span>{result.home}</span>
-      <span className="text-[10px] text-slate-500">VS</span>
-      <span>{result.away}</span>
-    </div>
-  ) : (
-    <span className="text-slate-500 font-bold">טרם עודכן</span>
-  )}
-</td>
-                        <td className="p-3 text-center">
-  {isMatchLocked(match, manuallyUnlockedMatches) ? (
-    <span className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-300 px-4 py-2 rounded-2xl text-sm font-black">
-      🔒 נעול
-    </span>
-  ) : (
-    <span className="inline-flex items-center gap-2 bg-green-500/20 border border-green-500/40 text-green-300 px-4 py-2 rounded-2xl text-sm font-black">
-      🟢 פתוח
-    </span>
-  )}
-</td>
-                        <td
-  className={`p-3 rounded-l-xl text-center font-black ${
-    points === 4.5
-      ? "text-yellow-300"
-      : points === 2
-      ? "text-sky-300"
-      : "text-slate-500"
-  }`}
->
-  {points}
-</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
           </section>
         )}
                 {page === "bonus" && (
