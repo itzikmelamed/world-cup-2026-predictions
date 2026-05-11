@@ -2179,14 +2179,16 @@ return true;
                       <tbody>
                         {table.map((team, index) => (
                           <tr
-                            key={team.team}
-                            className={`border-t border-slate-800 ${
-                              index < 2 ? "bg-slate-800" : ""
-                            }`}
-                          >
+  key={team.team}
+  className={`border-t border-slate-800 transition-colors duration-200 hover:bg-slate-800/80 ${
+    index < 2
+      ? "bg-green-500/10"
+      : "bg-slate-900"
+  }`}
+>
                             <td className="py-3 font-black">
-                              {index + 1}
-                            </td>
+  {index < 2 ? "✅" : index + 1}
+</td>
 
                             <td className="py-3 font-bold">
                               {team.team}
