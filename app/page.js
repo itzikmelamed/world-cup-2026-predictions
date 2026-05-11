@@ -1806,7 +1806,18 @@ return true;
 )}
                         {page === "all" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-2 md:p-4">
-            <h2 className="text-2xl font-black mb-4">כל ההימורים</h2>
+            <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+  <div>
+    <h2 className="text-2xl font-black">כל ההימורים</h2>
+    <div className="text-slate-400 font-bold mt-1">
+      צפייה מרוכזת בכל הניחושים לפי משחק ומשתתף
+    </div>
+  </div>
+
+  <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
+    משתתפים: <span className="text-yellow-300">{activePlayers.length}</span>
+  </div>
+</div>
 
             <div className="hidden md:block overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
               <table className="border-collapse min-w-max">
