@@ -143,11 +143,7 @@ useEffect(() => {
     subscription.unsubscribe();
   };
 }, []);
-useEffect(() => {
-  if (!authUser) return;
 
-  refreshAllData();
-}, [authUser]);
 useEffect(() => {
   if (!authUser || dbPlayers.length === 0) return;
 
