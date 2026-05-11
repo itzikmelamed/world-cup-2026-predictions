@@ -1396,7 +1396,7 @@ return true;
                         <option value="">בחר עולה ראשונה</option>
                         {teams.map((team) => (
                           <option key={team} value={team}>
-  {teamFlags[team]} {team}
+  {team}
 </option>
                         ))}
                       </select>
@@ -1412,7 +1412,7 @@ return true;
                         <option value="">בחר עולה שנייה</option>
                         {teams.map((team) => (
                           <option key={team} value={team}>
-  {teamFlags[team]} {team}
+  {team}
 </option>
                         ))}
                       </select>
