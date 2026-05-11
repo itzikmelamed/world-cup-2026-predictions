@@ -2256,15 +2256,57 @@ return true;
   <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
     <h2 className="text-2xl font-black mb-4">חוקי המשחק</h2>
 
-    <div className="space-y-3 font-bold">
-      <div className="bg-slate-800 rounded-2xl p-4">בול פגיעה - 4.5 נק'</div>
-      <div className="bg-slate-800 rounded-2xl p-4">ניחוש ניצחון/תיקו - 2 נק'</div>
-      <div className="bg-slate-800 rounded-2xl p-4">
-        ניחוש 2 עולות מכל בית - על כל ניחוש נק' אחת
-      </div>
-      <div className="bg-slate-800 rounded-2xl p-4">ניחוש אלופה - 9 נק'</div>
-      <div className="bg-slate-800 rounded-2xl p-4">ניחוש מלך שערים - 8 נק'</div>
+    <div className="grid gap-3 md:grid-cols-2">
+  <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700 shadow-lg">
+    <div className="text-yellow-300 font-black text-lg mb-1">
+      🎯 בול פגיעה
     </div>
+
+    <div className="text-slate-300 font-bold">
+      4.5 נקודות
+    </div>
+  </div>
+
+  <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700 shadow-lg">
+    <div className="text-sky-300 font-black text-lg mb-1">
+      ✓ ניחוש נכון
+    </div>
+
+    <div className="text-slate-300 font-bold">
+      ניחוש ניצחון / תיקו - 2 נקודות
+    </div>
+  </div>
+
+  <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700 shadow-lg">
+    <div className="text-green-300 font-black text-lg mb-1">
+      🏆 עולות מהבתים
+    </div>
+
+    <div className="text-slate-300 font-bold">
+      כל נבחרת נכונה - נקודה אחת
+    </div>
+  </div>
+
+  <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700 shadow-lg">
+    <div className="text-yellow-300 font-black text-lg mb-1">
+      👑 אלופת העולם
+    </div>
+
+    <div className="text-slate-300 font-bold">
+      9 נקודות
+    </div>
+  </div>
+
+  <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700 shadow-lg md:col-span-2">
+    <div className="text-red-300 font-black text-lg mb-1">
+      ⚽ מלך שערים
+    </div>
+
+    <div className="text-slate-300 font-bold">
+      8 נקודות
+    </div>
+  </div>
+</div>
 
     <h3 className="text-xl font-black mt-8 mb-4">שוברי שיוויון</h3>
 
