@@ -2140,10 +2140,21 @@ return true;
         )}
         {page === "groups" && (
           <section className="space-y-6">
-            <h2 className="text-3xl font-black">
-              טבלאות בתים
-            </h2>
+            <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+  <div>
+    <h2 className="text-3xl font-black">
+      טבלאות בתים
+    </h2>
 
+    <div className="text-slate-400 font-bold mt-1">
+      הטבלאות מתעדכנות אוטומטית לפי תוצאות המשחקים
+    </div>
+  </div>
+
+  <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
+    ✓ שתי הראשונות עולות שלב
+  </div>
+</div>
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {Object.keys(groups).map((groupName) => {
                 const table = calculateGroupTable(
