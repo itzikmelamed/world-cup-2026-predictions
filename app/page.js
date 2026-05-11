@@ -1783,7 +1783,10 @@ return true;
 
         <tbody>
           {leaderboard.map((row, index) => (
-            <tr key={row.player} className="border-t border-slate-800 bg-slate-900">
+            <tr
+  key={row.player}
+  className="border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80 transition-colors duration-200"
+>
               <td
   className={`sticky right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px] ${
     index === 0
