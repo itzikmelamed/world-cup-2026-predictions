@@ -1790,9 +1790,19 @@ return true;
     : index + 1}
 </td>
 
-              <td className="sticky right-[45px] z-20 bg-slate-900 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px]truncate">
-                {row.player}
-              </td>
+              <td
+  className={`sticky right-[45px] z-20 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] truncate ${
+    index === 0
+      ? "bg-yellow-500/15 text-yellow-300"
+      : index === 1
+      ? "bg-slate-300/10 text-slate-200"
+      : index === 2
+      ? "bg-amber-700/15 text-amber-400"
+      : "bg-slate-900 text-white"
+  }`}
+>
+  {row.player}
+</td>
 
               <td className="sticky right-[140px] z-20 bg-slate-900 text-center p-2 border-l border-slate-800 text-yellow-400 font-black text-lg w-[65px] min-w-[65px] max-w-[65px]">
                 {row.total}
