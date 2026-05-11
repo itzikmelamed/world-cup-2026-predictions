@@ -164,8 +164,8 @@ useEffect(() => {
   }
 }, [activePlayers, selectedPlayer, authUser]);
 
-  useEffect(() => {
-  async function loadPlayers() {
+   async function loadPlayers() {
+  
     
     const { data, error } = await supabase
       .from("players")
@@ -279,11 +279,8 @@ async function refreshAllData() {
   await loadResults();
   await loadAppSettings();
 }
-loadPlayers();
-loadPredictions();
-loadBonusPredictions();
-loadResults();
-loadAppSettings();
+useEffect(() => {
+  refreshAllData();
 }, []);
 
   const [page, setPage] = useState(() => {
