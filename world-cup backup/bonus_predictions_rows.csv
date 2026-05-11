@@ -1,0 +1,7 @@
+id,created_at,player_name,champion,top_scorer,group_winners,updated_at
+1,2026-04-30 18:53:17.274629+00,איציק,Germany,אמבפה,"{""A"":[""South Africa"",""South Africa""],""B"":[""Canada"",""Qatar""],""D"":[""USA"",""""],""E"":[""Germany"",""""]}",
+18,2026-05-04 20:45:09.143098+00,יהל,Scotland,קיין,"{""A"":[""South Africa"",""South Korea""],""B"":[""Canada"",""Switzerland""],""E"":[""Germany"",""Curacao""],""F"":[""Netherlands"",""Sweden""]}",
+45,2026-05-05 11:40:34.388252+00,ניסים,Australia,,"{""A"":[""Mexico"",""South Korea""],""B"":[""Canada"",""""],""E"":[""Curacao"",""Germany""]}",
+74,2026-05-08 08:06:14.502779+00,אלכס,,,"{""A"":[""Mexico"",""Mexico""],""B"":[""Canada"",""Switzerland""]}",
+75,2026-05-11 06:43:16.541358+00,שרגא,,,"{""A"":[""South Korea"",""Mexico""]}",
+82,2026-05-11 13:31:37.278085+00,יוסי,Curacao,,"{""A"":[""South Africa"",""""]}",
