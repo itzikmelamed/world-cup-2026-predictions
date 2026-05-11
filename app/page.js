@@ -1804,10 +1804,19 @@ return true;
   {row.player}
 </td>
 
-              <td className="sticky right-[140px] z-20 bg-slate-900 text-center p-2 border-l border-slate-800 text-yellow-400 font-black text-lg w-[65px] min-w-[65px] max-w-[65px]">
-                {row.total}
-              </td>
-
+              <td
+  className={`sticky right-[140px] z-20 text-center p-2 border-l border-slate-800 font-black text-lg w-[65px] min-w-[65px] max-w-[65px] ${
+    index === 0
+      ? "bg-yellow-500/15 text-yellow-300"
+      : index === 1
+      ? "bg-slate-300/10 text-slate-200"
+      : index === 2
+      ? "bg-amber-700/15 text-amber-400"
+      : "bg-slate-900 text-yellow-400"
+  }`}
+>
+  {row.total}
+</td>
               <td className="p-2 text-center border-l border-slate-800">
                 {row.matchPoints}
               </td>
