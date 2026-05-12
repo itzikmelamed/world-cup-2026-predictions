@@ -1621,16 +1621,26 @@ return true;
             }`}
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="font-black text-yellow-300">
-                משחק {match.id}
-              </div>
+  <div className="font-black text-yellow-300">
+    משחק {match.id}
+  </div>
 
-              <div className="text-sm font-bold text-slate-400">
-                {match.group
-                  ? `בית ${match.group}`
-                  : match.stage}
-              </div>
-            </div>
+  <div className="flex items-center gap-2">
+    <div className="text-sm font-bold text-slate-400">
+      {match.group ? `בית ${match.group}` : match.stage}
+    </div>
+
+    {locked ? (
+      <span className="inline-flex items-center rounded-full bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 text-xs font-black">
+        🔒 נעול
+      </span>
+    ) : (
+      <span className="inline-flex items-center rounded-full bg-green-500/20 border border-green-500/40 text-green-300 px-3 py-1 text-xs font-black">
+        🟢 פתוח
+      </span>
+    )}
+  </div>
+</div>
 
             <div className="text-sm text-slate-400 font-bold mb-4">
               {match.date} | {match.time}
