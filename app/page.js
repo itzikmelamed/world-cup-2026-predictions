@@ -1578,6 +1578,140 @@ return true;
             </div>
           </section>
         )}
+        {page === "matchesCards" && (
+  <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
+    <div className="mb-6">
+      <h2 className="text-2xl font-black">
+        הימורי משחקים - כרטיסים
+      </h2>
+
+      <div className="text-slate-400 font-bold mt-1">
+        משתתף נוכחי:{" "}
+        <span className="text-yellow-300">{selectedPlayer}</span>
+      </div>
+    </div>
+
+    <div className="grid gap-4">
+      {matches.map((match) => {
+        const prediction =
+          predictions[selectedPlayer]?.[match.id] || {
+            home: "",
+            away: "",
+          };
+
+        const result = results[match.id] || {
+          home: "",
+          away: "",
+        };
+
+        const points = calculatePoints(prediction, result);
+
+        const locked = isMatchLocked(
+          match,
+          manuallyUnlockedMatches
+        );
+
+        return (
+          <div
+            key={match.id}
+            className={`rounded-3xl border p-4 transition-all ${
+              locked
+                ? "border-red-500/30 bg-red-950/20"
+                : "border-green-500/30 bg-green-950/10"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="font-black text-yellow-300">
+                משחק {match.id}
+              </div>
+
+              <div className="text-sm font-bold text-slate-400">
+                {match.group
+                  ? `בית ${match.group}`
+                  : match.stage}
+              </div>
+            </div>
+
+            <div className="text-sm text-slate-400 font-bold mb-4">
+              {match.date} | {match.time}
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <div className="font-black text-white">
+                  {match.home}
+                </div>
+
+                <input
+                  type="number"
+                  min="0"
+                  value={prediction.home ?? ""}
+                  disabled={locked}
+                  onChange={(e) =>
+                    updatePrediction(
+                      match.id,
+                      "home",
+                      e.target.value
+                    )
+                  }
+                  className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-3 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40"
+                />
+              </div>
+
+              <div className="flex items-center justify-between gap-4">
+                <div className="font-black text-white">
+                  {match.away}
+                </div>
+
+                <input
+                  type="number"
+                  min="0"
+                  value={prediction.away ?? ""}
+                  disabled={locked}
+                  onChange={(e) =>
+                    updatePrediction(
+                      match.id,
+                      "away",
+                      e.target.value
+                    )
+                  }
+                  className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-3 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40"
+                />
+              </div>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between">
+              <div>
+                {result.home !== "" &&
+                result.away !== "" ? (
+                  <div className="text-green-400 font-black">
+                    אמת: {result.home}-{result.away}
+                  </div>
+                ) : (
+                  <div className="text-slate-500 font-bold">
+                    טרם עודכן
+                  </div>
+                )}
+              </div>
+
+              <div
+                className={`font-black text-lg ${
+                  points === 4.5
+                    ? "text-yellow-300"
+                    : points === 2
+                    ? "text-sky-300"
+                    : "text-slate-500"
+                }`}
+              >
+                {points}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+)}
                 {page === "bonusAll" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
             <h2 className="text-2xl font-black mb-6">
