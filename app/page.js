@@ -219,6 +219,7 @@ const [authUser, setAuthUser] = useState(null);
 const [participantName, setParticipantName] = useState("");
 const [message, setMessage] = useState("");
 const [messageType, setMessageType] = useState("");
+const [matchCardsFilter, setMatchCardsFilter] = useState("all");
  const activePlayers = dbPlayers.filter((player) => player.is_active);
  const loggedInPlayer = activePlayers.find(
   (player) => player.email === authUser?.email
@@ -1590,9 +1591,40 @@ return true;
         <span className="text-yellow-300">{selectedPlayer}</span>
       </div>
     </div>
-
+<div className="mb-5 flex gap-2 overflow-x-auto pb-2">
+  {[
+    { key: "all", label: "כל המשחקים" },
+    { key: "open", label: "פתוחים" },
+    { key: "locked", label: "נעולים" },
+    { key: "groups", label: "שלב בתים" },
+    { key: "knockout", label: "נוקאאוט" },
+  ].map((filter) => (
+    <button
+      key={filter.key}
+      onClick={() => setMatchCardsFilter(filter.key)}
+      className={`whitespace-nowrap px-4 py-2 rounded-2xl font-black text-sm transition-all ${
+        matchCardsFilter === filter.key
+          ? "bg-yellow-400 text-slate-950"
+          : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+      }`}
+    >
+      {filter.label}
+    </button>
+  ))}
+</div>
     <div className="grid gap-4">
-      {matches.map((match) => {
+      {matches
+  .filter((match) => {
+    const locked = isMatchLocked(match, manuallyUnlockedMatches);
+
+    if (matchCardsFilter === "open") return !locked;
+    if (matchCardsFilter === "locked") return locked;
+    if (matchCardsFilter === "groups") return !!match.group;
+    if (matchCardsFilter === "knockout") return !match.group;
+
+    return true;
+  })
+  .map((match) => {
         const prediction =
           predictions[selectedPlayer]?.[match.id] || {
             home: "",
