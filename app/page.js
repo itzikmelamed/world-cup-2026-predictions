@@ -2517,6 +2517,15 @@ return true;
         {page === "rules" && (
   <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
     <h2 className="text-2xl font-black mb-4">חוקי המשחק</h2>
+    <div className="rounded-2xl bg-slate-950 border border-slate-800 p-4">
+  <div className="text-yellow-300 font-black mb-2">
+    ⏰ נעילת הימורים
+  </div>
+  <div className="text-slate-300 font-bold leading-7">
+    ניתן להמר או לערוך הימור על כל משחק עד 5 דקות לפני תחילת המשחק.
+    לאחר מועד זה המשחק יינעל ולא ניתן יהיה לשנות את ההימור.
+  </div>
+</div>
 
     <div className="grid gap-3 md:grid-cols-2">
   <div className="bg-slate-800/90 rounded-2xl p-4 border border-slate-700 shadow-lg">
