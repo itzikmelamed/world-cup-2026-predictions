@@ -1765,34 +1765,23 @@ return true;
 </div>
 
             <div className="mt-5 flex items-center justify-between">
-              <div>
-                {result.home !== "" &&
-                result.away !== "" ? (
-                  <div className="flex flex-col items-center gap-1">
-  <div className="text-[11px] font-bold text-slate-300">
-    {match.home}
+              <div className="mt-4 flex items-center justify-between border-t border-slate-800 pt-3">
+  <div className="text-slate-400 font-bold text-sm">
+    ניקוד
   </div>
 
-  <div className="text-green-400 font-black text-lg">
-    {result.home}
-  </div>
-
-  <div className="text-slate-500 font-black">VS</div>
-
-  <div className="text-green-400 font-black text-lg">
-    {result.away}
-  </div>
-
-  <div className="text-[11px] font-bold text-slate-300">
-    {match.away}
+  <div
+    className={`font-black text-lg ${
+      points === 4.5
+        ? "text-yellow-300"
+        : points === 2
+        ? "text-sky-300"
+        : "text-slate-500"
+    }`}
+  >
+    {points}
   </div>
 </div>
-                ) : (
-                  <div className="text-slate-500 font-bold">
-                    טרם עודכן
-                  </div>
-                )}
-              </div>
 
               <div
                 className={`font-black text-lg ${
