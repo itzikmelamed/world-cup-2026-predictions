@@ -1764,8 +1764,7 @@ return true;
   </div>
 </div>
 
-            <div className="mt-5 flex items-center justify-between">
-              <div className="mt-4 flex items-center justify-between border-t border-slate-800 pt-3">
+            <div className="mt-4 flex items-center justify-between border-t border-slate-800 pt-3">
   <div className="text-slate-400 font-bold text-sm">
     ניקוד
   </div>
@@ -1782,19 +1781,6 @@ return true;
     {points}
   </div>
 </div>
-
-              <div
-                className={`font-black text-lg ${
-                  points === 4.5
-                    ? "text-yellow-300"
-                    : points === 2
-                    ? "text-sky-300"
-                    : "text-slate-500"
-                }`}
-              >
-                {points}
-              </div>
-            </div>
           </div>
         );
       })}
