@@ -1591,6 +1591,41 @@ return true;
         <span className="text-yellow-300">{selectedPlayer}</span>
       </div>
     </div>
+    {(() => {
+  const nextMatch = matches.find(
+    (match) => !isMatchLocked(match, manuallyUnlockedMatches)
+  );
+
+  if (!nextMatch) return null;
+
+  return (
+    <div className="mb-5 rounded-3xl border border-yellow-400/40 bg-yellow-400/10 p-4">
+      <div className="text-yellow-300 font-black mb-2">
+        המשחק הקרוב להימור
+      </div>
+
+      <div className="text-white font-black text-lg">
+        {nextMatch.home} נגד {nextMatch.away}
+      </div>
+
+      <div className="text-slate-400 font-bold mt-1">
+        משחק {nextMatch.id} | {nextMatch.date} | {nextMatch.time} |{" "}
+        {nextMatch.group ? `בית ${nextMatch.group}` : nextMatch.stage}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => {
+          const el = document.getElementById(`match-card-${nextMatch.id}`);
+          el?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }}
+        className="mt-4 bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black px-5 py-2 rounded-2xl transition-all"
+      >
+        קפוץ למשחק
+      </button>
+    </div>
+  );
+})()}
 <div className="mb-5 flex gap-2 overflow-x-auto pb-2">
   {[
     { key: "all", label: "כל המשחקים" },
@@ -1645,8 +1680,9 @@ return true;
 
         return (
           <div
-            key={match.id}
-            className={`rounded-3xl border p-4 transition-all ${
+  id={`match-card-${match.id}`}
+  key={match.id}
+  className={`rounded-3xl border p-4 transition-all ${
               locked
                 ? "border-red-500/30 bg-red-950/20"
                 : "border-green-500/30 bg-green-950/10"
