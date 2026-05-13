@@ -1762,9 +1762,25 @@ return true;
               <div>
                 {result.home !== "" &&
                 result.away !== "" ? (
-                  <div className="text-green-400 font-black">
-                    אמת: {result.home}-{result.away}
-                  </div>
+                  <div className="flex flex-col items-center gap-1">
+  <div className="text-[11px] font-bold text-slate-300">
+    {match.home}
+  </div>
+
+  <div className="text-green-400 font-black text-lg">
+    {result.home}
+  </div>
+
+  <div className="text-slate-500 font-black">VS</div>
+
+  <div className="text-green-400 font-black text-lg">
+    {result.away}
+  </div>
+
+  <div className="text-[11px] font-bold text-slate-300">
+    {match.away}
+  </div>
+</div>
                 ) : (
                   <div className="text-slate-500 font-bold">
                     טרם עודכן
