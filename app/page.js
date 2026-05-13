@@ -1714,49 +1714,55 @@ return true;
               {match.date} | {match.time}
             </div>
 
-            <div className="space-y-4">
-              <div className="flex items-center justify-between gap-4">
-                <div className="font-black text-white">
-                  {match.home}
-                </div>
+            <div className="space-y-3">
+  <div className="grid grid-cols-[1fr_70px_70px] items-center gap-3">
+    <div className="font-black text-white">
+      {match.home}
+    </div>
 
-                <input
-                  type="number"
-                  min="0"
-                  value={prediction.home ?? ""}
-                  disabled={locked}
-                  onChange={(e) =>
-                    updatePrediction(
-                      match.id,
-                      "home",
-                      e.target.value
-                    )
-                  }
-                  className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-3 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40"
-                />
-              </div>
+    <input
+      type="number"
+      min="0"
+      value={prediction.home ?? ""}
+      disabled={locked}
+      onChange={(e) =>
+        updatePrediction(match.id, "home", e.target.value)
+      }
+      className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-3 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40"
+    />
 
-              <div className="flex items-center justify-between gap-4">
-                <div className="font-black text-white">
-                  {match.away}
-                </div>
+    <div className="text-center text-green-400 font-black">
+      {result.home !== "" ? result.home : "-"}
+    </div>
+  </div>
 
-                <input
-                  type="number"
-                  min="0"
-                  value={prediction.away ?? ""}
-                  disabled={locked}
-                  onChange={(e) =>
-                    updatePrediction(
-                      match.id,
-                      "away",
-                      e.target.value
-                    )
-                  }
-                  className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-3 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40"
-                />
-              </div>
-            </div>
+  <div className="grid grid-cols-[1fr_70px_70px] items-center gap-3">
+    <div className="font-black text-white">
+      {match.away}
+    </div>
+
+    <input
+      type="number"
+      min="0"
+      value={prediction.away ?? ""}
+      disabled={locked}
+      onChange={(e) =>
+        updatePrediction(match.id, "away", e.target.value)
+      }
+      className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-3 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40"
+    />
+
+    <div className="text-center text-green-400 font-black">
+      {result.away !== "" ? result.away : "-"}
+    </div>
+  </div>
+
+  <div className="grid grid-cols-[1fr_70px_70px] gap-3 text-[11px] text-slate-500 font-bold">
+    <div></div>
+    <div className="text-center">הימור</div>
+    <div className="text-center">אמת</div>
+  </div>
+</div>
 
             <div className="mt-5 flex items-center justify-between">
               <div>
