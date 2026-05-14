@@ -1002,6 +1002,16 @@ async function saveAppSettings(updatedMatches, updatedBonus, updatedGroupStage) 
 showMessage("הגדרות הניהול נשמרו בהצלחה");
 return true;
 }
+const filteredAllBetsMatches = matches.filter((match) => {
+  const searchText = allBetsSearch.trim().toLowerCase();
+
+  if (searchText === "") return true;
+
+  return (
+    match.home.toLowerCase().includes(searchText) ||
+    match.away.toLowerCase().includes(searchText)
+  );
+});
   return (
     
     <main
