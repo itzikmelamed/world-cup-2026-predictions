@@ -1005,12 +1005,17 @@ return true;
 const filteredAllBetsMatches = matches.filter((match) => {
   const searchText = allBetsSearch.trim().toLowerCase();
 
-  if (searchText === "") return true;
-
-  return (
+  const matchesSearch =
+    searchText === "" ||
     match.home.toLowerCase().includes(searchText) ||
-    match.away.toLowerCase().includes(searchText)
-  );
+    match.away.toLowerCase().includes(searchText);
+
+  const matchesStage =
+    allBetsStageFilter === "all" ||
+    (allBetsStageFilter === "groups" && match.group) ||
+    (allBetsStageFilter === "knockout" && !match.group);
+
+  return matchesSearch && matchesStage;
 });
   return (
     
