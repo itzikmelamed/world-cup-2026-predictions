@@ -1745,9 +1745,31 @@ const getFlagUrl = (team) => {
         המשחק הקרוב להימור
       </div>
 
-      <div className="text-white font-black text-lg">
-        {nextMatch.home} נגד {nextMatch.away}
-      </div>
+      <div className="flex items-center gap-3 text-white font-black text-lg">
+  <div className="flex items-center gap-2">
+    {getFlagUrl(nextMatch.home) && (
+      <img
+        src={getFlagUrl(nextMatch.home)}
+        alt={nextMatch.home}
+        className="w-6 h-6 rounded-full object-cover"
+      />
+    )}
+    <span>{nextMatch.home}</span>
+  </div>
+
+  <span className="text-slate-400">נגד</span>
+
+  <div className="flex items-center gap-2">
+    {getFlagUrl(nextMatch.away) && (
+      <img
+        src={getFlagUrl(nextMatch.away)}
+        alt={nextMatch.away}
+        className="w-6 h-6 rounded-full object-cover"
+      />
+    )}
+    <span>{nextMatch.away}</span>
+  </div>
+</div>
 
       <div className="text-slate-400 font-bold mt-1">
         משחק {nextMatch.id} | {nextMatch.date} | {nextMatch.time} |{" "}
