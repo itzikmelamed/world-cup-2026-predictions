@@ -1065,6 +1065,28 @@ const filteredAdminMatches = matches.filter((match) => {
 
   return matchesSearch && matchesStatus;
 });
+const getFlagUrl = (team) => {
+  const flags = {
+    Brazil: "https://flagcdn.com/w40/br.png",
+    Argentina: "https://flagcdn.com/w40/ar.png",
+    France: "https://flagcdn.com/w40/fr.png",
+    England: "https://flagcdn.com/w40/gb-eng.png",
+    Spain: "https://flagcdn.com/w40/es.png",
+    Germany: "https://flagcdn.com/w40/de.png",
+    Italy: "https://flagcdn.com/w40/it.png",
+    Portugal: "https://flagcdn.com/w40/pt.png",
+    Netherlands: "https://flagcdn.com/w40/nl.png",
+    Belgium: "https://flagcdn.com/w40/be.png",
+    Croatia: "https://flagcdn.com/w40/hr.png",
+    Uruguay: "https://flagcdn.com/w40/uy.png",
+    USA: "https://flagcdn.com/w40/us.png",
+    Mexico: "https://flagcdn.com/w40/mx.png",
+    Japan: "https://flagcdn.com/w40/jp.png",
+    South Korea: "https://flagcdn.com/w40/kr.png",
+  };
+
+  return flags[team] || null;
+};
   return (
     
     <main
