@@ -2349,6 +2349,10 @@ if (pts === 4.5) {
   <div className="rounded-full bg-slate-800 px-2 py-1 text-[10px] md:text-xs font-black text-yellow-400 border border-slate-700">
     {total} נק'
   </div>
+  <div className="flex flex-col items-center gap-0.5 text-[10px] font-black text-slate-400">
+  <div className="text-yellow-300">🎯 {exactHits}</div>
+  <div className="text-sky-300">✅ {correctResults}</div>
+</div>
 </div>
     </th>
   );
