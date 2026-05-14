@@ -1,7 +1,7 @@
 "use client";
 import { Fragment } from "react";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -218,6 +218,7 @@ const [authPassword, setAuthPassword] = useState("");
 const [authUser, setAuthUser] = useState(null);
 const [participantName, setParticipantName] = useState("");
 const [message, setMessage] = useState("");
+const nextOpenMatchRef = useRef(null);
 const [messageType, setMessageType] = useState("");
 const [allBetsStageFilter, setAllBetsStageFilter] = useState("all");
 const [allBetsStatusFilter, setAllBetsStatusFilter] = useState("all");
