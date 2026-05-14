@@ -1626,9 +1626,18 @@ const scrollToNextOpenMatch = () => {
       </div>
     </div>
     {(() => {
-  const nextMatch = matches.find(
-    (match) => !isMatchLocked(match, manuallyUnlockedMatches)
-  );
+  const nextMatch = matches
+  .filter((match) => {
+    const locked = isMatchLocked(match, manuallyUnlockedMatches);
+
+    if (matchCardsFilter === "open") return !locked;
+    if (matchCardsFilter === "locked") return locked;
+    if (matchCardsFilter === "groups") return !!match.group;
+    if (matchCardsFilter === "knockout") return !match.group;
+
+    return true;
+  })
+  .find((match) => !isMatchLocked(match, manuallyUnlockedMatches));
 
   if (!nextMatch) return null;
 
