@@ -2866,8 +2866,18 @@ if (pts === 4.5) {
 </td>
 
                             <td className="py-3 font-bold">
-                              {team.team}
-                            </td>
+  <div className="flex items-center gap-2">
+    {getFlagUrl(team.team) && (
+      <img
+        src={getFlagUrl(team.team)}
+        alt={team.team}
+        className="w-5 h-5 rounded-full object-cover"
+      />
+    )}
+
+    <span>{team.team}</span>
+  </div>
+</td>
 
                             <td className="text-center">
                               {team.played}
