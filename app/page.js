@@ -1651,6 +1651,18 @@ const getFlagUrl = (team) => {
 </option>
                         ))}
                       </select>
+                      {selectedGroup[0] && (
+  <div className="flex items-center gap-2 text-sm font-black text-slate-200 bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-2">
+    {getFlagUrl(selectedGroup[0]) && (
+      <img
+        src={getFlagUrl(selectedGroup[0])}
+        alt={selectedGroup[0]}
+        className="w-5 h-5 rounded-full object-cover"
+      />
+    )}
+    <span>{selectedGroup[0]}</span>
+  </div>
+)}
 
                       <select
                         value={selectedGroup[1]}
@@ -1667,6 +1679,18 @@ const getFlagUrl = (team) => {
 </option>
                         ))}
                       </select>
+                      {selectedGroup[1] && (
+  <div className="flex items-center gap-2 text-sm font-black text-slate-200 bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-2">
+    {getFlagUrl(selectedGroup[1]) && (
+      <img
+        src={getFlagUrl(selectedGroup[1])}
+        alt={selectedGroup[1]}
+        className="w-5 h-5 rounded-full object-cover"
+      />
+    )}
+    <span>{selectedGroup[1]}</span>
+  </div>
+)}
                     </div>
                   </div>
                 );
