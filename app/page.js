@@ -2306,12 +2306,24 @@ const filteredAllBetsMatches = matches.filter((match) => {
 
                     {activePlayers.map((player) => {
   let total = 0;
+  let exactHits = 0;
+let correctResults = 0;
 
   matches.forEach((match) => {
     total += calculatePoints(
       predictions[player.name]?.[match.id],
       results[match.id]
     );
+    const pts = calculatePoints(
+  predictions[player.name]?.[match.id],
+  results[match.id]
+);
+
+if (pts === 4.5) {
+  exactHits++;
+} else if (pts === 2) {
+  correctResults++;
+}
   });
 
   return (
