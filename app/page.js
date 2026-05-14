@@ -2392,6 +2392,12 @@ const filteredAllBetsMatches = matches.filter((match) => {
     prediction,
     result
   );
+  const pointStyle =
+  points === 4.5
+    ? "bg-yellow-400/20 border-yellow-400/50 text-yellow-300"
+    : points === 2
+    ? "bg-sky-400/20 border-sky-400/50 text-sky-300"
+    : "bg-slate-950 border-slate-800 text-slate-400";
 
                           return (
                             <td
