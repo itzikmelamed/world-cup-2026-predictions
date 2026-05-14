@@ -220,6 +220,7 @@ const [participantName, setParticipantName] = useState("");
 const [message, setMessage] = useState("");
 const nextOpenMatchRef = useRef(null);
 const [messageType, setMessageType] = useState("");
+const [adminResultsFilter, setAdminResultsFilter] = useState("all");
 const [allBetsStageFilter, setAllBetsStageFilter] = useState("all");
 const [allBetsStatusFilter, setAllBetsStatusFilter] = useState("all");
 const [allBetsSearch, setAllBetsSearch] = useState("");
@@ -1040,6 +1041,20 @@ const updatedResultsCount = Object.values(results).filter(
     result.away !== "" &&
     result.away != null
 ).length;
+const filteredAdminMatches = matches.filter((match) => {
+  const result = results[match.id] || { home: "", away: "" };
+
+  const hasResult =
+    result.home !== "" &&
+    result.home != null &&
+    result.away !== "" &&
+    result.away != null;
+
+  if (adminResultsFilter === "updated") return hasResult;
+  if (adminResultsFilter === "missing") return !hasResult;
+
+  return true;
+});
   return (
     
     <main
@@ -1947,6 +1962,26 @@ const updatedResultsCount = Object.values(results).filter(
             <div className="mb-4 inline-flex items-center rounded-2xl bg-slate-800 border border-slate-700 px-4 py-2 font-black text-slate-300">
   עודכנו {updatedResultsCount} מתוך {matches.length} משחקים
 </div>
+<div className="mb-6 flex gap-2 overflow-x-auto pb-2">
+  {[
+    { key: "all", label: "כל המשחקים" },
+    { key: "updated", label: "עודכנו" },
+    { key: "missing", label: "טרם עודכנו" },
+  ].map((filter) => (
+    <button
+      key={filter.key}
+      type="button"
+      onClick={() => setAdminResultsFilter(filter.key)}
+      className={`whitespace-nowrap px-4 py-2 rounded-2xl font-black text-sm transition-all ${
+        adminResultsFilter === filter.key
+          ? "bg-yellow-400 text-slate-950"
+          : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+      }`}
+    >
+      {filter.label}
+    </button>
+  ))}
+</div>
             <div className="grid gap-4 md:grid-cols-2 mb-6">
   <div className="bg-slate-800 rounded-2xl p-4">
     <label className="block mb-2 font-black">
@@ -2067,7 +2102,7 @@ const updatedResultsCount = Object.values(results).filter(
 </div>
 
             <div className="space-y-3">
-              {matches.map((match) => {
+              {filteredAdminMatches.map((match) => {
                 const result = results[match.id] || { home: "", away: "" };
                 const hasResult =
   result.home !== "" &&
