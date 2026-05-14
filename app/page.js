@@ -2595,9 +2595,35 @@ if (pts === 4.5) {
   }`}
 >
                         <td className="sticky right-0 z-10 bg-slate-900 p-3 border-l border-slate-800 w-[170px] min-w-[170px] max-w-[170px] md:w-[240px] md:min-w-[240px] md:max-w-[240px]">
-                          <div className="font-black">
-                            {match.home} נגד {match.away}
-                          </div>
+                          <div className="space-y-1 font-black">
+  <div className="flex items-center gap-2">
+    {getFlagUrl(match.home) && (
+      <img
+        src={getFlagUrl(match.home)}
+        alt={match.home}
+        className="w-5 h-5 rounded-full object-cover"
+      />
+    )}
+
+    <span>{match.home}</span>
+  </div>
+
+  <div className="text-slate-500 text-xs font-black">
+    נגד
+  </div>
+
+  <div className="flex items-center gap-2">
+    {getFlagUrl(match.away) && (
+      <img
+        src={getFlagUrl(match.away)}
+        alt={match.away}
+        className="w-5 h-5 rounded-full object-cover"
+      />
+    )}
+
+    <span>{match.away}</span>
+  </div>
+</div>
                           <div className="text-slate-400 text-sm">
   {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
 </div>
