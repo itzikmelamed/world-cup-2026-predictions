@@ -2321,7 +2321,7 @@ const filteredAllBetsMatches = matches.filter((match) => {
                 </thead>
 
                 <tbody>
-                  {matches.map((match) => {
+                  {filteredAllBetsMatches.map((match) => {
                     const result =
                       results[match.id] || {
                         home: "",
