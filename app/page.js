@@ -1363,15 +1363,18 @@ const getFlagUrl = (team) => {
 </section>
 
         <nav className="mb-6 flex gap-2 overflow-x-auto rounded-3xl border border-slate-800 bg-slate-900/70 backdrop-blur-md p-2 shadow-2xl scrollbar-hide">
-          <button
-          
-            onClick={() => setPage("matches")}
-            className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
-              page === "matches" ? "bg-yellow-400 text-slate-950" : "bg-slate-800 hover:bg-slate-700 text-slate-200"
-            }`}
-          >
-            הימורי משחקים
-          </button>
+          {false && (
+  <button
+    onClick={() => setPage("matches")}
+    className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
+      page === "matches"
+        ? "bg-yellow-400 text-slate-950"
+        : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+    }`}
+  >
+    הימורי משחקים
+  </button>
+)}
           <button
   onClick={() => setPage("matchesCards")}
   className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
