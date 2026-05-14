@@ -2079,7 +2079,7 @@ const scrollToNextOpenMatch = () => {
                         {match.home} נגד {match.away}
                       </div>
                       <div className="text-slate-400 text-sm">
-                        {match.date} | {match.time} | בית {match.group ? `בית ${match.group}` : match.stage}
+                        {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
                       </div>
                     </div>
 
