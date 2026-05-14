@@ -2059,11 +2059,20 @@ const scrollToNextOpenMatch = () => {
             <div className="space-y-3">
               {matches.map((match) => {
                 const result = results[match.id] || { home: "", away: "" };
+                const hasResult =
+  result.home !== "" &&
+  result.home != null &&
+  result.away !== "" &&
+  result.away != null;
 
                 return (
                   <div
                     key={match.id}
-                    className="bg-slate-800 rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                    className={`rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border ${
+  hasResult
+    ? "bg-green-950/20 border-green-500/30"
+    : "bg-slate-800 border-slate-700"
+}`}
                   >
                     <div>
                       <div className="font-black">
