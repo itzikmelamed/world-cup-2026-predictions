@@ -2253,6 +2253,9 @@ const filteredAllBetsMatches = matches.filter((match) => {
     משתתפים: <span className="text-yellow-300">{activePlayers.length}</span>
   </div>
 </div>
+<div className="mb-3 text-sm font-black text-slate-400">
+  מציג {filteredAllBetsMatches.length} מתוך {matches.length} משחקים
+</div>
 <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
   <input
     type="text"
