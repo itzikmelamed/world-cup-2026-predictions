@@ -1033,6 +1033,13 @@ const scrollToNextOpenMatch = () => {
     });
   }
 };
+const updatedResultsCount = Object.values(results).filter(
+  (result) =>
+    result.home !== "" &&
+    result.home != null &&
+    result.away !== "" &&
+    result.away != null
+).length;
   return (
     
     <main
@@ -1937,6 +1944,9 @@ const scrollToNextOpenMatch = () => {
             <p className="text-slate-400 mb-4">
               כאן המנהל מזין את תוצאת המשחק בפועל. בשלב נוקאאוט מזינים תוצאת 90 דקות בלבד.
             </p>
+            <div className="mb-4 inline-flex items-center rounded-2xl bg-slate-800 border border-slate-700 px-4 py-2 font-black text-slate-300">
+  עודכנו {updatedResultsCount} מתוך {matches.length} משחקים
+</div>
             <div className="grid gap-4 md:grid-cols-2 mb-6">
   <div className="bg-slate-800 rounded-2xl p-4">
     <label className="block mb-2 font-black">
