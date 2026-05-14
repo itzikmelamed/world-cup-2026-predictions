@@ -393,7 +393,7 @@ useEffect(() => {
 
   const [page, setPage] = useState(() => {
   if (typeof window !== "undefined") {
-    return localStorage.getItem("currentPage") || "matches";
+  return localStorage.getItem("currentPage") || "matchesCards";
   }
 
   return "matches";
