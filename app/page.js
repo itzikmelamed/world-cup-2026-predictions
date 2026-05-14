@@ -2333,6 +2333,16 @@ const filteredAllBetsMatches = matches.filter((match) => {
                 </thead>
 
                 <tbody>
+                  {filteredAllBetsMatches.length === 0 && (
+  <tr>
+    <td
+      colSpan={activePlayers.length + 1}
+      className="p-6 text-center text-slate-400 font-black"
+    >
+      לא נמצאו משחקים שמתאימים לסינון
+    </td>
+  </tr>
+)}
                   {filteredAllBetsMatches.map((match) => {
                     const result =
                       results[match.id] || {
