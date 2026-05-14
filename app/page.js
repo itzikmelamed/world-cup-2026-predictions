@@ -2362,7 +2362,14 @@ const filteredAllBetsMatches = matches.filter((match) => {
                       };
 
                     return (
-                      <tr key={match.id} className="border-t border-slate-800">
+                      <tr
+  key={match.id}
+  className={`border-t border-slate-800 ${
+    isMatchLocked(match, manuallyUnlockedMatches)
+      ? "bg-red-950/20"
+      : "bg-green-950/10"
+  }`}
+>
                         <td className="sticky right-0 z-10 bg-slate-900 p-3 border-l border-slate-800 w-[170px] min-w-[170px] max-w-[170px] md:w-[240px] md:min-w-[240px] md:max-w-[240px]">
                           <div className="font-black">
                             {match.home} נגד {match.away}
