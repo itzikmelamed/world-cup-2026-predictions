@@ -2008,7 +2008,7 @@ const getFlagUrl = (team) => {
               כל הימורי הבונוס
             </h2>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-800">
+           <div className="overflow-auto max-h-[75vh] rounded-2xl border border-slate-800">
               <table className="border-collapse table-fixed w-auto">
                 <colgroup>
   <col style={{ width: "95px" }} />
