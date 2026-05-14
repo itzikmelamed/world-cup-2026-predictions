@@ -2025,7 +2025,7 @@ const getFlagUrl = (team) => {
                     {activePlayers.map((player) => (
   <th
     key={player.id}
-   className="sticky top-0 bg-slate-950 z-40 p-3 text-center border-l border-slate-800 min-w-[140px]"
+    className="p-3 text-center border-l border-slate-800 min-w-[140px]"
   >
     {player.name}
   </th>
