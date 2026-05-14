@@ -2441,7 +2441,7 @@ const filteredAllBetsMatches = matches.filter((match) => {
               </table>
             </div>
             <div className="md:hidden space-y-4">
-  {matches.map((match) => {
+  {filteredAllBetsMatches.map((match) => {
     const result = results[match.id];
     const sortedPlayers = [...activePlayers].sort((a, b) => {
   const predictionA = predictions[a.name]?.[match.id];
