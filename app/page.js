@@ -2116,7 +2116,25 @@ const getFlagUrl = (team) => {
     key={player.id}
     className="p-3 text-center border-l border-slate-800 font-bold"
   >
-    {bonusPredictions[player.name]?.champion || "-"}
+    {(() => {
+  const team = bonusPredictions[player.name]?.champion;
+
+  return team ? (
+    <div className="flex items-center justify-center gap-1">
+      {getFlagUrl(team) && (
+        <img
+          src={getFlagUrl(team)}
+          alt={team}
+          className="w-4 h-4 rounded-full object-cover"
+        />
+      )}
+
+      <span>{team}</span>
+    </div>
+  ) : (
+    "-"
+  );
+})()}
   </td>
 ))}
                   </tr>
