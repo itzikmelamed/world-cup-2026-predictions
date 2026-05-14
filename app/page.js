@@ -1082,11 +1082,12 @@ const getFlagUrl = (team) => {
     USA: "https://flagcdn.com/w40/us.png",
     Mexico: "https://flagcdn.com/w40/mx.png",
     Japan: "https://flagcdn.com/w40/jp.png",
-    South Korea: "https://flagcdn.com/w40/kr.png",
+    "South Korea": "https://flagcdn.com/w40/kr.png",
   };
 
   return flags[team] || null;
 };
+
   return (
     
     <main
