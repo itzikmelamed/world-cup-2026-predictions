@@ -2265,7 +2265,7 @@ const scrollToNextOpenMatch = () => {
 <div className="mb-3 text-sm font-black text-slate-400">
   מציג {filteredAllBetsMatches.length} מתוך {matches.length} משחקים
 </div>
-<div className="mb-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+<div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
   <input
     type="text"
     value={allBetsSearch}
@@ -2304,13 +2304,7 @@ const scrollToNextOpenMatch = () => {
 >
   איפוס סינונים
 </button>
-<button
-  type="button"
-  onClick={scrollToNextOpenMatch}
-  className="bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 rounded-2xl px-4 py-3 font-black text-sky-300"
->
-  ⏭ המשחק הפתוח הבא
-</button>
+
 </div>
             <div className="hidden md:block overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
               <table className="border-collapse min-w-max">
@@ -2397,14 +2391,8 @@ if (pts === 4.5) {
                       };
 
                     return (
-                     <tr
+                      <tr
   key={match.id}
-  ref={
-    !isMatchLocked(match, manuallyUnlockedMatches) &&
-    !nextOpenMatchRef.current
-      ? nextOpenMatchRef
-      : null
-  }
   className={`border-t border-slate-800 ${
     isMatchLocked(match, manuallyUnlockedMatches)
       ? "bg-red-950/20"
