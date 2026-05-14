@@ -2397,8 +2397,14 @@ if (pts === 4.5) {
                       };
 
                     return (
-                      <tr
+                     <tr
   key={match.id}
+  ref={
+    !isMatchLocked(match, manuallyUnlockedMatches) &&
+    !nextOpenMatchRef.current
+      ? nextOpenMatchRef
+      : null
+  }
   className={`border-t border-slate-800 ${
     isMatchLocked(match, manuallyUnlockedMatches)
       ? "bg-red-950/20"
