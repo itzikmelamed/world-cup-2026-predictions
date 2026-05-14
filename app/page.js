@@ -219,6 +219,9 @@ const [authUser, setAuthUser] = useState(null);
 const [participantName, setParticipantName] = useState("");
 const [message, setMessage] = useState("");
 const [messageType, setMessageType] = useState("");
+const [allBetsStageFilter, setAllBetsStageFilter] = useState("all");
+const [allBetsStatusFilter, setAllBetsStatusFilter] = useState("all");
+const [allBetsSearch, setAllBetsSearch] = useState("");
 const [matchCardsFilter, setMatchCardsFilter] = useState("all");
  const activePlayers = dbPlayers.filter((player) => player.is_active);
  const loggedInPlayer = activePlayers.find(
@@ -240,7 +243,28 @@ useEffect(() => {
   } = supabase.auth.onAuthStateChange((_event, session) => {
     setAuthUser(session?.user ?? null);
   });
+const filteredAllBetsMatches = matches.filter((match) => {
+  const searchText = allBetsSearch.trim().toLowerCase();
 
+  const matchesSearch =
+    searchText === "" ||
+    match.home.toLowerCase().includes(searchText) ||
+    match.away.toLowerCase().includes(searchText);
+
+  const matchesStage =
+    allBetsStageFilter === "all" ||
+    (allBetsStageFilter === "groups" && match.group) ||
+    (allBetsStageFilter === "knockout" && !match.group);
+
+  const locked = isMatchLocked(match, manuallyUnlockedMatches);
+
+  const matchesStatus =
+    allBetsStatusFilter === "all" ||
+    (allBetsStatusFilter === "open" && !locked) ||
+    (allBetsStatusFilter === "locked" && locked);
+
+  return matchesSearch && matchesStage && matchesStatus;
+});
   return () => {
     subscription.unsubscribe();
   };
@@ -2228,7 +2252,35 @@ return true;
     משתתפים: <span className="text-yellow-300">{activePlayers.length}</span>
   </div>
 </div>
+<div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+  <input
+    type="text"
+    value={allBetsSearch}
+    onChange={(e) => setAllBetsSearch(e.target.value)}
+    placeholder="חיפוש לפי נבחרת..."
+    className="bg-slate-950 border border-slate-700 rounded-2xl px-4 py-3 font-bold outline-none focus:border-yellow-400"
+  />
 
+  <select
+    value={allBetsStageFilter}
+    onChange={(e) => setAllBetsStageFilter(e.target.value)}
+    className="bg-slate-950 border border-slate-700 rounded-2xl px-4 py-3 font-bold outline-none focus:border-yellow-400"
+  >
+    <option value="all">כל השלבים</option>
+    <option value="groups">שלב בתים</option>
+    <option value="knockout">נוקאאוט</option>
+  </select>
+
+  <select
+    value={allBetsStatusFilter}
+    onChange={(e) => setAllBetsStatusFilter(e.target.value)}
+    className="bg-slate-950 border border-slate-700 rounded-2xl px-4 py-3 font-bold outline-none focus:border-yellow-400"
+  >
+    <option value="all">כל הסטטוסים</option>
+    <option value="open">פתוחים</option>
+    <option value="locked">נעולים</option>
+  </select>
+</div>
             <div className="hidden md:block overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
               <table className="border-collapse min-w-max">
                 <thead>
@@ -2280,7 +2332,7 @@ return true;
                 </thead>
 
                 <tbody>
-                  {matches.map((match) => {
+                  {filteredAllBetsMatches.map((match) => {
                     const result =
                       results[match.id] || {
                         home: "",
