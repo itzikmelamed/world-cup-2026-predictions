@@ -1025,6 +1025,14 @@ const filteredAllBetsMatches = matches.filter((match) => {
 
   return matchesSearch && matchesStage && matchesStatus;
 });
+const scrollToNextOpenMatch = () => {
+  if (nextOpenMatchRef.current) {
+    nextOpenMatchRef.current.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
+};
   return (
     
     <main
