@@ -2403,8 +2403,10 @@ const filteredAllBetsMatches = matches.filter((match) => {
                             <td
                               key={player}
                              className={`p-1 md:p-3 text-center border-l border-slate-800 ${
+  points > 0 ? pointStyle : ""
+} ${
   player.name === selectedPlayer
-    ? "bg-yellow-500/5"
+    ? "ring-1 ring-yellow-400/30"
     : ""
 }`}
                             >
