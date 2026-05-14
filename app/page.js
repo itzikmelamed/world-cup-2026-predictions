@@ -2386,6 +2386,17 @@ const filteredAllBetsMatches = matches.filter((match) => {
     ? `${result.home} : ${result.away}`
     : "-"}
 </div>
+<div className="mt-2">
+  {isMatchLocked(match, manuallyUnlockedMatches) ? (
+    <span className="inline-flex items-center bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 rounded-full text-xs font-black">
+      🔒 נעול
+    </span>
+  ) : (
+    <span className="inline-flex items-center bg-green-500/20 border border-green-500/40 text-green-300 px-3 py-1 rounded-full text-xs font-black">
+      🟢 פתוח
+    </span>
+  )}
+</div>
                         </td>
 
                        {activePlayers.map((player) => {
