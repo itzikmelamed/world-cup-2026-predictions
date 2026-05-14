@@ -1015,7 +1015,14 @@ const filteredAllBetsMatches = matches.filter((match) => {
     (allBetsStageFilter === "groups" && match.group) ||
     (allBetsStageFilter === "knockout" && !match.group);
 
-  return matchesSearch && matchesStage;
+  const locked = isMatchLocked(match, manuallyUnlockedMatches);
+
+  const matchesStatus =
+    allBetsStatusFilter === "all" ||
+    (allBetsStatusFilter === "open" && !locked) ||
+    (allBetsStatusFilter === "locked" && locked);
+
+  return matchesSearch && matchesStage && matchesStatus;
 });
   return (
     
