@@ -2378,8 +2378,8 @@ const filteredAllBetsMatches = matches.filter((match) => {
                             {match.home} נגד {match.away}
                           </div>
                           <div className="text-slate-400 text-sm">
-                            {match.date} | {match.time} | בית {match.group ? `בית ${match.group}` : match.stage}
-                          </div>
+  {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
+</div>
                           <div className="text-green-400 text-sm font-black mt-1">
   תוצאת אמת:{" "}
   {result.home !== "" &&
