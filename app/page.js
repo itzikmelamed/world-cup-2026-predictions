@@ -2081,6 +2081,17 @@ const scrollToNextOpenMatch = () => {
                       <div className="text-slate-400 text-sm">
                         {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
                       </div>
+                      <div className="mt-2">
+  {hasResult ? (
+    <span className="inline-flex items-center rounded-full bg-green-500/20 border border-green-500/40 text-green-300 px-3 py-1 text-xs font-black">
+      ✓ עודכן
+    </span>
+  ) : (
+    <span className="inline-flex items-center rounded-full bg-slate-700 border border-slate-600 text-slate-300 px-3 py-1 text-xs font-black">
+      טרם עודכן
+    </span>
+  )}
+</div>
                     </div>
 
                     <div className="flex items-center gap-2">
