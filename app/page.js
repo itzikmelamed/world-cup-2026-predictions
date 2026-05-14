@@ -220,6 +220,7 @@ const [participantName, setParticipantName] = useState("");
 const [message, setMessage] = useState("");
 const nextOpenMatchRef = useRef(null);
 const [messageType, setMessageType] = useState("");
+const [adminResultsSearch, setAdminResultsSearch] = useState("");
 const [adminResultsFilter, setAdminResultsFilter] = useState("all");
 const [allBetsStageFilter, setAllBetsStageFilter] = useState("all");
 const [allBetsStatusFilter, setAllBetsStatusFilter] = useState("all");
@@ -1050,10 +1051,19 @@ const filteredAdminMatches = matches.filter((match) => {
     result.away !== "" &&
     result.away != null;
 
-  if (adminResultsFilter === "updated") return hasResult;
-  if (adminResultsFilter === "missing") return !hasResult;
+  const searchText = adminResultsSearch.trim().toLowerCase();
 
-  return true;
+  const matchesSearch =
+    searchText === "" ||
+    match.home.toLowerCase().includes(searchText) ||
+    match.away.toLowerCase().includes(searchText);
+
+  const matchesStatus =
+    adminResultsFilter === "all" ||
+    (adminResultsFilter === "updated" && hasResult) ||
+    (adminResultsFilter === "missing" && !hasResult);
+
+  return matchesSearch && matchesStatus;
 });
   return (
     
@@ -1982,6 +1992,13 @@ const filteredAdminMatches = matches.filter((match) => {
     </button>
   ))}
 </div>
+<input
+  type="text"
+  value={adminResultsSearch}
+  onChange={(e) => setAdminResultsSearch(e.target.value)}
+  placeholder="חיפוש לפי נבחרת..."
+  className="mb-6 w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 font-bold outline-none focus:border-yellow-400"
+/>
             <div className="grid gap-4 md:grid-cols-2 mb-6">
   <div className="bg-slate-800 rounded-2xl p-4">
     <label className="block mb-2 font-black">
