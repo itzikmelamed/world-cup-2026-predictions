@@ -1383,7 +1383,7 @@ const getFlagUrl = (team) => {
       : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
-  הימורי משחקים - כרטיסים
+ הימורי משחקים
 </button>
           <button
   onClick={() => setPage("bonus")}
@@ -1754,7 +1754,7 @@ const getFlagUrl = (team) => {
   <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
     <div className="mb-6">
       <h2 className="text-2xl font-black">
-        הימורי משחקים - כרטיסים
+       הימורי משחקים
       </h2>
 
       <div className="text-slate-400 font-bold mt-1">
