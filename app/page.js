@@ -1716,6 +1716,18 @@ const getFlagUrl = (team) => {
                     </option>
                   ))}
                 </select>
+                {(bonusPredictions[selectedPlayer] || {}).champion && (
+  <div className="mt-3 flex items-center gap-2 text-sm font-black text-slate-200 bg-slate-900/70 border border-slate-700 rounded-xl px-3 py-2">
+    {getFlagUrl((bonusPredictions[selectedPlayer] || {}).champion) && (
+      <img
+        src={getFlagUrl((bonusPredictions[selectedPlayer] || {}).champion)}
+        alt={(bonusPredictions[selectedPlayer] || {}).champion}
+        className="w-5 h-5 rounded-full object-cover"
+      />
+    )}
+    <span>{(bonusPredictions[selectedPlayer] || {}).champion}</span>
+  </div>
+)}
               </div>
 
               <div className="bg-slate-800 rounded-3xl p-4 border border-slate-700">
