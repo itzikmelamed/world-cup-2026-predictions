@@ -2253,7 +2253,7 @@ const filteredAllBetsMatches = matches.filter((match) => {
     משתתפים: <span className="text-yellow-300">{activePlayers.length}</span>
   </div>
 </div>
-<div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+<div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
   <input
     type="text"
     value={allBetsSearch}
@@ -2281,6 +2281,17 @@ const filteredAllBetsMatches = matches.filter((match) => {
     <option value="open">פתוחים</option>
     <option value="locked">נעולים</option>
   </select>
+  <button
+  type="button"
+  onClick={() => {
+    setAllBetsSearch("");
+    setAllBetsStageFilter("all");
+    setAllBetsStatusFilter("all");
+  }}
+  className="bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl px-4 py-3 font-black text-slate-200"
+>
+  איפוס סינונים
+</button>
 </div>
             <div className="hidden md:block overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
               <table className="border-collapse min-w-max">
