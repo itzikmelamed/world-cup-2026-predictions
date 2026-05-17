@@ -1829,27 +1829,29 @@ const getDisplayTeam = (match, side) => {
 
       <div className="flex items-center gap-3 text-white font-black text-lg">
   <div className="flex items-center gap-2">
-    {getFlagUrl(nextMatch.home) && (
-      <img
-        src={getFlagUrl(nextMatch.home)}
-        alt={nextMatch.home}
-        className="w-6 h-6 rounded-full object-cover"
-      />
-    )}
-    <span>{nextMatch.home}</span>
+    {getFlagUrl(getDisplayTeam(nextMatch, "home")) && (
+  <img
+    src={getFlagUrl(getDisplayTeam(nextMatch, "home"))}
+    alt={getDisplayTeam(nextMatch, "home")}
+    className="w-6 h-6 rounded-full object-cover"
+  />
+)}
+
+<span>{getDisplayTeam(nextMatch, "home")}</span>
   </div>
 
   <span className="text-slate-400">נגד</span>
 
   <div className="flex items-center gap-2">
-    {getFlagUrl(nextMatch.away) && (
-      <img
-        src={getFlagUrl(nextMatch.away)}
-        alt={nextMatch.away}
-        className="w-6 h-6 rounded-full object-cover"
-      />
-    )}
-    <span>{nextMatch.away}</span>
+    {getFlagUrl(getDisplayTeam(nextMatch, "away")) && (
+  <img
+    src={getFlagUrl(getDisplayTeam(nextMatch, "away"))}
+    alt={getDisplayTeam(nextMatch, "away")}
+    className="w-6 h-6 rounded-full object-cover"
+  />
+)}
+
+<span>{getDisplayTeam(nextMatch, "away")}</span>
   </div>
 </div>
 
