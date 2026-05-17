@@ -1299,9 +1299,11 @@ const filteredAdminMatches = matches.filter((match) => {
     match.away.toLowerCase().includes(searchText);
 
   const matchesStatus =
-    adminResultsFilter === "all" ||
-    (adminResultsFilter === "updated" && hasResult) ||
-    (adminResultsFilter === "missing" && !hasResult);
+  adminResultsFilter === "all" ||
+  (adminResultsFilter === "groups" && match.group) ||
+  (adminResultsFilter === "knockout" && !match.group) ||
+  (adminResultsFilter === "updated" && hasResult) ||
+  (adminResultsFilter === "missing" && !hasResult);
 
   return matchesSearch && matchesStatus;
 });
@@ -2491,10 +2493,13 @@ const knockoutProgression = {
 </div>
 <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
   {[
-    { key: "all", label: "כל המשחקים" },
-    { key: "updated", label: "עודכנו" },
-    { key: "missing", label: "טרם עודכנו" },
-  ].map((filter) => (
+    {[
+  { key: "all", label: "כל המשחקים" },
+  { key: "groups", label: "שלב בתים" },
+  { key: "knockout", label: "נוקאאוט" },
+  { key: "updated", label: "עודכנו" },
+  { key: "missing", label: "טרם עודכנו" },
+].map((filter) => (
     <button
       key={filter.key}
       type="button"
