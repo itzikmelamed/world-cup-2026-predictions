@@ -2237,7 +2237,15 @@ const knockoutProgression = {
             </div>
             {!match.group && knockoutMatches[match.id]?.winner_team && (
   <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-3 py-1 text-xs font-black">
-    עולה: {knockoutMatches[match.id].winner_team}
+    {getFlagUrl(knockoutMatches[match.id].winner_team) && (
+      <img
+        src={getFlagUrl(knockoutMatches[match.id].winner_team)}
+        alt={knockoutMatches[match.id].winner_team}
+        className="w-4 h-4 rounded-full object-cover"
+      />
+    )}
+
+    <span>עולה: {knockoutMatches[match.id].winner_team}</span>
   </div>
 )}
 
