@@ -406,7 +406,31 @@ async function loadAppSettings() {
 );
 }
 async function updateKnockoutWinner(match, winnerTeam) {
-  if (!winnerTeam) return;
+  if (!winnerTeam) {
+  const currentUpdated = {
+    ...(knockoutMatches[match.id] || {}),
+    winner_team: null,
+    loser_team: null,
+  };
+
+  setKnockoutMatches((prev) => ({
+    ...prev,
+    [match.id]: currentUpdated,
+  }));
+
+  await supabase.from("knockout_matches").upsert(
+    {
+      match_id: match.id,
+      home_team: currentUpdated.home_team || null,
+      away_team: currentUpdated.away_team || null,
+      winner_team: null,
+      loser_team: null,
+    },
+    { onConflict: "match_id" }
+  );
+
+  return;
+}
 
   const homeTeam = getDisplayTeam(match, "home");
   const awayTeam = getDisplayTeam(match, "away");
