@@ -1962,15 +1962,15 @@ const getDisplayTeam = (match, side) => {
             <div className="space-y-3">
   <div className="grid grid-cols-[1fr_70px_70px] items-center gap-3">
     <div className="flex items-center gap-2 font-black text-white">
-  {getFlagUrl(match.home) && (
-    <img
-      src={getFlagUrl(match.home)}
-      alt={match.home}
-      className="w-6 h-6 rounded-full object-cover"
-    />
-  )}
+  {getFlagUrl(getDisplayTeam(match, "home")) && (
+  <img
+    src={getFlagUrl(getDisplayTeam(match, "home"))}
+    alt={getDisplayTeam(match, "home")}
+    className="w-6 h-6 rounded-full object-cover"
+  />
+)}
 
-  <span>{match.home}</span>
+<span>{getDisplayTeam(match, "home")}</span>
 </div>
 
     <input
@@ -1991,15 +1991,15 @@ const getDisplayTeam = (match, side) => {
 
   <div className="grid grid-cols-[1fr_70px_70px] items-center gap-3">
     <div className="flex items-center gap-2 font-black text-white">
-  {getFlagUrl(match.away) && (
-    <img
-      src={getFlagUrl(match.away)}
-      alt={match.away}
-      className="w-6 h-6 rounded-full object-cover"
-    />
-  )}
+  {getFlagUrl(getDisplayTeam(match, "away")) && (
+  <img
+    src={getFlagUrl(getDisplayTeam(match, "away"))}
+    alt={getDisplayTeam(match, "away")}
+    className="w-6 h-6 rounded-full object-cover"
+  />
+)}
 
-  <span>{match.away}</span>
+<span>{getDisplayTeam(match, "away")}</span>
 </div>
 
     <input
