@@ -2678,33 +2678,43 @@ const knockoutProgression = {
 
 {!match.group && (
   <div className="grid grid-cols-2 gap-2 mt-3">
-    <input
-      type="text"
-      value={knockoutMatches[match.id]?.home_team || ""}
-      onChange={(e) =>
-        updateKnockoutTeam(
-          match.id,
-          "home_team",
-          e.target.value
-        )
-      }
-      placeholder="נבחרת בית"
-      className="bg-slate-700 rounded-xl p-2 text-sm font-bold"
-    />
+    <select
+  value={knockoutMatches[match.id]?.home_team || ""}
+  onChange={(e) =>
+    updateKnockoutTeam(
+      match.id,
+      "home_team",
+      e.target.value
+    )
+  }
+  className="bg-slate-700 rounded-xl p-2 text-sm font-bold"
+>
+  <option value="">בחר נבחרת בית</option>
+  {Object.values(groups).flat().map((team) => (
+    <option key={team} value={team}>
+      {team}
+    </option>
+  ))}
+</select>
 
-    <input
-      type="text"
-      value={knockoutMatches[match.id]?.away_team || ""}
-      onChange={(e) =>
-        updateKnockoutTeam(
-          match.id,
-          "away_team",
-          e.target.value
-        )
-      }
-      placeholder="נבחרת חוץ"
-      className="bg-slate-700 rounded-xl p-2 text-sm font-bold"
-    />
+    <select
+  value={knockoutMatches[match.id]?.away_team || ""}
+  onChange={(e) =>
+    updateKnockoutTeam(
+      match.id,
+      "away_team",
+      e.target.value
+    )
+  }
+  className="bg-slate-700 rounded-xl p-2 text-sm font-bold"
+>
+  <option value="">בחר נבחרת חוץ</option>
+  {Object.values(groups).flat().map((team) => (
+    <option key={team} value={team}>
+      {team}
+    </option>
+  ))}
+</select>
   </div>
 )}
 {!match.group && (
