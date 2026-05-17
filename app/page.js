@@ -727,6 +727,25 @@ if (error) {
   return;
 }
 
+const match = matches.find((m) => m.id === matchId);
+
+if (
+  match &&
+  !match.group &&
+  updatedResult.home !== "" &&
+  updatedResult.home != null &&
+  updatedResult.away !== "" &&
+  updatedResult.away != null
+) {
+  const homeScore = Number(updatedResult.home);
+  const awayScore = Number(updatedResult.away);
+
+  if (homeScore > awayScore) {
+    await updateKnockoutWinner(match, getDisplayTeam(match, "home"));
+  } else if (awayScore > homeScore) {
+    await updateKnockoutWinner(match, getDisplayTeam(match, "away"));
+  }
+}
 showMessage("תוצאת המשחק נשמרה בהצלחה");
 }
  async function updateBonusQualifier(group, index, value) {
