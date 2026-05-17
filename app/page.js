@@ -407,16 +407,36 @@ async function loadAppSettings() {
 }
 async function updateKnockoutWinner(match, winnerTeam) {
   if (!winnerTeam) {
+  const progression = knockoutProgression[match.id];
+
   const currentUpdated = {
     ...(knockoutMatches[match.id] || {}),
     winner_team: null,
     loser_team: null,
   };
 
-  setKnockoutMatches((prev) => ({
-    ...prev,
-    [match.id]: currentUpdated,
-  }));
+  setKnockoutMatches((prev) => {
+    const next = {
+      ...prev,
+      [match.id]: currentUpdated,
+    };
+
+    if (progression?.nextMatch && progression?.side) {
+      next[progression.nextMatch] = {
+        ...(next[progression.nextMatch] || {}),
+        [`${progression.side}_team`]: null,
+      };
+    }
+
+    if (progression?.loserNextMatch && progression?.loserSide) {
+      next[progression.loserNextMatch] = {
+        ...(next[progression.loserNextMatch] || {}),
+        [`${progression.loserSide}_team`]: null,
+      };
+    }
+
+    return next;
+  });
 
   await supabase.from("knockout_matches").upsert(
     {
@@ -428,6 +448,49 @@ async function updateKnockoutWinner(match, winnerTeam) {
     },
     { onConflict: "match_id" }
   );
+
+  if (progression?.nextMatch && progression?.side) {
+    const nextData = knockoutMatches[progression.nextMatch] || {};
+
+    await supabase.from("knockout_matches").upsert(
+      {
+        match_id: progression.nextMatch,
+        home_team:
+          progression.side === "home"
+            ? null
+            : nextData.home_team || null,
+        away_team:
+          progression.side === "away"
+            ? null
+            : nextData.away_team || null,
+        winner_team: nextData.winner_team || null,
+        loser_team: nextData.loser_team || null,
+      },
+      { onConflict: "match_id" }
+    );
+  }
+
+  if (progression?.loserNextMatch && progression?.loserSide) {
+    const loserNextData =
+      knockoutMatches[progression.loserNextMatch] || {};
+
+    await supabase.from("knockout_matches").upsert(
+      {
+        match_id: progression.loserNextMatch,
+        home_team:
+          progression.loserSide === "home"
+            ? null
+            : loserNextData.home_team || null,
+        away_team:
+          progression.loserSide === "away"
+            ? null
+            : loserNextData.away_team || null,
+        winner_team: loserNextData.winner_team || null,
+        loser_team: loserNextData.loser_team || null,
+      },
+      { onConflict: "match_id" }
+    );
+  }
 
   return;
 }
