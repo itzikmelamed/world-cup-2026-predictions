@@ -2216,10 +2216,11 @@ const knockoutProgression = {
 
         const points = calculatePoints(prediction, result);
 
-        const locked = isMatchLocked(
-          match,
-          manuallyUnlockedMatches
-        );
+       const locked = isMatchLocked(
+  match,
+  manuallyUnlockedMatches,
+  knockoutMatches
+);
 
         return (
           <div
