@@ -3118,6 +3118,11 @@ if (pts === 4.5) {
     ? `${result.home} : ${result.away}`
     : "-"}
 </div>
+{!match.group && knockoutMatches[match.id]?.winner_team && (
+  <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-3 py-1 text-xs font-black">
+    עולה: {knockoutMatches[match.id].winner_team}
+  </div>
+)}
 <div className="mt-2">
   {isMatchLocked(match, manuallyUnlockedMatches) ? (
     <span className="inline-flex items-center bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 rounded-full text-xs font-black">
