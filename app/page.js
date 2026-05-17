@@ -2259,7 +2259,12 @@ const knockoutProgression = {
             <div className="text-sm text-slate-400 font-bold mb-4">
               {match.date} | {match.time}
             </div>
-            {!match.group && knockoutMatches[match.id]?.winner_team && (
+            {!match.group &&
+  knockoutMatches[match.id]?.winner_team &&
+  [
+    getDisplayTeam(match, "home"),
+    getDisplayTeam(match, "away"),
+  ].includes(knockoutMatches[match.id].winner_team) && (
   <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-3 py-1 text-xs font-black">
     {getFlagUrl(knockoutMatches[match.id].winner_team) && (
       <img
@@ -3160,7 +3165,12 @@ if (pts === 4.5) {
     ? `${result.home} : ${result.away}`
     : "-"}
 </div>
-{!match.group && knockoutMatches[match.id]?.winner_team && (
+{!match.group &&
+  knockoutMatches[match.id]?.winner_team &&
+  [
+    getDisplayTeam(match, "home"),
+    getDisplayTeam(match, "away"),
+  ].includes(knockoutMatches[match.id].winner_team) && (
   <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-3 py-1 text-xs font-black">
     עולה: {knockoutMatches[match.id].winner_team}
   </div>
@@ -3307,7 +3317,12 @@ if (pts === 4.5) {
   ? `${result.home} - ${result.away}`
   : "טרם עודכן"}
           </div>
-          {!match.group && knockoutMatches[match.id]?.winner_team && (
+          {!match.group &&
+  knockoutMatches[match.id]?.winner_team &&
+  [
+    getDisplayTeam(match, "home"),
+    getDisplayTeam(match, "away"),
+  ].includes(knockoutMatches[match.id].winner_team) && (
   <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-3 py-1 text-xs font-black">
     עולה: {knockoutMatches[match.id].winner_team}
   </div>
