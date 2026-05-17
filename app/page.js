@@ -2235,6 +2235,11 @@ const knockoutProgression = {
             <div className="text-sm text-slate-400 font-bold mb-4">
               {match.date} | {match.time}
             </div>
+            {!match.group && knockoutMatches[match.id]?.winner_team && (
+  <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-3 py-1 text-xs font-black">
+    עולה: {knockoutMatches[match.id].winner_team}
+  </div>
+)}
 
             <div className="space-y-3">
   <div className="grid grid-cols-[1fr_70px_70px] items-center gap-3">
