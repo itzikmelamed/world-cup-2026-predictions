@@ -2493,7 +2493,6 @@ const knockoutProgression = {
 </div>
 <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
   {[
-    {[
   { key: "all", label: "כל המשחקים" },
   { key: "groups", label: "שלב בתים" },
   { key: "knockout", label: "נוקאאוט" },
