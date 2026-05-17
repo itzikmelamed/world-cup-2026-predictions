@@ -541,25 +541,36 @@ async function updateKnockoutWinner(match, winnerTeam) {
 
 async function updateKnockoutTeam(matchId, side, value) {
   const existing = knockoutMatches[matchId] || {};
-  const removedTeams = [existing.winner_team, existing.loser_team].filter(Boolean);
+
+  // normalize empty string to null
+  const newValue = value === "" ? null : value;
+  const previousValue = existing[side] === "" ? null : existing[side];
+
+  // prepare updated for this match: always reset winner/loser when teams change
   const updated = {
     ...existing,
-    [side]: value,
+    [side]: newValue,
     winner_team: null,
     loser_team: null,
   };
+
+  // snapshot to pass to cascade so it sees this match's updated state
   const cleanupState = { ...knockoutMatches, [matchId]: updated };
+
+  // if the previous side held a real team and it was removed or replaced, run cleanup
+  const removedTeams = [];
+  if (previousValue && previousValue !== newValue) removedTeams.push(previousValue);
+
   const cleanupUpdates =
     removedTeams.length > 0
       ? await cascadeKnockoutCleanup(matchId, removedTeams, cleanupState)
       : {};
+
   const finalUpdates = { [matchId]: updated, ...cleanupUpdates };
 
   setKnockoutMatches((prev) => ({ ...prev, ...finalUpdates }));
   await Promise.all(
-    Object.entries(finalUpdates).map(([matchId, data]) =>
-      upsertKnockoutMatchData(matchId, data)
-    )
+    Object.entries(finalUpdates).map(([mId, data]) => upsertKnockoutMatchData(mId, data))
   );
 }
 async function refreshAllData() {
