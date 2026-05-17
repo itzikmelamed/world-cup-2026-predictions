@@ -1209,6 +1209,64 @@ const getDisplayTeam = (match, side) => {
   return knockoutData.away_team || match.away;
 };
 
+const knockoutProgression = {
+  73: { nextMatch: 89, side: "home" },
+  75: { nextMatch: 89, side: "away" },
+
+  74: { nextMatch: 90, side: "home" },
+  77: { nextMatch: 90, side: "away" },
+
+  76: { nextMatch: 91, side: "home" },
+  78: { nextMatch: 91, side: "away" },
+
+  79: { nextMatch: 92, side: "home" },
+  80: { nextMatch: 92, side: "away" },
+
+  83: { nextMatch: 93, side: "home" },
+  84: { nextMatch: 93, side: "away" },
+
+  81: { nextMatch: 94, side: "home" },
+  82: { nextMatch: 94, side: "away" },
+
+  86: { nextMatch: 95, side: "home" },
+  88: { nextMatch: 95, side: "away" },
+
+  85: { nextMatch: 96, side: "home" },
+  87: { nextMatch: 96, side: "away" },
+
+  89: { nextMatch: 97, side: "home" },
+  90: { nextMatch: 97, side: "away" },
+
+  93: { nextMatch: 98, side: "home" },
+  94: { nextMatch: 98, side: "away" },
+
+  91: { nextMatch: 99, side: "home" },
+  92: { nextMatch: 99, side: "away" },
+
+  95: { nextMatch: 100, side: "home" },
+  96: { nextMatch: 100, side: "away" },
+
+  97: { nextMatch: 101, side: "home" },
+  98: { nextMatch: 101, side: "away" },
+
+  99: { nextMatch: 102, side: "home" },
+  100: { nextMatch: 102, side: "away" },
+
+  101: {
+    nextMatch: 104,
+    side: "home",
+    loserNextMatch: 103,
+    loserSide: "home",
+  },
+
+  102: {
+    nextMatch: 104,
+    side: "away",
+    loserNextMatch: 103,
+    loserSide: "away",
+  },
+};
+
   return (
     
     <main
