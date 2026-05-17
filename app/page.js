@@ -3265,6 +3265,11 @@ if (pts === 4.5) {
   ? `${result.home} - ${result.away}`
   : "טרם עודכן"}
           </div>
+          {!match.group && knockoutMatches[match.id]?.winner_team && (
+  <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 px-3 py-1 text-xs font-black">
+    עולה: {knockoutMatches[match.id].winner_team}
+  </div>
+)}
         </div>
 
         <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
