@@ -405,203 +405,162 @@ async function loadAppSettings() {
   }
 );
 }
-async function updateKnockoutWinner(match, winnerTeam) {
-  if (!winnerTeam) {
-  const progression = knockoutProgression[match.id];
-
-  const currentUpdated = {
-    ...(knockoutMatches[match.id] || {}),
-    winner_team: null,
-    loser_team: null,
-  };
-
-  setKnockoutMatches((prev) => {
-    const next = {
-      ...prev,
-      [match.id]: currentUpdated,
-    };
-
-    if (progression?.nextMatch && progression?.side) {
-      next[progression.nextMatch] = {
-        ...(next[progression.nextMatch] || {}),
-        [`${progression.side}_team`]: null,
-      };
-    }
-
-    if (progression?.loserNextMatch && progression?.loserSide) {
-      next[progression.loserNextMatch] = {
-        ...(next[progression.loserNextMatch] || {}),
-        [`${progression.loserSide}_team`]: null,
-      };
-    }
-
-    return next;
-  });
-
-  await supabase.from("knockout_matches").upsert(
+async function upsertKnockoutMatchData(matchId, data) {
+  const { error } = await supabase.from("knockout_matches").upsert(
     {
-      match_id: match.id,
-      home_team: currentUpdated.home_team || null,
-      away_team: currentUpdated.away_team || null,
-      winner_team: null,
-      loser_team: null,
+      match_id: matchId,
+      home_team: data.home_team || null,
+      away_team: data.away_team || null,
+      winner_team: data.winner_team || null,
+      loser_team: data.loser_team || null,
     },
     { onConflict: "match_id" }
   );
 
-  if (progression?.nextMatch && progression?.side) {
-    const nextData = knockoutMatches[progression.nextMatch] || {};
-
-    await supabase.from("knockout_matches").upsert(
-      {
-        match_id: progression.nextMatch,
-        home_team:
-          progression.side === "home"
-            ? null
-            : nextData.home_team || null,
-        away_team:
-          progression.side === "away"
-            ? null
-            : nextData.away_team || null,
-        winner_team: nextData.winner_team || null,
-        loser_team: nextData.loser_team || null,
-      },
-      { onConflict: "match_id" }
-    );
+  if (error) {
+    console.error("Error saving knockout match:", matchId, error);
+    throw error;
   }
-
-  if (progression?.loserNextMatch && progression?.loserSide) {
-    const loserNextData =
-      knockoutMatches[progression.loserNextMatch] || {};
-
-    await supabase.from("knockout_matches").upsert(
-      {
-        match_id: progression.loserNextMatch,
-        home_team:
-          progression.loserSide === "home"
-            ? null
-            : loserNextData.home_team || null,
-        away_team:
-          progression.loserSide === "away"
-            ? null
-            : loserNextData.away_team || null,
-        winner_team: loserNextData.winner_team || null,
-        loser_team: loserNextData.loser_team || null,
-      },
-      { onConflict: "match_id" }
-    );
-  }
-
-  return;
 }
+async function cascadeKnockoutCleanup(matchId, removedTeams, stateSnapshot = {}) {
+  const progression = knockoutProgression[matchId];
+  if (!progression) return {};
+
+  let cleanupUpdates = {};
+  const branches = [
+    { nextMatch: progression.nextMatch, side: progression.side },
+    { nextMatch: progression.loserNextMatch, side: progression.loserSide },
+  ];
+
+  for (const branch of branches) {
+    if (!branch.nextMatch || !branch.side) continue;
+
+    const childId = branch.nextMatch;
+    const existing =
+      cleanupUpdates[childId] || stateSnapshot[childId] || knockoutMatches[childId] || {};
+    const updated = { ...existing };
+    let changed = false;
+
+    ["home_team", "away_team", "winner_team", "loser_team"].forEach((field) => {
+      if (removedTeams.includes(updated[field])) {
+        updated[field] = null;
+        changed = true;
+      }
+    });
+
+    if ((!updated.home_team || !updated.away_team) && (updated.winner_team || updated.loser_team)) {
+      updated.winner_team = null;
+      updated.loser_team = null;
+      changed = true;
+    }
+
+    if (changed) {
+      cleanupUpdates[childId] = updated;
+      const nextSnapshot = { ...stateSnapshot, ...cleanupUpdates };
+      const deeper = await cascadeKnockoutCleanup(childId, removedTeams, nextSnapshot);
+      cleanupUpdates = { ...cleanupUpdates, ...deeper };
+    }
+  }
+
+  return cleanupUpdates;
+}
+
+async function updateKnockoutWinner(match, winnerTeam) {
+  const existing = knockoutMatches[match.id] || {};
+  const previousWinner = existing.winner_team;
+  const previousLoser = existing.loser_team;
+  const removedTeams = [previousWinner, previousLoser].filter(
+    (team) => team && team !== winnerTeam
+  );
+
+  if (!winnerTeam) {
+    const currentUpdated = {
+      ...existing,
+      winner_team: null,
+      loser_team: null,
+    };
+    const cleanupState = { ...knockoutMatches, [match.id]: currentUpdated };
+    const cleanupUpdates =
+      removedTeams.length > 0
+        ? await cascadeKnockoutCleanup(match.id, removedTeams, cleanupState)
+        : {};
+    const mergedUpdates = { [match.id]: currentUpdated, ...cleanupUpdates };
+
+    setKnockoutMatches((prev) => ({ ...prev, ...mergedUpdates }));
+    await Promise.all(
+      Object.entries(mergedUpdates).map(([matchId, data]) =>
+        upsertKnockoutMatchData(matchId, data)
+      )
+    );
+    return;
+  }
 
   const homeTeam = getDisplayTeam(match, "home");
   const awayTeam = getDisplayTeam(match, "away");
-
   const loserTeam = winnerTeam === homeTeam ? awayTeam : homeTeam;
   const progression = knockoutProgression[match.id];
-
   const currentUpdated = {
-    ...(knockoutMatches[match.id] || {}),
+    ...existing,
     winner_team: winnerTeam,
     loser_team: loserTeam,
   };
-
-  setKnockoutMatches((prev) => ({
-    ...prev,
+  const mergedUpdates = {
     [match.id]: currentUpdated,
-  }));
-
-  await supabase.from("knockout_matches").upsert(
-    {
-      match_id: match.id,
-      home_team: currentUpdated.home_team || null,
-      away_team: currentUpdated.away_team || null,
-      winner_team: currentUpdated.winner_team || null,
-      loser_team: currentUpdated.loser_team || null,
-    },
-    { onConflict: "match_id" }
-  );
-
-  if (!progression) return;
-
-  const nextUpdated = {
-    ...(knockoutMatches[progression.nextMatch] || {}),
-    [`${progression.side}_team`]: winnerTeam,
   };
 
-  setKnockoutMatches((prev) => ({
-    ...prev,
-    [progression.nextMatch]: nextUpdated,
-  }));
-
-  await supabase.from("knockout_matches").upsert(
-    {
-      match_id: progression.nextMatch,
-      home_team: nextUpdated.home_team || null,
-      away_team: nextUpdated.away_team || null,
-      winner_team: nextUpdated.winner_team || null,
-      loser_team: nextUpdated.loser_team || null,
-    },
-    { onConflict: "match_id" }
-  );
-
-  if (progression.loserNextMatch && progression.loserSide) {
-    const loserNextUpdated = {
-      ...(knockoutMatches[progression.loserNextMatch] || {}),
-      [`${progression.loserSide}_team`]: loserTeam,
+  if (progression) {
+    mergedUpdates[progression.nextMatch] = {
+      ...(knockoutMatches[progression.nextMatch] || {}),
+      [`${progression.side}_team`]: winnerTeam,
     };
 
-    setKnockoutMatches((prev) => ({
-      ...prev,
-      [progression.loserNextMatch]: loserNextUpdated,
-    }));
-
-    await supabase.from("knockout_matches").upsert(
-      {
-        match_id: progression.loserNextMatch,
-        home_team: loserNextUpdated.home_team || null,
-        away_team: loserNextUpdated.away_team || null,
-        winner_team: loserNextUpdated.winner_team || null,
-        loser_team: loserNextUpdated.loser_team || null,
-      },
-      { onConflict: "match_id" }
-    );
+    if (progression.loserNextMatch && progression.loserSide) {
+      mergedUpdates[progression.loserNextMatch] = {
+        ...(knockoutMatches[progression.loserNextMatch] || {}),
+        [`${progression.loserSide}_team`]: loserTeam,
+      };
+    }
   }
+
+  const cleanupUpdates =
+    removedTeams.length > 0
+      ? await cascadeKnockoutCleanup(match.id, removedTeams, {
+          ...knockoutMatches,
+          ...mergedUpdates,
+        })
+      : {};
+  const finalUpdates = { ...mergedUpdates, ...cleanupUpdates };
+
+  setKnockoutMatches((prev) => ({ ...prev, ...finalUpdates }));
+  await Promise.all(
+    Object.entries(finalUpdates).map(([matchId, data]) =>
+      upsertKnockoutMatchData(matchId, data)
+    )
+  );
 }
 
 async function updateKnockoutTeam(matchId, side, value) {
   const existing = knockoutMatches[matchId] || {};
-
+  const removedTeams = [existing.winner_team, existing.loser_team].filter(Boolean);
   const updated = {
-  ...existing,
-  [side]: value,
-  winner_team: null,
-  loser_team: null,
-};
+    ...existing,
+    [side]: value,
+    winner_team: null,
+    loser_team: null,
+  };
+  const cleanupState = { ...knockoutMatches, [matchId]: updated };
+  const cleanupUpdates =
+    removedTeams.length > 0
+      ? await cascadeKnockoutCleanup(matchId, removedTeams, cleanupState)
+      : {};
+  const finalUpdates = { [matchId]: updated, ...cleanupUpdates };
 
-  setKnockoutMatches((prev) => ({
-    ...prev,
-    [matchId]: updated,
-  }));
-
-  const { error } = await supabase
-    .from("knockout_matches")
-    .upsert(
-      {
-        match_id: matchId,
-        home_team: updated.home_team || null,
-        away_team: updated.away_team || null,
-        winner_team: updated.winner_team || null,
-        loser_team: updated.loser_team || null,
-      },
-      { onConflict: "match_id" }
-    );
-
-  if (error) {
-    console.error("Error saving knockout teams:", error);
-    alert(error.message);
-  }
+  setKnockoutMatches((prev) => ({ ...prev, ...finalUpdates }));
+  await Promise.all(
+    Object.entries(finalUpdates).map(([matchId, data]) =>
+      upsertKnockoutMatchData(matchId, data)
+    )
+  );
 }
 async function refreshAllData() {
   await loadPlayers();
@@ -739,95 +698,6 @@ if (
   updatedResult.away !== "" &&
   updatedResult.away != null
 ) {
-  const homeScore = Number(updatedResult.home);
-  const awayScore = Number(updatedResult.away);
-
-  if (homeScore > awayScore) {
-    await updateKnockoutWinner(match, getDisplayTeam(match, "home"));
-  } else if (awayScore > homeScore) {
-    await updateKnockoutWinner(match, getDisplayTeam(match, "away"));
-  }
-}
-showMessage("תוצאת המשחק נשמרה בהצלחה");
-}
- async function updateBonusQualifier(group, index, value) {
-
-  const playerBonus = bonusPredictions[selectedPlayer] || {};
-  const currentGroup = playerBonus[group] || ["", ""];
-
-  const updatedGroup = [...currentGroup];
-  updatedGroup[index] = value;
-
-  const updatedBonus = {
-    ...playerBonus,
-    [group]: updatedGroup,
-  };
-
-  setBonusPredictions((prev) => ({
-    ...prev,
-    [selectedPlayer]: updatedBonus,
-  }));
-
-  const { champion, topScorer, ...groups } = updatedBonus;
-
-  const { error } = await supabase
-    .from("bonus_predictions")
-    .upsert(
-      [
-        {
-          player_name: selectedPlayer,
-          champion: champion || null,
-          top_scorer: topScorer || null,
-          group_winners: groups,
-        },
-      ],
-      {
-        onConflict: "player_name",
-      }
-    );
-
-  if (error) {
-  console.error("Error saving bonus prediction:", error);
-  showMessage("שגיאה בשמירת הבונוסים: " + error.message, "error");
-  return;
-}
-
-showMessage("הבונוסים נשמרו בהצלחה");
-}
-
-async function updateSpecialBonus(field, value) {
-
-  const playerBonus = bonusPredictions[selectedPlayer] || {};
-
-  const updatedBonus = {
-    ...playerBonus,
-    [field]: value,
-  };
-
-  setBonusPredictions((prev) => ({
-    ...prev,
-    [selectedPlayer]: updatedBonus,
-  }));
-
-  const { champion, topScorer, ...groups } = updatedBonus;
-
-  const { error } = await supabase
-    .from("bonus_predictions")
-    .upsert(
-      [
-        {
-          player_name: selectedPlayer,
-          champion: champion || null,
-          top_scorer: topScorer || null,
-          group_winners: groups,
-        },
-      ],
-      {
-        onConflict: "player_name",
-      }
-    );
-
-  if (error) {
   console.error("Error saving special bonus:", error);
   showMessage("שגיאה בשמירת הבונוס: " + error.message, "error");
   return;
