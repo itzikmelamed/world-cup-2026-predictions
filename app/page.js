@@ -220,6 +220,7 @@ const [participantName, setParticipantName] = useState("");
 const [message, setMessage] = useState("");
 const nextOpenMatchRef = useRef(null);
 const [messageType, setMessageType] = useState("");
+const [knockoutMatches, setKnockoutMatches] = useState({});
 const [adminResultsSearch, setAdminResultsSearch] = useState("");
 const [adminResultsFilter, setAdminResultsFilter] = useState("all");
 const [allBetsStageFilter, setAllBetsStageFilter] = useState("all");
@@ -337,6 +338,30 @@ async function loadBonusPredictions() {
   setBonusPredictions(formatted);
 }
 
+async function loadKnockoutMatches() {
+  const { data, error } = await supabase
+    .from("knockout_matches")
+    .select("*");
+
+  if (error) {
+    console.error("Error loading knockout matches:", error);
+    return;
+  }
+
+  const formatted = {};
+
+  data.forEach((row) => {
+    formatted[row.match_id] = {
+      home_team: row.home_team,
+      away_team: row.away_team,
+      winner_team: row.winner_team,
+      loser_team: row.loser_team,
+    };
+  });
+
+  setKnockoutMatches(formatted);
+}
+
 async function loadResults() {
   const { data, error } = await supabase
     .from("match_results")
@@ -395,8 +420,7 @@ useEffect(() => {
   if (typeof window !== "undefined") {
   return localStorage.getItem("currentPage") || "matchesCards";
   }
-
-  return "matches";
+return "matchesCards";
 });
   const [predictions, setPredictions] = useState({});
   const [results, setResults] = useState({});
