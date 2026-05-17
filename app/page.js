@@ -411,6 +411,7 @@ async function refreshAllData() {
   await loadBonusPredictions();
   await loadResults();
   await loadAppSettings();
+  await loadKnockoutMatches();
 }
 useEffect(() => {
   refreshAllData();
@@ -1153,6 +1154,24 @@ const getFlagUrl = (team) => {
 };
 
   return flags[team] || null;
+};
+
+const getDisplayTeam = (match, side) => {
+  if (match.group) {
+    return side === "home" ? match.home : match.away;
+  }
+
+  const knockoutData = knockoutMatches[match.id];
+
+  if (!knockoutData) {
+    return side === "home" ? match.home : match.away;
+  }
+
+  if (side === "home") {
+    return knockoutData.home_team || match.home;
+  }
+
+  return knockoutData.away_team || match.away;
 };
 
   return (
