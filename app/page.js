@@ -2596,7 +2596,10 @@ const knockoutProgression = {
 
     <select
       value={knockoutMatches[match.id]?.winner_team || ""}
-      onChange={(e) => updateKnockoutWinner(match, e.target.value)}
+      onChange={(e) => {
+  console.log("Winner selected:", match.id, e.target.value);
+  updateKnockoutWinner(match, e.target.value);
+}}
       className="w-full bg-slate-700 rounded-xl p-2 text-sm font-bold"
     >
       <option value="">בחר עולה</option>
