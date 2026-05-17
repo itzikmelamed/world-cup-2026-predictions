@@ -2588,6 +2588,29 @@ const knockoutProgression = {
     />
   </div>
 )}
+{!match.group && (
+  <div className="mt-3">
+    <label className="block mb-2 text-sm font-black text-slate-300">
+      עולה לשלב הבא
+    </label>
+
+    <select
+      value={knockoutMatches[match.id]?.winner_team || ""}
+      onChange={(e) => updateKnockoutWinner(match, e.target.value)}
+      className="w-full bg-slate-700 rounded-xl p-2 text-sm font-bold"
+    >
+      <option value="">בחר עולה</option>
+
+      <option value={getDisplayTeam(match, "home")}>
+        {getDisplayTeam(match, "home")}
+      </option>
+
+      <option value={getDisplayTeam(match, "away")}>
+        {getDisplayTeam(match, "away")}
+      </option>
+    </select>
+  </div>
+)}
                       <div className="text-slate-400 text-sm">
                         {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
                       </div>
