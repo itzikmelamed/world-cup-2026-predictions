@@ -574,9 +574,11 @@ async function updateKnockoutTeam(matchId, side, value) {
   const existing = knockoutMatches[matchId] || {};
 
   const updated = {
-    ...existing,
-    [side]: value,
-  };
+  ...existing,
+  [side]: value,
+  winner_team: null,
+  loser_team: null,
+};
 
   setKnockoutMatches((prev) => ({
     ...prev,
