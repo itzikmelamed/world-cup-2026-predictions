@@ -413,6 +413,84 @@ async function updateKnockoutTeam(matchId, side, value) {
     [side]: value,
   };
 
+  async function updateKnockoutWinner(match, winnerTeam) {
+  if (!winnerTeam) return;
+
+  const homeTeam = getDisplayTeam(match, "home");
+  const awayTeam = getDisplayTeam(match, "away");
+
+  const loserTeam = winnerTeam === homeTeam ? awayTeam : homeTeam;
+
+  const progression = knockoutProgression[match.id];
+
+  const currentUpdated = {
+    ...(knockoutMatches[match.id] || {}),
+    winner_team: winnerTeam,
+    loser_team: loserTeam,
+  };
+
+  setKnockoutMatches((prev) => ({
+    ...prev,
+    [match.id]: currentUpdated,
+  }));
+
+  await supabase.from("knockout_matches").upsert(
+    {
+      match_id: match.id,
+      home_team: currentUpdated.home_team || null,
+      away_team: currentUpdated.away_team || null,
+      winner_team: currentUpdated.winner_team || null,
+      loser_team: currentUpdated.loser_team || null,
+    },
+    { onConflict: "match_id" }
+  );
+
+  if (!progression) return;
+
+  const nextUpdated = {
+    ...(knockoutMatches[progression.nextMatch] || {}),
+    [`${progression.side}_team`]: winnerTeam,
+  };
+
+  setKnockoutMatches((prev) => ({
+    ...prev,
+    [progression.nextMatch]: nextUpdated,
+  }));
+
+  await supabase.from("knockout_matches").upsert(
+    {
+      match_id: progression.nextMatch,
+      home_team: nextUpdated.home_team || null,
+      away_team: nextUpdated.away_team || null,
+      winner_team: nextUpdated.winner_team || null,
+      loser_team: nextUpdated.loser_team || null,
+    },
+    { onConflict: "match_id" }
+  );
+
+  if (progression.loserNextMatch && progression.loserSide) {
+    const loserNextUpdated = {
+      ...(knockoutMatches[progression.loserNextMatch] || {}),
+      [`${progression.loserSide}_team`]: loserTeam,
+    };
+
+    setKnockoutMatches((prev) => ({
+      ...prev,
+      [progression.loserNextMatch]: loserNextUpdated,
+    }));
+
+    await supabase.from("knockout_matches").upsert(
+      {
+        match_id: progression.loserNextMatch,
+        home_team: loserNextUpdated.home_team || null,
+        away_team: loserNextUpdated.away_team || null,
+        winner_team: loserNextUpdated.winner_team || null,
+        loser_team: loserNextUpdated.loser_team || null,
+      },
+      { onConflict: "match_id" }
+    );
+  }
+}
   setKnockoutMatches((prev) => ({
     ...prev,
     [matchId]: updated,
