@@ -419,14 +419,22 @@ async function updateKnockoutTeam(matchId, side, value) {
   }));
 
   const { error } = await supabase
-    .from("knockout_matches")
-    .upsert({
+  .from("knockout_matches")
+  .upsert(
+    {
       match_id: matchId,
       home_team: updated.home_team || null,
       away_team: updated.away_team || null,
       winner_team: updated.winner_team || null,
       loser_team: updated.loser_team || null,
-    });
+    },
+    { onConflict: "match_id" }
+  );
+
+if (error) {
+  console.error("Error saving knockout teams:", error);
+  alert(error.message);
+}
 
   if (error) {
     console.error("Error saving knockout teams:", error);
