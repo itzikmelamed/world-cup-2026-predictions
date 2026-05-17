@@ -405,6 +405,33 @@ async function loadAppSettings() {
   }
 );
 }
+async function updateKnockoutTeam(matchId, side, value) {
+  const existing = knockoutMatches[matchId] || {};
+
+  const updated = {
+    ...existing,
+    [side]: value,
+  };
+
+  setKnockoutMatches((prev) => ({
+    ...prev,
+    [matchId]: updated,
+  }));
+
+  const { error } = await supabase
+    .from("knockout_matches")
+    .upsert({
+      match_id: matchId,
+      home_team: updated.home_team || null,
+      away_team: updated.away_team || null,
+      winner_team: updated.winner_team || null,
+      loser_team: updated.loser_team || null,
+    });
+
+  if (error) {
+    console.error("Error saving knockout teams:", error);
+  }
+}
 async function refreshAllData() {
   await loadPlayers();
   await loadPredictions();
@@ -2382,8 +2409,41 @@ const getDisplayTeam = (match, side) => {
                   >
                     <div>
                       <div className="font-black">
-                        {match.home} נגד {match.away}
-                      </div>
+  {getDisplayTeam(match, "home")} נגד{" "}
+  {getDisplayTeam(match, "away")}
+</div>
+
+{!match.group && (
+  <div className="grid grid-cols-2 gap-2 mt-3">
+    <input
+      type="text"
+      value={knockoutMatches[match.id]?.home_team || ""}
+      onChange={(e) =>
+        updateKnockoutTeam(
+          match.id,
+          "home_team",
+          e.target.value
+        )
+      }
+      placeholder="נבחרת בית"
+      className="bg-slate-700 rounded-xl p-2 text-sm font-bold"
+    />
+
+    <input
+      type="text"
+      value={knockoutMatches[match.id]?.away_team || ""}
+      onChange={(e) =>
+        updateKnockoutTeam(
+          match.id,
+          "away_team",
+          e.target.value
+        )
+      }
+      placeholder="נבחרת חוץ"
+      className="bg-slate-700 rounded-xl p-2 text-sm font-bold"
+    />
+  </div>
+)}
                       <div className="text-slate-400 text-sm">
                         {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
                       </div>
