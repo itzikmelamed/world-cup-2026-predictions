@@ -1031,7 +1031,30 @@ correctDirections,
     total,
   };
 }
-function isMatchLocked(match, manuallyUnlockedMatches) {
+function isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches = {}) {
+  if (!match.group) {
+    const knockoutData = knockoutMatches[match.id];
+
+    const homeTeam = knockoutData?.home_team || match.home;
+    const awayTeam = knockoutData?.away_team || match.away;
+
+    const hasRealKnockoutTeams =
+      homeTeam &&
+      awayTeam &&
+      !homeTeam.includes("Winner") &&
+      !homeTeam.includes("Loser") &&
+      !homeTeam.includes("3rd") &&
+      !homeTeam.match(/^[A-L][12]$/) &&
+      !awayTeam.includes("Winner") &&
+      !awayTeam.includes("Loser") &&
+      !awayTeam.includes("3rd") &&
+      !awayTeam.match(/^[A-L][12]$/);
+
+    if (!hasRealKnockoutTeams) {
+      return true;
+    }
+  }
+
   if (manuallyUnlockedMatches.includes(match.id)) {
     return false;
   }
@@ -1040,12 +1063,10 @@ function isMatchLocked(match, manuallyUnlockedMatches) {
   const [hours, minutes] = match.time.split(":");
 
   const matchDateTime = new Date(
-  `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
-);
-
-  const lockTime = new Date(
-    matchDateTime.getTime() - 5 * 60 * 1000
+    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
   );
+
+  const lockTime = new Date(matchDateTime.getTime() - 5 * 60 * 1000);
 
   return new Date() >= lockTime;
 }
@@ -1258,7 +1279,7 @@ const filteredAllBetsMatches = matches.filter((match) => {
     (allBetsStageFilter === "groups" && match.group) ||
     (allBetsStageFilter === "knockout" && !match.group);
 
-  const locked = isMatchLocked(match, manuallyUnlockedMatches);
+  const locked = isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches);
 
   const matchesStatus =
     allBetsStatusFilter === "all" ||
@@ -1822,7 +1843,7 @@ const knockoutProgression = {
                       <tr
   key={match.id}
   className={`transition-all duration-200 hover:bg-slate-700/80 ${
-    isMatchLocked(match, manuallyUnlockedMatches)
+    isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches)
       ? "bg-red-950/30"
       : "bg-green-950/20"
   }`}
@@ -1856,7 +1877,7 @@ const knockoutProgression = {
     type="number"
     min="0"
     value={prediction.home ?? ""}
-    disabled={isMatchLocked(match, manuallyUnlockedMatches)}
+    disabled={isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches)}
     onChange={(e) =>
       updatePrediction(match.id, "home", e.target.value)
     }
@@ -1867,7 +1888,7 @@ const knockoutProgression = {
     type="number"
     min="0"
     value={prediction.away ?? ""}
-    disabled={isMatchLocked(match, manuallyUnlockedMatches)}
+    disabled={isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches)}
     onChange={(e) =>
       updatePrediction(match.id, "away", e.target.value)
     }
@@ -1887,7 +1908,7 @@ const knockoutProgression = {
   )}
 </td>
                         <td className="p-3 text-center">
-  {isMatchLocked(match, manuallyUnlockedMatches) ? (
+  {isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches) ? (
     <span className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-300 px-4 py-2 rounded-2xl text-sm font-black">
       🔒 נעול
     </span>
@@ -2083,7 +2104,7 @@ const knockoutProgression = {
     {(() => {
   const nextMatch = matches
   .filter((match) => {
-    const locked = isMatchLocked(match, manuallyUnlockedMatches);
+    const locked = isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches);
 
     if (matchCardsFilter === "open") return !locked;
     if (matchCardsFilter === "locked") return locked;
@@ -2092,7 +2113,7 @@ const knockoutProgression = {
 
     return true;
   })
-  .find((match) => !isMatchLocked(match, manuallyUnlockedMatches));
+  .find((match) => !isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches));
 
   if (!nextMatch) return null;
 
@@ -2172,7 +2193,7 @@ const knockoutProgression = {
     <div className="grid gap-4">
       {matches
   .filter((match) => {
-    const locked = isMatchLocked(match, manuallyUnlockedMatches);
+    const locked = isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches);
 
     if (matchCardsFilter === "open") return !locked;
     if (matchCardsFilter === "locked") return locked;
@@ -3088,7 +3109,7 @@ if (pts === 4.5) {
                       <tr
   key={match.id}
   className={`border-t border-slate-800 ${
-    isMatchLocked(match, manuallyUnlockedMatches)
+    isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches)
       ? "bg-red-950/20"
       : "bg-green-950/10"
   }`}
@@ -3142,7 +3163,7 @@ if (pts === 4.5) {
   </div>
 )}
 <div className="mt-2">
-  {isMatchLocked(match, manuallyUnlockedMatches) ? (
+  {isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches) ? (
     <span className="inline-flex items-center bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 rounded-full text-xs font-black">
       🔒 נעול
     </span>
