@@ -1306,6 +1306,31 @@ const getDisplayTeam = (match, side) => {
   return knockoutData.away_team || match.away;
 };
 
+const getKnockoutStatus = (match) => {
+  if (match.group) return null;
+
+  const homeTeam = getDisplayTeam(match, "home");
+  const awayTeam = getDisplayTeam(match, "away");
+
+  const isPlaceholder = (team) => {
+    const normalized = String(team || "").trim();
+    return (
+      /^(winner|loser|3rd)$/i.test(normalized) ||
+      /^[A-Z]{1,2}\d$/i.test(normalized)
+    );
+  };
+
+  if (isPlaceholder(homeTeam) || isPlaceholder(awayTeam)) {
+    return "missing";
+  }
+
+  if (knockoutMatches[match.id]?.winner_team) {
+    return "decided";
+  }
+
+  return "ready";
+};
+
 const knockoutProgression = {
   73: { nextMatch: 89, side: "home" },
   75: { nextMatch: 89, side: "away" },
@@ -2110,12 +2135,14 @@ const knockoutProgression = {
 
         const points = calculatePoints(prediction, result);
 
-       const locked = isMatchLocked(
-  match,
-  manuallyUnlockedMatches,
-  knockoutMatches,
-  results
-);
+        const locked = isMatchLocked(
+          match,
+          manuallyUnlockedMatches,
+          knockoutMatches,
+          results
+        );
+
+        const knockoutStatus = getKnockoutStatus(match);
 
         return (
           <div
@@ -2132,10 +2159,28 @@ const knockoutProgression = {
     משחק {match.id}
   </div>
 
-  <div className="flex items-center gap-2">
+  <div className="flex flex-wrap items-center gap-2">
     <div className="text-sm font-bold text-slate-400">
       {match.group ? `בית ${match.group}` : match.stage}
     </div>
+
+    {knockoutStatus && (
+      <span
+        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black ${
+          knockoutStatus === "missing"
+            ? "bg-orange-500/20 border border-orange-500/40 text-orange-300"
+            : knockoutStatus === "ready"
+            ? "bg-green-500/20 border border-green-500/40 text-green-300"
+            : "bg-yellow-400/20 border border-yellow-400/40 text-yellow-300"
+        }`}
+      >
+        {knockoutStatus === "missing"
+          ? "טרם נקבעו נבחרות"
+          : knockoutStatus === "ready"
+          ? "נבחרות הוזנו"
+          : "הוכרע"}
+      </span>
+    )}
 
     {locked ? (
       <span className="inline-flex items-center rounded-full bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 text-xs font-black">
@@ -2668,7 +2713,7 @@ const knockoutProgression = {
                       <div className="text-slate-400 text-sm">
                         {match.date} | {match.time} | {match.group ? `בית ${match.group}` : match.stage}
                       </div>
-                      <div className="mt-2">
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
   {hasResult ? (
     <span className="inline-flex items-center rounded-full bg-green-500/20 border border-green-500/40 text-green-300 px-3 py-1 text-xs font-black">
       ✓ עודכן
@@ -2676,6 +2721,23 @@ const knockoutProgression = {
   ) : (
     <span className="inline-flex items-center rounded-full bg-slate-700 border border-slate-600 text-slate-300 px-3 py-1 text-xs font-black">
       טרם עודכן
+    </span>
+  )}
+  {getKnockoutStatus(match) && (
+    <span
+      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black ${
+        getKnockoutStatus(match) === "missing"
+          ? "bg-orange-500/20 border border-orange-500/40 text-orange-300"
+          : getKnockoutStatus(match) === "ready"
+          ? "bg-green-500/20 border border-green-500/40 text-green-300"
+          : "bg-yellow-400/20 border border-yellow-400/40 text-yellow-300"
+      }`}
+    >
+      {getKnockoutStatus(match) === "missing"
+        ? "טרם נקבעו נבחרות"
+        : getKnockoutStatus(match) === "ready"
+        ? "נבחרות הוזנו"
+        : "הוכרע"}
     </span>
   )}
 </div>
