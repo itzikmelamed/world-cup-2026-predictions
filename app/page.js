@@ -671,50 +671,60 @@ showMessage("ההימור נשמר בהצלחה");
       [side]: value,
     },
   }));
+
   const updatedResult = {
-  ...(results[matchId] || { home: "", away: "" }),
-  [side]: value,
-};
+    ...(results[matchId] || { home: "", away: "" }),
+    [side]: value,
+  };
 
-const { error } = await supabase
-  .from("match_results")
-  .upsert(
-    [
+  const { error } = await supabase
+    .from("match_results")
+    .upsert(
+      [
+        {
+          match_id: matchId,
+          home_score:
+            updatedResult.home === "" ? null : Number(updatedResult.home),
+          away_score:
+            updatedResult.away === "" ? null : Number(updatedResult.away),
+        },
+      ],
       {
-        match_id: matchId,
-        home_score:
-          updatedResult.home === "" ? null : Number(updatedResult.home),
-        away_score:
-          updatedResult.away === "" ? null : Number(updatedResult.away),
-      },
-    ],
-    {
-      onConflict: "match_id",
+        onConflict: "match_id",
+      }
+    );
+
+  if (error) {
+    console.error("Error saving match result:", error);
+    showMessage("שגיאה בשמירת תוצאת המשחק", "error");
+    return;
+  }
+
+  const match = matches.find((m) => m.id === matchId);
+
+  if (
+    match &&
+    !match.group &&
+    updatedResult.home !== "" &&
+    updatedResult.home != null &&
+    updatedResult.away !== "" &&
+    updatedResult.away != null
+  ) {
+    const homeTeam = getDisplayTeam(match, "home");
+    const awayTeam = getDisplayTeam(match, "away");
+    const homeScore = Number(updatedResult.home);
+    const awayScore = Number(updatedResult.away);
+
+    if (isRealTeamName(homeTeam) && isRealTeamName(awayTeam)) {
+      if (homeScore > awayScore) {
+        await updateKnockoutWinner(match, homeTeam);
+      } else if (awayScore > homeScore) {
+        await updateKnockoutWinner(match, awayTeam);
+      }
     }
-  );
+  }
 
-if (error) {
-  console.error("Error saving match result:", error);
-  showMessage("שגיאה בשמירת תוצאת המשחק", "error");
-  return;
-}
-
-const match = matches.find((m) => m.id === matchId);
-
-if (
-  match &&
-  !match.group &&
-  updatedResult.home !== "" &&
-  updatedResult.home != null &&
-  updatedResult.away !== "" &&
-  updatedResult.away != null
-) {
-  console.error("Error saving special bonus:", error);
-  showMessage("שגיאה בשמירת הבונוס: " + error.message, "error");
-  return;
-}
-
-showMessage("הבונוס נשמר בהצלחה");
+  showMessage("תוצאת המשחק נשמרה בהצלחה");
 }
 function calculateGroupTable(groupName, matches, groups, results) {
   const teams = groups[groupName];
@@ -914,6 +924,19 @@ correctDirections,
     total,
   };
 }
+function isRealTeamName(team) {
+  if (!team) return false;
+
+  const value = String(team).trim();
+
+  if (value === "") return false;
+  if (value.includes("Winner")) return false;
+  if (value.includes("Loser")) return false;
+  if (value.includes("3rd")) return false;
+  if (/^[A-L][12]$/.test(value)) return false;
+
+  return Object.values(groups).flat().includes(value);
+}
 function isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches = {}, results = {}) {
   if (!match.group) {
     const knockoutData = knockoutMatches[match.id];
@@ -922,16 +945,7 @@ function isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches = {}, res
     const awayTeam = knockoutData?.away_team || match.away;
 
     const hasRealKnockoutTeams =
-      homeTeam &&
-      awayTeam &&
-      !homeTeam.includes("Winner") &&
-      !homeTeam.includes("Loser") &&
-      !homeTeam.includes("3rd") &&
-      !homeTeam.match(/^[A-L][12]$/) &&
-      !awayTeam.includes("Winner") &&
-      !awayTeam.includes("Loser") &&
-      !awayTeam.includes("3rd") &&
-      !awayTeam.match(/^[A-L][12]$/);
+      isRealTeamName(homeTeam) && isRealTeamName(awayTeam);
 
     const matchResult = results[match.id];
     const hasRealResult =
@@ -1312,19 +1326,16 @@ const getKnockoutStatus = (match) => {
   const homeTeam = getDisplayTeam(match, "home");
   const awayTeam = getDisplayTeam(match, "away");
 
-  const isPlaceholder = (team) => {
-    const normalized = String(team || "").trim();
-    return (
-      /^(winner|loser|3rd)$/i.test(normalized) ||
-      /^[A-Z]{1,2}\d$/i.test(normalized)
-    );
-  };
+  const hasHome = isRealTeamName(homeTeam);
+  const hasAway = isRealTeamName(awayTeam);
 
-  if (isPlaceholder(homeTeam) || isPlaceholder(awayTeam)) {
+  if (!hasHome || !hasAway) {
     return "missing";
   }
 
-  if (knockoutMatches[match.id]?.winner_team) {
+  const winnerTeam = knockoutMatches[match.id]?.winner_team;
+
+  if (winnerTeam && isRealTeamName(winnerTeam)) {
     return "decided";
   }
 
