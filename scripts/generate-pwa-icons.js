@@ -109,7 +109,7 @@ function drawLine(raw, width, height, x0, y0, x1, y1, color) {
   }
 }
 
-function writePNG(path, width, height, raw) {
+function createPNGBuffer(width, height, raw) {
   const header = Buffer.from('\x89PNG\r\n\x1a\n', 'binary');
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(width, 0);
@@ -120,13 +120,37 @@ function writePNG(path, width, height, raw) {
   ihdr[11] = 0;
   ihdr[12] = 0;
   const idat = zlib.deflateSync(raw);
-  const png = Buffer.concat([
+  return Buffer.concat([
     header,
     chunk('IHDR', ihdr),
     chunk('IDAT', idat),
     chunk('IEND', Buffer.alloc(0)),
   ]);
-  fs.writeFileSync(path, png);
+}
+
+function writePNG(path, width, height, raw) {
+  fs.writeFileSync(path, createPNGBuffer(width, height, raw));
+}
+
+function writeICO(path, width, height, raw) {
+  const pngData = createPNGBuffer(width, height, raw);
+  const header = Buffer.alloc(6);
+  header.writeUInt16LE(0, 0);
+  header.writeUInt16LE(1, 2);
+  header.writeUInt16LE(1, 4);
+
+  const entry = Buffer.alloc(16);
+  entry.writeUInt8(width >= 256 ? 0 : width, 0);
+  entry.writeUInt8(height >= 256 ? 0 : height, 1);
+  entry.writeUInt8(0, 2);
+  entry.writeUInt8(0, 3);
+  entry.writeUInt16LE(1, 4);
+  entry.writeUInt16LE(32, 6);
+  entry.writeUInt32LE(pngData.length, 8);
+  entry.writeUInt32LE(6 + 16, 12);
+
+  const ico = Buffer.concat([header, entry, pngData]);
+  fs.writeFileSync(path, ico);
 }
 
 function createIcon(width, height) {
@@ -296,4 +320,7 @@ if (!fs.existsSync('public')) {
 }
 writePNG('public/icon-192x192.png', 192, 192, createIcon(192, 192));
 writePNG('public/icon-512x512.png', 512, 512, createIcon(512, 512));
+writePNG('public/apple-touch-icon.png', 180, 180, createIcon(180, 180));
+writePNG('public/favicon.png', 64, 64, createIcon(64, 64));
+writeICO('public/favicon.ico', 64, 64, createIcon(64, 64));
 console.log('icons written');
