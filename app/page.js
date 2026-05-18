@@ -2638,6 +2638,7 @@ const knockoutProgression = {
   result.home != null &&
   result.away !== "" &&
   result.away != null;
+                const knockoutStatus = getKnockoutStatus(match);
 
                 return (
                   <div
@@ -2734,19 +2735,19 @@ const knockoutProgression = {
       טרם עודכן
     </span>
   )}
-  {getKnockoutStatus(match) && (
+  {knockoutStatus && (
     <span
       className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black ${
-        getKnockoutStatus(match) === "missing"
+        knockoutStatus === "missing"
           ? "bg-orange-500/20 border border-orange-500/40 text-orange-300"
-          : getKnockoutStatus(match) === "ready"
+          : knockoutStatus === "ready"
           ? "bg-green-500/20 border border-green-500/40 text-green-300"
           : "bg-yellow-400/20 border border-yellow-400/40 text-yellow-300"
       }`}
     >
-      {getKnockoutStatus(match) === "missing"
+      {knockoutStatus === "missing"
         ? "טרם נקבעו נבחרות"
-        : getKnockoutStatus(match) === "ready"
+        : knockoutStatus === "ready"
         ? "נבחרות הוזנו"
         : "הוכרע"}
     </span>
