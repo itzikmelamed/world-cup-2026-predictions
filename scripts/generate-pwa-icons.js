@@ -52,6 +52,14 @@ function setPixel(raw, width, height, x, y, color) {
   raw[idx + 2] = color[2];
 }
 
+function fillRect(raw, width, height, x, y, w, h, color) {
+  for (let yi = y; yi < y + h; yi++) {
+    for (let xi = x; xi < x + w; xi++) {
+      setPixel(raw, width, height, xi, yi, color);
+    }
+  }
+}
+
 function fillCircle(raw, width, height, cx, cy, radius, color) {
   const r2 = radius * radius;
   for (let dy = -radius; dy <= radius; dy++) {
@@ -61,6 +69,21 @@ function fillCircle(raw, width, height, cx, cy, radius, color) {
       setPixel(raw, width, height, cx + dx, y, color);
     }
   }
+}
+
+function fillRoundedRect(raw, width, height, x, y, w, h, radius, color) {
+  if (radius <= 0) {
+    fillRect(raw, width, height, x, y, w, h, color);
+    return;
+  }
+
+  fillRect(raw, width, height, x + radius, y, w - radius * 2, h, color);
+  fillRect(raw, width, height, x, y + radius, radius, h - radius * 2, color);
+  fillRect(raw, width, height, x + w - radius, y + radius, radius, h - radius * 2, color);
+  fillCircle(raw, width, height, x + radius, y + radius, radius, color);
+  fillCircle(raw, width, height, x + w - radius - 1, y + radius, radius, color);
+  fillCircle(raw, width, height, x + radius, y + h - radius - 1, radius, color);
+  fillCircle(raw, width, height, x + w - radius - 1, y + h - radius - 1, radius, color);
 }
 
 function drawLine(raw, width, height, x0, y0, x1, y1, color) {
@@ -86,15 +109,6 @@ function drawLine(raw, width, height, x0, y0, x1, y1, color) {
   }
 }
 
-function drawThickLine(raw, width, height, x0, y0, x1, y1, thickness, color) {
-  for (let offset = -thickness; offset <= thickness; offset++) {
-    const ox = offset;
-    const oy = offset;
-    drawLine(raw, width, height, x0 + ox, y0, x1 + ox, y1, color);
-    drawLine(raw, width, height, x0, y0 + oy, x1, y1 + oy, color);
-  }
-}
-
 function writePNG(path, width, height, raw) {
   const header = Buffer.from('\x89PNG\r\n\x1a\n', 'binary');
   const ihdr = Buffer.alloc(13);
@@ -116,31 +130,163 @@ function writePNG(path, width, height, raw) {
 }
 
 function createIcon(width, height) {
-  const bg = [15, 23, 42];
+  const bg = [9, 15, 30];
   const raw = createBuffer(width, height, bg);
   const cx = Math.floor(width / 2);
   const cy = Math.floor(height / 2);
-  const radius = Math.floor(width * 0.38);
-  const white = [245, 245, 245];
-  const black = [18, 18, 18];
-  const gold = [251, 191, 36];
+  const cupWidth = Math.floor(width * 0.36);
+  const cupHeight = Math.floor(height * 0.28);
+  const stemWidth = Math.floor(width * 0.08);
+  const stemHeight = Math.floor(height * 0.18);
+  const baseWidth = Math.floor(width * 0.42);
+  const baseHeight = Math.floor(height * 0.08);
+  const handleOffsetX = Math.floor(cupWidth * 0.55);
+  const handleRadius = Math.floor(cupHeight * 0.45);
 
-  fillCircle(raw, width, height, cx, cy, radius + 2, [12, 18, 34]);
-  fillCircle(raw, width, height, cx, cy, radius, white);
-  fillCircle(raw, width, height, cx, cy, radius - 8, [235, 235, 235]);
-  drawThickLine(raw, width, height, cx - radius + 12, cy, cx + radius - 12, cy, 3, black);
-  drawThickLine(raw, width, height, cx, cy - radius + 12, cx, cy + radius - 12, 3, black);
-  drawThickLine(raw, width, height, cx - radius + 18, cy - radius + 18, cx + radius - 18, cy + radius - 18, 3, black);
-  drawThickLine(raw, width, height, cx - radius + 18, cy + radius - 18, cx + radius - 18, cy - radius + 18, 3, black);
+  const gold = [246, 179, 0];
+  const goldDark = [176, 120, 18];
+  const goldLight = [255, 225, 110];
+  const accent = [255, 220, 90];
 
-  fillCircle(raw, width, height, cx, cy, Math.floor(radius * 0.18), black);
-  fillCircle(raw, width, height, cx, cy, Math.floor(radius * 0.12), gold);
+  fillCircle(raw, width, height, cx, cy, Math.floor(width * 0.45), [6, 16, 30]);
+  fillCircle(raw, width, height, cx, cy, Math.floor(width * 0.35), [10, 18, 34]);
 
-  fillCircle(raw, width, height, cx + Math.floor(radius * 0.55), cy - Math.floor(radius * 0.55), Math.floor(radius * 0.18), gold);
-  fillCircle(raw, width, height, cx + Math.floor(radius * 0.55), cy - Math.floor(radius * 0.55), Math.floor(radius * 0.08), black);
+  fillRoundedRect(
+    raw,
+    width,
+    height,
+    cx - Math.floor(cupWidth / 2),
+    cy - Math.floor(cupHeight * 0.92),
+    cupWidth,
+    cupHeight,
+    Math.floor(width * 0.04),
+    gold
+  );
+  fillRect(
+    raw,
+    width,
+    height,
+    cx - Math.floor(stemWidth / 2),
+    cy - Math.floor(cupHeight * 0.08),
+    stemWidth,
+    stemHeight,
+    gold
+  );
+  fillRect(
+    raw,
+    width,
+    height,
+    cx - Math.floor(baseWidth / 2),
+    cy + Math.floor(stemHeight * 0.7),
+    baseWidth,
+    baseHeight,
+    goldDark
+  );
+  fillRect(
+    raw,
+    width,
+    height,
+    cx - Math.floor(baseWidth * 0.2),
+    cy + Math.floor(stemHeight * 0.7) - Math.floor(baseHeight * 0.45),
+    Math.floor(baseWidth * 0.4),
+    Math.floor(baseHeight * 0.5),
+    gold
+  );
 
-  drawLine(raw, width, height, cx - radius + 10, cy + radius - 18, cx + radius - 10, cy - radius + 22, gold);
-  drawLine(raw, width, height, cx - radius + 14, cy + radius - 14, cx + radius - 14, cy - radius + 14, gold);
+  fillCircle(
+    raw,
+    width,
+    height,
+    cx - handleOffsetX,
+    cy - Math.floor(cupHeight * 0.24),
+    handleRadius,
+    goldDark
+  );
+  fillCircle(
+    raw,
+    width,
+    height,
+    cx + handleOffsetX,
+    cy - Math.floor(cupHeight * 0.24),
+    handleRadius,
+    goldDark
+  );
+  fillCircle(
+    raw,
+    width,
+    height,
+    cx - handleOffsetX,
+    cy - Math.floor(cupHeight * 0.24),
+    Math.floor(handleRadius * 0.7),
+    bg
+  );
+  fillCircle(
+    raw,
+    width,
+    height,
+    cx + handleOffsetX,
+    cy - Math.floor(cupHeight * 0.24),
+    Math.floor(handleRadius * 0.7),
+    bg
+  );
+
+  fillRect(
+    raw,
+    width,
+    height,
+    cx - Math.floor(cupWidth / 2) - 2,
+    cy - Math.floor(cupHeight * 0.56),
+    4,
+    Math.floor(cupHeight * 0.42),
+    gold
+  );
+  fillRect(
+    raw,
+    width,
+    height,
+    cx + Math.floor(cupWidth / 2) - 2,
+    cy - Math.floor(cupHeight * 0.56),
+    4,
+    Math.floor(cupHeight * 0.42),
+    gold
+  );
+
+  fillRoundedRect(
+    raw,
+    width,
+    height,
+    cx - Math.floor(cupWidth * 0.42),
+    cy - Math.floor(cupHeight * 0.82),
+    Math.floor(cupWidth * 0.84),
+    Math.floor(cupHeight * 0.22),
+    Math.floor(width * 0.015),
+    goldLight
+  );
+
+  drawLine(
+    raw,
+    width,
+    height,
+    cx - Math.floor(cupWidth * 0.24),
+    cy - Math.floor(cupHeight * 0.25),
+    cx + Math.floor(cupWidth * 0.24),
+    cy - Math.floor(cupHeight * 0.25),
+    accent
+  );
+  drawLine(
+    raw,
+    width,
+    height,
+    cx - Math.floor(cupWidth * 0.2),
+    cy + Math.floor(cupHeight * 0.08),
+    cx + Math.floor(cupWidth * 0.2),
+    cy + Math.floor(cupHeight * 0.08),
+    accent
+  );
+
+  fillCircle(raw, width, height, cx, cy - Math.floor(cupHeight * 0.32), Math.floor(width * 0.04), accent);
+  fillCircle(raw, width, height, cx, cy + Math.floor(cupHeight * 0.02), Math.floor(width * 0.02), accent);
+  fillCircle(raw, width, height, cx, cy + Math.floor(cupHeight * 0.14), Math.floor(width * 0.012), accent);
 
   return raw;
 }
