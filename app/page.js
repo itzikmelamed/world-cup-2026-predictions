@@ -1440,6 +1440,8 @@ const knockoutProgression = {
   },
 };
 
+  const bonusLocked = isBonusLocked(bonusManuallyUnlocked);
+
   return (
     
     <main
@@ -1909,21 +1911,21 @@ const knockoutProgression = {
         )}
                 {page === "bonus" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
-            <h2 className="text-2xl font-black mb-2">
-              הימורי בונוס - {selectedPlayer}
-            </h2>
+                <h2 className="text-2xl font-black mb-2">
+                  הימורי בונוס - {selectedPlayer}
+                </h2>
 
-            <p className="text-slate-400 mb-6">
-              בכל בית יש לבחור בדיוק 2 עולות מתוך 4 הקבוצות באותו בית.
-            </p>
-            <div
+                <p className="text-slate-400 mb-6">
+                  בכל בית יש לבחור בדיוק 2 עולות מתוך 4 הקבוצות באותו בית.
+                </p>
+                <div
   className={`mb-6 rounded-2xl p-4 font-black ${
-    isBonusLocked(bonusManuallyUnlocked)
+    bonusLocked
       ? "bg-red-500 text-white"
       : "bg-green-500 text-black"
   }`}
 >
-  {isBonusLocked(bonusManuallyUnlocked)
+  {bonusLocked
     ? "הימורי הבונוס נעולים"
     : "הימורי הבונוס פתוחים עד 11.06.2026 בשעה 17:00"}
 </div>
@@ -1950,7 +1952,7 @@ const knockoutProgression = {
                     <div className="space-y-3">
                       <select
                         value={selectedGroup[0]}
-                        disabled={isBonusLocked(bonusManuallyUnlocked)}
+                        disabled={bonusLocked}
                         onChange={(e) =>
                           updateBonusQualifier(groupName, 0, e.target.value)
                         }
@@ -1978,7 +1980,7 @@ const knockoutProgression = {
 
                       <select
                         value={selectedGroup[1]}
-                        disabled={isBonusLocked(bonusManuallyUnlocked)}
+                        disabled={bonusLocked}
                         onChange={(e) =>
                           updateBonusQualifier(groupName, 1, e.target.value)
                         }
@@ -2017,7 +2019,7 @@ const knockoutProgression = {
 
                 <select
                   value={(bonusPredictions[selectedPlayer] || {}).champion || ""}
-                  disabled={isBonusLocked(bonusManuallyUnlocked)}
+                  disabled={bonusLocked}
                   onChange={(e) => updateSpecialBonus("champion", e.target.value)}
                   className="w-full bg-slate-700 rounded-xl p-3 font-bold"
                 >
@@ -2050,7 +2052,7 @@ const knockoutProgression = {
                 <input
                   type="text"
                   value={(bonusPredictions[selectedPlayer] || {}).topScorer || ""}
-                  disabled={isBonusLocked(bonusManuallyUnlocked)}
+                  disabled={bonusLocked}
                   onChange={(e) => updateSpecialBonus("topScorer", e.target.value)}
                   placeholder="שם השחקן"
                   className="w-full bg-slate-700 rounded-xl p-3 font-bold"
