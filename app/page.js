@@ -422,11 +422,39 @@ async function upsertKnockoutMatchData(matchId, data) {
     throw error;
   }
 }
+
+async function clearKnockoutMatchResults(matchIds = []) {
+  if (!matchIds.length) return;
+
+  setResults((prev) => {
+    const next = { ...prev };
+    matchIds.forEach((id) => {
+      next[id] = { home: "", away: "" };
+    });
+    return next;
+  });
+
+  const updates = matchIds.map((match_id) => ({
+    match_id,
+    home_score: null,
+    away_score: null,
+  }));
+
+  const { error } = await supabase
+    .from("match_results")
+    .upsert(updates, { onConflict: "match_id" });
+
+  if (error) {
+    console.error("Error clearing knockout match results:", error);
+  }
+}
+
 async function cascadeKnockoutCleanup(matchId, removedTeams, stateSnapshot = {}) {
   const progression = knockoutProgression[matchId];
-  if (!progression) return {};
+  if (!progression) return { knockoutUpdates: {}, clearedResults: [] };
 
   let cleanupUpdates = {};
+  let clearedResults = [];
   const branches = [
     { nextMatch: progression.nextMatch, side: progression.side },
     { nextMatch: progression.loserNextMatch, side: progression.loserSide },
@@ -456,13 +484,23 @@ async function cascadeKnockoutCleanup(matchId, removedTeams, stateSnapshot = {})
 
     if (changed) {
       cleanupUpdates[childId] = updated;
+      if (
+        results[childId]?.home !== "" &&
+        results[childId]?.home != null &&
+        results[childId]?.away !== "" &&
+        results[childId]?.away != null
+      ) {
+        clearedResults.push(childId);
+      }
+
       const nextSnapshot = { ...stateSnapshot, ...cleanupUpdates };
       const deeper = await cascadeKnockoutCleanup(childId, removedTeams, nextSnapshot);
-      cleanupUpdates = { ...cleanupUpdates, ...deeper };
+      cleanupUpdates = { ...cleanupUpdates, ...deeper.knockoutUpdates };
+      clearedResults = [...clearedResults, ...deeper.clearedResults];
     }
   }
 
-  return cleanupUpdates;
+  return { knockoutUpdates: cleanupUpdates, clearedResults };
 }
 
 async function updateKnockoutWinner(match, winnerTeam) {
@@ -480,11 +518,11 @@ async function updateKnockoutWinner(match, winnerTeam) {
       loser_team: null,
     };
     const cleanupState = { ...knockoutMatches, [match.id]: currentUpdated };
-    const cleanupUpdates =
+    const cleanupResult =
       removedTeams.length > 0
         ? await cascadeKnockoutCleanup(match.id, removedTeams, cleanupState)
-        : {};
-    const mergedUpdates = { [match.id]: currentUpdated, ...cleanupUpdates };
+        : { knockoutUpdates: {}, clearedResults: [] };
+    const mergedUpdates = { [match.id]: currentUpdated, ...cleanupResult.knockoutUpdates };
 
     setKnockoutMatches((prev) => ({ ...prev, ...mergedUpdates }));
     await Promise.all(
@@ -492,6 +530,7 @@ async function updateKnockoutWinner(match, winnerTeam) {
         upsertKnockoutMatchData(matchId, data)
       )
     );
+    await clearKnockoutMatchResults(cleanupResult.clearedResults);
     return;
   }
 
@@ -561,17 +600,18 @@ async function updateKnockoutTeam(matchId, side, value) {
   const removedTeams = [];
   if (previousValue && previousValue !== newValue) removedTeams.push(previousValue);
 
-  const cleanupUpdates =
+  const cleanupResult =
     removedTeams.length > 0
       ? await cascadeKnockoutCleanup(matchId, removedTeams, cleanupState)
-      : {};
+      : { knockoutUpdates: {}, clearedResults: [] };
 
-  const finalUpdates = { [matchId]: updated, ...cleanupUpdates };
+  const finalUpdates = { [matchId]: updated, ...cleanupResult.knockoutUpdates };
 
   setKnockoutMatches((prev) => ({ ...prev, ...finalUpdates }));
   await Promise.all(
     Object.entries(finalUpdates).map(([mId, data]) => upsertKnockoutMatchData(mId, data))
   );
+  await clearKnockoutMatchResults(cleanupResult.clearedResults);
 }
 async function refreshAllData() {
   await loadPlayers();
