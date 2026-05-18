@@ -1315,6 +1315,29 @@ const scrollToNextOpenMatch = () => {
     });
   }
 };
+const scrollToNextIncompleteAdminMatch = () => {
+  const nextMatch = matches.find((match) => {
+    const result = results[match.id] || { home: "", away: "" };
+    return (
+      result.home === "" ||
+      result.home == null ||
+      result.away === "" ||
+      result.away == null
+    );
+  });
+
+  if (!nextMatch) {
+    showMessage("כל המשחקים עודכנו");
+    return;
+  }
+
+  const el = document.getElementById(`match-card-${nextMatch.id}`);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    showMessage("כל המשחקים עודכנו");
+  }
+};
 const updatedResultsCount = Object.values(results).filter(
   (result) =>
     result.home !== "" &&
@@ -2592,8 +2615,18 @@ const knockoutProgression = {
             <p className="text-slate-400 mb-4">
               כאן המנהל מזין את תוצאת המשחק בפועל. בשלב נוקאאוט מזינים תוצאת 90 דקות בלבד.
             </p>
-            <div className="mb-4 inline-flex items-center rounded-2xl bg-slate-800 border border-slate-700 px-4 py-2 font-black text-slate-300">
-  עודכנו {updatedResultsCount} מתוך {matches.length} משחקים
+            <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div className="inline-flex items-center rounded-2xl bg-slate-800 border border-slate-700 px-4 py-2 font-black text-slate-300">
+    עודכנו {updatedResultsCount} מתוך {matches.length} משחקים
+  </div>
+
+  <button
+    type="button"
+    onClick={scrollToNextIncompleteAdminMatch}
+    className="whitespace-nowrap px-4 py-2 rounded-2xl bg-yellow-400 text-slate-950 font-black transition-all hover:bg-yellow-300"
+  >
+    עבור למשחק הקרוב
+  </button>
 </div>
 <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
   {[
@@ -2755,6 +2788,7 @@ const knockoutProgression = {
 
                 return (
                   <div
+                    id={`match-card-${match.id}`}
                     key={match.id}
                     className={`rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border ${
   hasResult
@@ -3517,10 +3551,11 @@ if (pts === 4.5) {
                           <th className="text-right py-2">#</th>
                           <th className="text-right py-2">נבחרת</th>
                           <th className="text-center py-2">מש'</th>
-                          <th className="text-center py-2">ז'</th>
-                          <th className="text-center py-2">ת'</th>
-                          <th className="text-center py-2">ה'</th>
+                          <th className="text-center py-2">נצ'</th>
+                          <th className="text-center py-2">תיק'</th>
                           <th className="text-center py-2">הפ'</th>
+                          <th className="text-center py-2">שז</th>
+                          <th className="text-center py-2">שח</th>
                           <th className="text-center py-2">נק'</th>
                         </tr>
                       </thead>
@@ -3564,19 +3599,23 @@ if (pts === 4.5) {
                             </td>
 
                             <td className="text-center">
+                              {team.wins}
+                            </td>
+
+                            <td className="text-center">
+                              {team.draws}
+                            </td>
+
+                            <td className="text-center">
+                              {team.losses}
+                            </td>
+
+                            <td className="text-center">
                               {team.gf}
                             </td>
 
                             <td className="text-center">
                               {team.ga}
-                            </td>
-
-                            <td className="text-center">
-                              {team.gd}
-                            </td>
-
-                            <td className="text-center">
-                              {team.wins}
                             </td>
 
                             <td className="text-center">
