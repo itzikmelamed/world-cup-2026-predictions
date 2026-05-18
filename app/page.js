@@ -338,6 +338,77 @@ async function loadBonusPredictions() {
   setBonusPredictions(formatted);
 }
 
+const buildGroupWinnersPayload = (playerBonus) => {
+  return Object.keys(groups).reduce((payload, groupName) => {
+    payload[groupName] = playerBonus[groupName] || ["", ""];
+    return payload;
+  }, {});
+};
+
+async function updateBonusQualifier(groupName, index, value) {
+  if (!selectedPlayer) return;
+
+  const currentBonus = bonusPredictions[selectedPlayer] || {};
+  const currentGroup = currentBonus[groupName] || ["", ""];
+  const nextGroup = [...currentGroup];
+  nextGroup[index] = value;
+
+  const updatedBonus = {
+    ...currentBonus,
+    [groupName]: nextGroup,
+  };
+
+  setBonusPredictions((prev) => ({
+    ...prev,
+    [selectedPlayer]: updatedBonus,
+  }));
+
+  const groupWinners = buildGroupWinnersPayload(updatedBonus);
+  const { error } = await supabase.from("bonus_predictions").upsert(
+    {
+      player_name: selectedPlayer,
+      champion: updatedBonus.champion || null,
+      top_scorer: updatedBonus.topScorer || null,
+      group_winners: groupWinners,
+    },
+    { onConflict: "player_name" }
+  );
+
+  if (error) {
+    console.error("Error saving bonus qualifier:", error);
+  }
+}
+
+async function updateSpecialBonus(field, value) {
+  if (!selectedPlayer) return;
+
+  const currentBonus = bonusPredictions[selectedPlayer] || {};
+  const updatedBonus = {
+    ...currentBonus,
+    [field === "champion" ? "champion" : "topScorer"]: value,
+  };
+
+  setBonusPredictions((prev) => ({
+    ...prev,
+    [selectedPlayer]: updatedBonus,
+  }));
+
+  const groupWinners = buildGroupWinnersPayload(updatedBonus);
+  const { error } = await supabase.from("bonus_predictions").upsert(
+    {
+      player_name: selectedPlayer,
+      champion: updatedBonus.champion || null,
+      top_scorer: updatedBonus.topScorer || null,
+      group_winners: groupWinners,
+    },
+    { onConflict: "player_name" }
+  );
+
+  if (error) {
+    console.error("Error saving special bonus:", error);
+  }
+}
+
 async function loadKnockoutMatches() {
   const { data, error } = await supabase
     .from("knockout_matches")
