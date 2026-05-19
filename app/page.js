@@ -653,6 +653,16 @@ async function updateKnockoutWinner(match, winnerTeam) {
 }
 
 async function updatePlayerActive(playerId, isActive) {
+  const confirmMessage = isActive
+    ? "האם אתה בטוח שברצונך להחזיר את המשתמש?"
+    : "האם אתה בטוח שברצונך להשבית את המשתמש?";
+
+  const confirmed = window.confirm(confirmMessage);
+
+  if (!confirmed) {
+    return;
+  }
+
   const { error } = await supabase
     .from("players")
     .update({ is_active: isActive })
