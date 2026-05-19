@@ -2620,6 +2620,57 @@ const knockoutProgression = {
             </div>
           </section>
         )}
+        {page === "playersAdmin" && role === "admin" && (
+  <section className="space-y-6">
+    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6">
+      <h2 className="text-2xl font-black text-yellow-300 mb-4">
+        ניהול משתתפים
+      </h2>
+
+      <div className="overflow-auto rounded-2xl border border-slate-800">
+        <table className="min-w-full text-sm">
+          <thead className="bg-slate-800 text-slate-200">
+            <tr>
+              <th className="px-4 py-3 text-right">שם</th>
+              <th className="px-4 py-3 text-right">אימייל</th>
+              <th className="px-4 py-3 text-right">תפקיד</th>
+              <th className="px-4 py-3 text-right">סטטוס</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {dbPlayers.map((player) => (
+              <tr
+                key={player.id}
+                className="border-t border-slate-800"
+              >
+                <td className="px-4 py-3 font-bold">
+                  {player.name}
+                </td>
+
+                <td className="px-4 py-3 text-slate-300">
+                  {player.email}
+                </td>
+
+                <td className="px-4 py-3">
+                  {player.role === "admin"
+                    ? "אדמין"
+                    : "משתתף"}
+                </td>
+
+                <td className="px-4 py-3">
+                  {player.is_active
+                    ? "פעיל"
+                    : "לא פעיל"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+)}
 
         {page === "admin" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
