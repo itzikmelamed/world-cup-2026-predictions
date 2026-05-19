@@ -2769,20 +2769,26 @@ console.log("inactive check", {
                 </td>
 
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      updatePlayerActive(player.id, !player.is_active)
-                    }
-                    className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
-                      player.is_active
-                        ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
-                        : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
-                    }`}
-                  >
-                    {player.is_active ? "השבת" : "החזר"}
-                  </button>
-                </td>
+  {player.role === "admin" ? (
+    <span className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-black border bg-yellow-500/15 text-yellow-300 border-yellow-500/40">
+      אדמין מוגן
+    </span>
+  ) : (
+    <button
+      type="button"
+      onClick={() =>
+        updatePlayerActive(player.id, !player.is_active)
+      }
+      className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
+        player.is_active
+          ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
+          : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+      }`}
+    >
+      {player.is_active ? "השבת" : "החזר"}
+    </button>
+  )}
+</td>
               </tr>
             ))}
           </tbody>
