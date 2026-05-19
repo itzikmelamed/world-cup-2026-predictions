@@ -22,37 +22,15 @@ export const metadata = {
     statusBarStyle: "black-translucent",
     title: "World Cup Predictor 2026",
   },
-  icons: [
-    {
-      rel: "icon",
-      url: "/favicon.ico",
-      type: "image/x-icon",
-      sizes: "48x48",
-    },
-    {
-      rel: "icon",
-      url: "/favicon.png",
-      type: "image/png",
-      sizes: "any",
-    },
-    {
-      rel: "icon",
-      url: "/icon-192x192.png",
-      type: "image/png",
-      sizes: "192x192",
-    },
-    {
-      rel: "icon",
-      url: "/icon-512x512.png",
-      type: "image/png",
-      sizes: "512x512",
-    },
-    {
-      rel: "apple-touch-icon",
-      url: "/apple-touch-icon.png",
-      sizes: "180x180",
-    },
-  ],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48", type: "image/x-icon" },
+      { url: "/favicon.png", sizes: "any", type: "image/png" },
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export const viewport = {
