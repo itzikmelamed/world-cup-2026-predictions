@@ -231,7 +231,7 @@ const [matchCardsFilter, setMatchCardsFilter] = useState("all");
  const currentPlayer = dbPlayers.find(
   (player) => player.email === authUser?.email
 );
- const loggedInPlayer = activePlayers.find(
+ const loggedInPlayer = dbPlayers.find(
   (player) => player.email === authUser?.email
 );
 useEffect(() => {
@@ -1562,7 +1562,7 @@ const knockoutProgression = {
 
   const bonusLocked = isBonusLocked(bonusManuallyUnlocked);
 
-  if (authUser && currentPlayer && currentPlayer.is_active === false) {
+  if (authUser && loggedInPlayer && loggedInPlayer.is_active === false) {
   return (
     <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-6 flex items-center justify-center">
       <div className="max-w-md w-full bg-slate-900 border border-red-500/40 rounded-3xl p-6 text-center">
