@@ -25,8 +25,8 @@ const players = [
 ];
 
 const matches = [
-  { id: 1, date: "19.05.2026", time: "16:34", stage: "בתים", group: "A", home: "Mexico", away: "South Africa" },
-  { id: 2, date: "19.05.2026", time: "16:37", stage: "בתים", group: "A", home: "South Korea", away: "Czech Republic" },
+  { id: 1, date: "11.06.2026", time: "22:00", stage: "בתים", group: "A", home: "Mexico", away: "South Africa" },
+  { id: 2, date: "12.06.2026", time: "05:00", stage: "בתים", group: "A", home: "South Korea", away: "Czech Republic" },
   { id: 3, date: "12.06.2026", time: "22:00", stage: "בתים", group: "B", home: "Canada", away: "Bosnia & Herzegovina" },
   { id: 4, date: "13.06.2026", time: "04:00", stage: "בתים", group: "D", home: "USA", away: "Paraguay" },
   { id: 5, date: "13.06.2026", time: "22:00", stage: "בתים", group: "B", home: "Qatar", away: "Switzerland" },
