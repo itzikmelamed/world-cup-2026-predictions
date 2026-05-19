@@ -15,6 +15,44 @@ export const metadata = {
   title: "World Cup Predictor 2026",
   description:
     "World Cup Predictor 2026 - live results, standings, and knockout predictions.",
+  applicationName: "World Cup Predictor 2026",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "World Cup Predictor 2026",
+  },
+  icons: [
+    {
+      rel: "icon",
+      url: "/favicon.ico",
+      type: "image/x-icon",
+      sizes: "48x48",
+    },
+    {
+      rel: "icon",
+      url: "/favicon.png",
+      type: "image/png",
+      sizes: "any",
+    },
+    {
+      rel: "icon",
+      url: "/icon-192x192.png",
+      type: "image/png",
+      sizes: "192x192",
+    },
+    {
+      rel: "icon",
+      url: "/icon-512x512.png",
+      type: "image/png",
+      sizes: "512x512",
+    },
+    {
+      rel: "apple-touch-icon",
+      url: "/apple-touch-icon.png",
+      sizes: "180x180",
+    },
+  ],
 };
 
 export const viewport = {
