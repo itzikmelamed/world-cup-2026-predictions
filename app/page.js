@@ -2626,6 +2626,37 @@ const knockoutProgression = {
       <h2 className="text-2xl font-black text-yellow-300 mb-4">
         ניהול משתתפים
       </h2>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+  <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
+    <div className="text-slate-400 text-sm font-bold mb-1">
+      משתתפים פעילים
+    </div>
+
+    <div className="text-3xl font-black text-green-400">
+      {dbPlayers.filter((p) => p.is_active).length}
+    </div>
+  </div>
+
+  <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
+    <div className="text-slate-400 text-sm font-bold mb-1">
+      משתתפים לא פעילים
+    </div>
+
+    <div className="text-3xl font-black text-red-400">
+      {dbPlayers.filter((p) => !p.is_active).length}
+    </div>
+  </div>
+
+  <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
+    <div className="text-slate-400 text-sm font-bold mb-1">
+      אדמינים
+    </div>
+
+    <div className="text-3xl font-black text-yellow-300">
+      {dbPlayers.filter((p) => p.role === "admin").length}
+    </div>
+  </div>
+</div>
 
       <div className="overflow-auto rounded-2xl border border-slate-800">
         <table className="min-w-full text-sm">
