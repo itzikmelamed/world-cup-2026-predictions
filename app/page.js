@@ -2684,37 +2684,29 @@ console.log("inactive check", {
       <h2 className="text-2xl font-black text-yellow-300 mb-4">
         ניהול משתתפים
       </h2>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-  <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
-    <div className="text-slate-400 text-sm font-bold mb-1">
-      משתתפים פעילים
-    </div>
+        <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
+          <div className="text-slate-400 text-sm font-bold mb-1">משתתפים פעילים</div>
+          <div className="text-3xl font-black text-green-400">
+            {dbPlayers.filter((p) => p.is_active).length}
+          </div>
+        </div>
 
-    <div className="text-3xl font-black text-green-400">
-      {dbPlayers.filter((p) => p.is_active).length}
-    </div>
-  </div>
+        <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
+          <div className="text-slate-400 text-sm font-bold mb-1">משתתפים לא פעילים</div>
+          <div className="text-3xl font-black text-red-400">
+            {dbPlayers.filter((p) => !p.is_active).length}
+          </div>
+        </div>
 
-  <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
-    <div className="text-slate-400 text-sm font-bold mb-1">
-      משתתפים לא פעילים
-    </div>
-
-    <div className="text-3xl font-black text-red-400">
-      {dbPlayers.filter((p) => !p.is_active).length}
-    </div>
-  </div>
-
-  <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
-    <div className="text-slate-400 text-sm font-bold mb-1">
-      אדמינים
-    </div>
-
-    <div className="text-3xl font-black text-yellow-300">
-      {dbPlayers.filter((p) => p.role === "admin").length}
-    </div>
-  </div>
-</div>
+        <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
+          <div className="text-slate-400 text-sm font-bold mb-1">אדמינים</div>
+          <div className="text-3xl font-black text-yellow-300">
+            {dbPlayers.filter((p) => p.role === "admin").length}
+          </div>
+        </div>
+      </div>
 
       <div className="overflow-auto rounded-2xl border border-slate-800">
         <table className="min-w-full text-sm">
@@ -2724,7 +2716,7 @@ console.log("inactive check", {
               <th className="px-4 py-3 text-right">אימייל</th>
               <th className="px-4 py-3 text-right">תפקיד</th>
               <th className="px-4 py-3 text-right">סטטוס</th>
-<th className="px-4 py-3 text-right">פעולה</th>
+              <th className="px-4 py-3 text-right">פעולה</th>
             </tr>
           </thead>
 
@@ -2732,42 +2724,55 @@ console.log("inactive check", {
             {dbPlayers.map((player) => (
               <tr
                 key={player.id}
-                className="border-t border-slate-800"
+                className="border-t border-slate-800 hover:bg-slate-800/50 transition"
               >
-                <td className="px-4 py-3 font-bold">
+                <td className="px-4 py-3 font-black text-white whitespace-nowrap">
                   {player.name}
                 </td>
 
-                <td className="px-4 py-3 text-slate-300">
+                <td className="px-4 py-3 text-slate-300 whitespace-nowrap">
                   {player.email}
                 </td>
 
-                <td className="px-4 py-3">
-                  {player.role === "admin"
-                    ? "אדמין"
-                    : "משתתף"}
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black border ${
+                      player.role === "admin"
+                        ? "bg-yellow-500/15 text-yellow-300 border-yellow-500/40"
+                        : "bg-sky-500/15 text-sky-300 border-sky-500/40"
+                    }`}
+                  >
+                    {player.role === "admin" ? "אדמין" : "משתתף"}
+                  </span>
                 </td>
 
-                <td className="px-4 py-3">
-                  {player.is_active
-                    ? "פעיל"
-                    : "לא פעיל"}
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black border ${
+                      player.is_active
+                        ? "bg-green-500/15 text-green-300 border-green-500/40"
+                        : "bg-red-500/15 text-red-300 border-red-500/40"
+                    }`}
+                  >
+                    {player.is_active ? "פעיל" : "לא פעיל"}
+                  </span>
                 </td>
-                <td className="px-4 py-3">
-  <button
-    type="button"
-    onClick={() =>
-      updatePlayerActive(player.id, !player.is_active)
-    }
-    className={`px-4 py-2 rounded-xl font-black text-sm ${
-      player.is_active
-        ? "bg-red-500/20 border border-red-500/40 text-red-300"
-        : "bg-green-500/20 border border-green-500/40 text-green-300"
-    }`}
-  >
-    {player.is_active ? "השבת" : "החזר"}
-  </button>
-</td>
+
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updatePlayerActive(player.id, !player.is_active)
+                    }
+                    className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
+                      player.is_active
+                        ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
+                        : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+                    }`}
+                  >
+                    {player.is_active ? "השבת" : "החזר"}
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -2776,7 +2781,6 @@ console.log("inactive check", {
     </div>
   </section>
 )}
-
         {page === "admin" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
             <h2 className="text-2xl font-black mb-4">ניהול תוצאות אמת</h2>
