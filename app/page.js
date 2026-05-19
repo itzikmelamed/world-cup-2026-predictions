@@ -1823,6 +1823,18 @@ const knockoutProgression = {
     ניהול תוצאות
   </button>
 )}
+{role === "admin" && (
+  <button
+    onClick={() => setPage("playersAdmin")}
+    className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
+      page === "playersAdmin"
+        ? "bg-yellow-400 text-slate-950"
+        : "bg-slate-800 hover:bg-slate-700 text-slate-200"
+    }`}
+  >
+    ניהול משתתפים
+  </button>
+)}
 <button
   onClick={() => setPage("leaderboard")}
   className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
