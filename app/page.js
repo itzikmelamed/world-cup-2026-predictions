@@ -649,6 +649,29 @@ async function updateKnockoutWinner(match, winnerTeam) {
   );
 }
 
+async function updatePlayerActive(playerId, isActive) {
+  const { error } = await supabase
+    .from("players")
+    .update({ is_active: isActive })
+    .eq("id", playerId);
+
+  if (error) {
+    console.error("Error updating player active status:", error);
+    showMessage("שגיאה בעדכון סטטוס המשתתף", "error");
+    return;
+  }
+
+  setDbPlayers((prev) =>
+    prev.map((player) =>
+      player.id === playerId
+        ? { ...player, is_active: isActive }
+        : player
+    )
+  );
+
+  showMessage("סטטוס המשתתף עודכן בהצלחה");
+}
+
 async function updateKnockoutTeam(matchId, side, value) {
   const existing = knockoutMatches[matchId] || {};
 
