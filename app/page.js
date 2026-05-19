@@ -2689,6 +2689,7 @@ const knockoutProgression = {
               <th className="px-4 py-3 text-right">אימייל</th>
               <th className="px-4 py-3 text-right">תפקיד</th>
               <th className="px-4 py-3 text-right">סטטוס</th>
+<th className="px-4 py-3 text-right">פעולה</th>
             </tr>
           </thead>
 
@@ -2717,6 +2718,21 @@ const knockoutProgression = {
                     ? "פעיל"
                     : "לא פעיל"}
                 </td>
+                <td className="px-4 py-3">
+  <button
+    type="button"
+    onClick={() =>
+      updatePlayerActive(player.id, !player.is_active)
+    }
+    className={`px-4 py-2 rounded-xl font-black text-sm ${
+      player.is_active
+        ? "bg-red-500/20 border border-red-500/40 text-red-300"
+        : "bg-green-500/20 border border-green-500/40 text-green-300"
+    }`}
+  >
+    {player.is_active ? "השבת" : "החזר"}
+  </button>
+</td>
               </tr>
             ))}
           </tbody>
