@@ -1561,7 +1561,11 @@ const knockoutProgression = {
 };
 
   const bonusLocked = isBonusLocked(bonusManuallyUnlocked);
-
+console.log("inactive check", {
+  authEmail: authUser?.email,
+  loggedInPlayer,
+  isActive: loggedInPlayer?.is_active,
+});
   if (authUser && loggedInPlayer && loggedInPlayer.is_active === false) {
   return (
     <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-6 flex items-center justify-center">
