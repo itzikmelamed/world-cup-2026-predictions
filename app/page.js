@@ -228,6 +228,9 @@ const [allBetsStatusFilter, setAllBetsStatusFilter] = useState("all");
 const [allBetsSearch, setAllBetsSearch] = useState("");
 const [matchCardsFilter, setMatchCardsFilter] = useState("all");
  const activePlayers = dbPlayers.filter((player) => player.is_active);
+ const currentPlayer = dbPlayers.find(
+  (player) => player.email === authUser?.email
+);
  const loggedInPlayer = activePlayers.find(
   (player) => player.email === authUser?.email
 );
@@ -1559,6 +1562,34 @@ const knockoutProgression = {
 
   const bonusLocked = isBonusLocked(bonusManuallyUnlocked);
 
+  if (authUser && currentPlayer && currentPlayer.is_active === false) {
+  return (
+    <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-6 flex items-center justify-center">
+      <div className="max-w-md w-full bg-slate-900 border border-red-500/40 rounded-3xl p-6 text-center">
+        <h1 className="text-2xl font-black text-red-300 mb-3">
+          החשבון שלך הושבת
+        </h1>
+
+        <p className="text-slate-300 font-bold mb-6">
+          אין לך כרגע גישה למערכת. יש לפנות למנהל המשחק.
+        </p>
+
+        <button
+          type="button"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            setAuthUser(null);
+            setSelectedPlayer("");
+            setRole("");
+          }}
+          className="bg-red-500 hover:bg-red-400 text-white font-black px-5 py-3 rounded-2xl"
+        >
+          התנתק
+        </button>
+      </div>
+    </main>
+  );
+}
   return (
     
     <main
