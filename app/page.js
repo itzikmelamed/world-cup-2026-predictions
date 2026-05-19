@@ -2731,7 +2731,17 @@ console.log("inactive check", {
           </thead>
 
           <tbody>
-            {dbPlayers.map((player) => (
+            {[...dbPlayers]
+  .sort((a, b) => {
+    if (a.role === "admin" && b.role !== "admin") return -1;
+    if (a.role !== "admin" && b.role === "admin") return 1;
+
+    if (a.is_active && !b.is_active) return -1;
+    if (!a.is_active && b.is_active) return 1;
+
+    return a.name.localeCompare(b.name, "he");
+  })
+  .map((player) => (
               <tr
                 key={player.id}
                 className="border-t border-slate-800 hover:bg-slate-800/50 transition"
