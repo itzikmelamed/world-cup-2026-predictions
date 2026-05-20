@@ -269,8 +269,18 @@ useEffect(() => {
   );
 
   if (matchingPlayer) {
-    setSelectedPlayer(matchingPlayer.name);
-    setRole(matchingPlayer.role || "player");
+    if (!matchingPlayer.is_approved) {
+      setSelectedPlayer("");
+      setRole("pending");
+      showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+    } else if (!matchingPlayer.is_active) {
+      setSelectedPlayer("");
+      setRole("blocked");
+      showMessage("החשבון שלך הושבת", "error");
+    } else {
+      setSelectedPlayer(matchingPlayer.role === "viewer" ? "" : matchingPlayer.name);
+      setRole(matchingPlayer.role || "player");
+    }
   }
 }, [authUser, dbPlayers]);
       useEffect(() => {
@@ -355,6 +365,15 @@ const buildGroupWinnersPayload = (playerBonus) => {
 
 async function updateBonusQualifier(groupName, index, value) {
   if (!selectedPlayer) return;
+  const currentLoggedIn = dbPlayers.find((p) => p.email === authUser?.email);
+  if (!currentLoggedIn || !currentLoggedIn.is_approved) {
+    showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+    return;
+  }
+  if (currentLoggedIn.role === "viewer") {
+    showMessage("אין לך הרשאה לשמור ניחושי בונוס", "error");
+    return;
+  }
   const { data: latestSettings, error: settingsError } = await supabase
   .from("app_settings")
   .select("bonus_manually_unlocked")
@@ -413,6 +432,15 @@ if (isBonusLocked(latestBonusManuallyUnlocked)) {
 
 async function updateSpecialBonus(field, value) {
   if (!selectedPlayer) return;
+  const currentLoggedIn = dbPlayers.find((p) => p.email === authUser?.email);
+  if (!currentLoggedIn || !currentLoggedIn.is_approved) {
+    showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+    return;
+  }
+  if (currentLoggedIn.role === "viewer") {
+    showMessage("אין לך הרשאה לשמור ניחושי בונוס", "error");
+    return;
+  }
 
   const { data: latestSettings, error: settingsError } = await supabase
   .from("app_settings")
@@ -930,6 +958,16 @@ useEffect(() => {
   setSavingPrediction(true);
 
   try {
+      const currentLoggedIn = dbPlayers.find((p) => p.email === authUser?.email);
+      if (!currentLoggedIn || !currentLoggedIn.is_approved) {
+        showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+        return;
+      }
+
+      if (currentLoggedIn.role === "viewer") {
+        showMessage("אין לך הרשאה להגיש הימורים", "error");
+        return;
+      }
     const { data: latestSettings, error: settingsError } = await supabase
       .from("app_settings")
       .select("manually_unlocked_matches")
@@ -1416,6 +1454,7 @@ async function signUp() {
       email: authEmail,
       role: "player",
       is_active: true,
+      is_approved: false,
     },
   ])
   .select()
@@ -1439,8 +1478,18 @@ const freshPlayer = await supabase
   .single();
 
 if (freshPlayer.data) {
-  setSelectedPlayer(freshPlayer.data.name);
-  setRole(freshPlayer.data.role || "player");
+  if (!freshPlayer.data.is_approved) {
+    setSelectedPlayer("");
+    setRole("pending");
+    showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+  } else if (!freshPlayer.data.is_active) {
+    setSelectedPlayer("");
+    setRole("blocked");
+    showMessage("החשבון שלך הושבת", "error");
+  } else {
+    setSelectedPlayer(freshPlayer.data.role === "viewer" ? "" : freshPlayer.data.name);
+    setRole(freshPlayer.data.role || "player");
+  }
 }
 await refreshAllData();
 
