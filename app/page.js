@@ -825,6 +825,31 @@ async function approvePlayer(playerId, newRole) {
   );
 }
 
+async function updatePlayerRole(playerId, newRole) {
+  const { error } = await supabase
+    .from("players")
+    .update({ role: newRole })
+    .eq("id", playerId);
+
+  if (error) {
+    console.error("Error updating player role:", error);
+    showMessage("שגיאה בעדכון תפקיד המשתמש", "error");
+    return;
+  }
+
+  setDbPlayers((prev) =>
+    prev.map((player) =>
+      player.id === playerId ? { ...player, role: newRole } : player
+    )
+  );
+
+  showMessage(
+    newRole === "viewer"
+      ? "המשתמש הוגדר כצפיין"
+      : "המשתמש הוגדר כמשתתף"
+  );
+}
+
 async function updateKnockoutTeam(matchId, side, value) {
   const existing = knockoutMatches[matchId] || {};
 
@@ -3073,19 +3098,34 @@ console.log("inactive check", {
     </button>
   </>
 ) : (
-  <button
-    type="button"
-    onClick={() =>
-      updatePlayerActive(player.id, !player.is_active)
-    }
-    className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
-      player.is_active
-        ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
-        : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
-    }`}
-  >
-    {player.is_active ? "השבת" : "החזר"}
-  </button>
+  <>
+    <button
+      type="button"
+      onClick={() =>
+        updatePlayerRole(
+          player.id,
+          player.role === "viewer" ? "player" : "viewer"
+        )
+      }
+      className="px-4 py-2 rounded-xl font-black text-sm border bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30"
+    >
+      {player.role === "viewer" ? "הפוך למשתתף" : "הפוך לצפיין"}
+    </button>
+
+    <button
+      type="button"
+      onClick={() =>
+        updatePlayerActive(player.id, !player.is_active)
+      }
+      className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
+        player.is_active
+          ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
+          : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+      }`}
+    >
+      {player.is_active ? "השבת" : "החזר"}
+    </button>
+  </>
 )}
       </>
     )}
