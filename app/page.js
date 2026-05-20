@@ -711,48 +711,6 @@ async function updatePlayerActive(playerId, isActive) {
   if (!confirmed) {
     return;
   }
-  async function updatePlayerName(player, newName) {
-  const cleanName = newName.trim();
-
-  if (!cleanName) {
-    showMessage("שם המשתתף לא יכול להיות ריק", "error");
-    return;
-  }
-
-  const oldName = player.name;
-
-  const { error: playerError } = await supabase
-    .from("players")
-    .update({ name: cleanName })
-    .eq("id", player.id);
-
-  if (playerError) {
-    console.error("Error updating player name:", playerError);
-    showMessage("שגיאה בעדכון שם המשתתף", "error");
-    return;
-  }
-
-  await supabase
-    .from("predictions")
-    .update({ player_name: cleanName })
-    .eq("player_name", oldName);
-
-  await supabase
-    .from("bonus_predictions")
-    .update({ player_name: cleanName })
-    .eq("player_name", oldName);
-
-  setDbPlayers((prev) =>
-    prev.map((p) =>
-      p.id === player.id ? { ...p, name: cleanName } : p
-    )
-  );
-
-  setEditingPlayerId(null);
-  setEditingPlayerName("");
-
-  showMessage("שם המשתתף עודכן בהצלחה");
-}
 
   const { error } = await supabase
     .from("players")
@@ -774,6 +732,61 @@ async function updatePlayerActive(playerId, isActive) {
   );
 
   showMessage("סטטוס המשתתף עודכן בהצלחה");
+}
+
+async function updatePlayerName(player, newName) {
+  const cleanName = newName.trim();
+
+  if (!cleanName) {
+    showMessage("שם המשתתף לא יכול להיות ריק", "error");
+    return;
+  }
+
+  const oldName = player.name;
+
+  const { error: playerError } = await supabase
+    .from("players")
+    .update({ name: cleanName })
+    .eq("id", player.id);
+
+  if (playerError) {
+    console.error("Error updating player name:", playerError);
+    showMessage("שגיאה בעדכון שם המשתתף", "error");
+    return;
+  }
+
+  const { error: predictionsError } = await supabase
+    .from("predictions")
+    .update({ player_name: cleanName })
+    .eq("player_name", oldName);
+
+  if (predictionsError) {
+    console.error("Error updating predictions player name:", predictionsError);
+    showMessage("שם המשתתף עודכן, אך הייתה שגיאה בעדכון ההימורים", "error");
+    return;
+  }
+
+  const { error: bonusError } = await supabase
+    .from("bonus_predictions")
+    .update({ player_name: cleanName })
+    .eq("player_name", oldName);
+
+  if (bonusError) {
+    console.error("Error updating bonus predictions player name:", bonusError);
+    showMessage("שם המשתתף עודכן, אך הייתה שגיאה בעדכון הימורי הבונוס", "error");
+    return;
+  }
+
+  setDbPlayers((prev) =>
+    prev.map((p) =>
+      p.id === player.id ? { ...p, name: cleanName } : p
+    )
+  );
+
+  setEditingPlayerId(null);
+  setEditingPlayerName("");
+
+  showMessage("שם המשתתף עודכן בהצלחה");
 }
 
 async function updateKnockoutTeam(matchId, side, value) {
