@@ -752,11 +752,35 @@ useEffect(() => {
   localStorage.setItem("currentPage", page);
 }, [page]);
   async function updatePrediction(matchId, side, value) {
-  const match = matches.find((m) => m.id === matchId);
-  if (match && isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)) {
-    showMessage("לא ניתן לשמור, המשחק נעול או קרוב להתחלה", "error");
-    return;
-  }
+  const { data: latestSettings, error: settingsError } = await supabase
+  .from("app_settings")
+  .select("manually_unlocked_matches")
+  .eq("id", 1)
+  .single();
+
+if (settingsError) {
+  console.error("Error checking latest app settings:", settingsError);
+  showMessage("שגיאה בבדיקת סטטוס נעילה", "error");
+  return;
+}
+
+const latestManuallyUnlockedMatches =
+  latestSettings?.manually_unlocked_matches || [];
+
+const match = matches.find((m) => m.id === matchId);
+
+if (
+  match &&
+  isMatchLocked(
+    match,
+    latestManuallyUnlockedMatches,
+    knockoutMatches,
+    results
+  )
+) {
+  showMessage("לא ניתן לשמור, המשחק נעול או קרוב להתחלה", "error");
+  return;
+}
 
   const currentPrediction =
     predictions[selectedPlayer]?.[matchId] || {
