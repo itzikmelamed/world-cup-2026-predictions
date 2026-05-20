@@ -350,6 +350,30 @@ const buildGroupWinnersPayload = (playerBonus) => {
 
 async function updateBonusQualifier(groupName, index, value) {
   if (!selectedPlayer) return;
+  const { data: latestSettings, error: settingsError } = await supabase
+  .from("app_settings")
+  .select("bonus_manually_unlocked")
+  .eq("id", 1)
+  .single();
+
+if (settingsError) {
+  console.error("Error checking latest bonus settings:", settingsError);
+
+  showMessage("שגיאה בבדיקת סטטוס נעילת הבונוסים", "error");
+  return;
+}
+
+const latestBonusManuallyUnlocked =
+  latestSettings?.bonus_manually_unlocked || false;
+
+if (isBonusLocked(latestBonusManuallyUnlocked)) {
+  showMessage(
+    "ניחושי הבונוס נעולים ולא ניתן לשנות אותם",
+    "error"
+  );
+
+  return;
+}
 
   const currentBonus = bonusPredictions[selectedPlayer] || {};
   const currentGroup = currentBonus[groupName] || ["", ""];
