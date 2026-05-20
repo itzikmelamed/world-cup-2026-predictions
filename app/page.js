@@ -752,6 +752,11 @@ useEffect(() => {
   localStorage.setItem("currentPage", page);
 }, [page]);
   async function updatePrediction(matchId, side, value) {
+  const match = matches.find((m) => m.id === matchId);
+  if (match && isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)) {
+    showMessage("לא ניתן לשמור, המשחק נעול או קרוב להתחלה", "error");
+    return;
+  }
 
   const currentPrediction =
     predictions[selectedPlayer]?.[matchId] || {
