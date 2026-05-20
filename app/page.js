@@ -2957,16 +2957,22 @@ console.log("inactive check", {
                 </td>
 
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span
-                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black border ${
-                      player.is_active
-                        ? "bg-green-500/15 text-green-300 border-green-500/40"
-                        : "bg-red-500/15 text-red-300 border-red-500/40"
-                    }`}
-                  >
-                    {player.is_active ? "פעיל" : "לא פעיל"}
-                  </span>
-                </td>
+  {!player.is_approved ? (
+    <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-black border bg-orange-500/15 text-orange-300 border-orange-500/40">
+      ממתין לאישור
+    </span>
+  ) : (
+    <span
+      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black border ${
+        player.is_active
+          ? "bg-green-500/15 text-green-300 border-green-500/40"
+          : "bg-red-500/15 text-red-300 border-red-500/40"
+      }`}
+    >
+      {player.is_active ? "פעיל" : "לא פעיל"}
+    </span>
+  )}
+</td>
 
                 <td className="px-4 py-3 whitespace-nowrap">
   <div className="flex flex-wrap gap-2">
