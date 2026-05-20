@@ -409,6 +409,31 @@ if (isBonusLocked(latestBonusManuallyUnlocked)) {
 async function updateSpecialBonus(field, value) {
   if (!selectedPlayer) return;
 
+  const { data: latestSettings, error: settingsError } = await supabase
+  .from("app_settings")
+  .select("bonus_manually_unlocked")
+  .eq("id", 1)
+  .single();
+
+if (settingsError) {
+  console.error("Error checking latest bonus settings:", settingsError);
+
+  showMessage("שגיאה בבדיקת סטטוס נעילת הבונוסים", "error");
+  return;
+}
+
+const latestBonusManuallyUnlocked =
+  latestSettings?.bonus_manually_unlocked || false;
+
+if (isBonusLocked(latestBonusManuallyUnlocked)) {
+  showMessage(
+    "ניחושי הבונוס נעולים ולא ניתן לשנות אותם",
+    "error"
+  );
+
+  return;
+}
+
   const currentBonus = bonusPredictions[selectedPlayer] || {};
   const updatedBonus = {
     ...currentBonus,
@@ -1183,7 +1208,7 @@ function isBonusLocked(bonusManuallyUnlocked) {
     return false;
   }
 
-  const bonusDeadline = new Date(2026, 5, 11, 17, 0);
+  const bonusDeadline = new Date(2026, 4, 20, 15,47);
 
   return new Date() >= bonusDeadline;
 }
