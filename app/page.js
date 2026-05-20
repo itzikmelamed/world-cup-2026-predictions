@@ -2983,7 +2983,7 @@ console.log("inactive check", {
         ניהול משתתפים
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 mb-6">
         <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
   <div className="text-slate-400 text-sm font-bold mb-1">
     סך הכול משתתפים
@@ -2996,7 +2996,12 @@ console.log("inactive check", {
         <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
           <div className="text-slate-400 text-sm font-bold mb-1">משתתפים פעילים</div>
           <div className="text-3xl font-black text-green-400">
-            {dbPlayers.filter((p) => p.is_active).length}
+            {dbPlayers.filter(
+  (p) =>
+    p.is_active &&
+    p.is_approved &&
+    p.role !== "viewer"
+).length}
           </div>
         </div>
 
@@ -3013,6 +3018,21 @@ console.log("inactive check", {
             {dbPlayers.filter((p) => p.role === "admin").length}
           </div>
         </div>
+        <div className="bg-slate-800 rounded-2xl p-4 border border-slate-700">
+  <div className="text-slate-400 text-sm font-bold mb-1">
+    צפיינים
+  </div>
+
+  <div className="text-3xl font-black text-purple-300">
+    {
+      dbPlayers.filter(
+        (p) =>
+          p.is_approved &&
+          p.role === "viewer"
+      ).length
+    }
+  </div>
+</div>
       </div>
 
       <div className="overflow-auto rounded-2xl border border-slate-800">
