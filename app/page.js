@@ -2108,7 +2108,10 @@ console.log("inactive check", {
     type="number"
     min="0"
     value={prediction.home ?? ""}
-    disabled={isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)}
+    disabled={
+  savingPrediction ||
+  isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)
+}
     onChange={(e) =>
       updatePrediction(match.id, "home", e.target.value)
     }
@@ -2119,13 +2122,21 @@ console.log("inactive check", {
     type="number"
     min="0"
     value={prediction.away ?? ""}
-    disabled={isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)}
+    disabled={
+  savingPrediction ||
+  isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)
+}
     onChange={(e) =>
       updatePrediction(match.id, "away", e.target.value)
     }
     className="w-16 bg-slate-950 border border-slate-600 rounded-2xl p-2 text-center font-black text-lg outline-none focus:border-yellow-400 disabled:opacity-40 disabled:cursor-not-allowed"
   />
 </div>
+{savingPrediction && (
+  <div className="mt-2 text-xs font-bold text-yellow-300 text-center">
+    שומר...
+  </div>
+)}
                         </td>
                         <td className="p-3 text-center">
   {result.home !== "" && result.away !== "" ? (
