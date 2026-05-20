@@ -1,0 +1,11 @@
+id,role,email,name,is_active
+1,admin,itzik12a@gmail.com,איציק,true
+5,player,yahelzana@gmail.com,יהל,true
+8,player,ohad86@hotmail.com,אוהד,true
+26,player,a@gmak.co.il,אבירם,true
+27,player,a@gmail.com,,true
+28,player,1@1.com,טל,true
+29,player,alex1212@gmail.com,אלברט,true
+30,player,giorq@gmail.com,מראדונה,true
+31,player,maldini@gmail.com,מאלדיני,true
+32,player,taltubi82@gmail.com,טל טובי,true

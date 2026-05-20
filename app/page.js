@@ -790,6 +790,8 @@ return "matchesCards";
   const [predictions, setPredictions] = useState({});
   const [results, setResults] = useState({});
   const [savingPrediction, setSavingPrediction] = useState(false);
+  const [editingPlayerId, setEditingPlayerId] = useState(null);
+const [editingPlayerName, setEditingPlayerName] = useState("");
   const [bonusPredictions, setBonusPredictions] = useState({});
   const [officialBonus, setOfficialBonus] = useState({
   champion: "",
@@ -2852,8 +2854,16 @@ console.log("inactive check", {
                 className="border-t border-slate-800 hover:bg-slate-800/50 transition"
               >
                 <td className="px-4 py-3 font-black text-white whitespace-nowrap">
-                  {player.name}
-                </td>
+  {editingPlayerId === player.id ? (
+    <input
+      value={editingPlayerName}
+      onChange={(e) => setEditingPlayerName(e.target.value)}
+      className="bg-slate-950 border border-yellow-400 rounded-xl px-3 py-1 text-sm text-white outline-none"
+    />
+  ) : (
+    player.name
+  )}
+</td>
 
                 <td className="px-4 py-3 text-slate-300 whitespace-nowrap">
                   {player.email}
