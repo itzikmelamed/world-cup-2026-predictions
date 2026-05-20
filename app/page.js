@@ -2988,7 +2988,11 @@ console.log("inactive check", {
                         : "bg-sky-500/15 text-sky-300 border-sky-500/40"
                     }`}
                   >
-                    {player.role === "admin" ? "אדמין" : "משתתף"}
+                   {player.role === "admin"
+  ? "אדמין"
+  : player.role === "viewer"
+  ? "צפיין"
+  : "משתתף"}
                   </span>
                 </td>
 
