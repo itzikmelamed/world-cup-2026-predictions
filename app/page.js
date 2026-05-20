@@ -711,6 +711,48 @@ async function updatePlayerActive(playerId, isActive) {
   if (!confirmed) {
     return;
   }
+  async function updatePlayerName(player, newName) {
+  const cleanName = newName.trim();
+
+  if (!cleanName) {
+    showMessage("שם המשתתף לא יכול להיות ריק", "error");
+    return;
+  }
+
+  const oldName = player.name;
+
+  const { error: playerError } = await supabase
+    .from("players")
+    .update({ name: cleanName })
+    .eq("id", player.id);
+
+  if (playerError) {
+    console.error("Error updating player name:", playerError);
+    showMessage("שגיאה בעדכון שם המשתתף", "error");
+    return;
+  }
+
+  await supabase
+    .from("predictions")
+    .update({ player_name: cleanName })
+    .eq("player_name", oldName);
+
+  await supabase
+    .from("bonus_predictions")
+    .update({ player_name: cleanName })
+    .eq("player_name", oldName);
+
+  setDbPlayers((prev) =>
+    prev.map((p) =>
+      p.id === player.id ? { ...p, name: cleanName } : p
+    )
+  );
+
+  setEditingPlayerId(null);
+  setEditingPlayerName("");
+
+  showMessage("שם המשתתף עודכן בהצלחה");
+}
 
   const { error } = await supabase
     .from("players")
@@ -2894,25 +2936,63 @@ console.log("inactive check", {
                 </td>
 
                 <td className="px-4 py-3 whitespace-nowrap">
-  {player.role === "admin" ? (
-    <span className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-black border bg-yellow-500/15 text-yellow-300 border-yellow-500/40">
-      אדמין מוגן
-    </span>
-  ) : (
-    <button
-      type="button"
-      onClick={() =>
-        updatePlayerActive(player.id, !player.is_active)
-      }
-      className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
-        player.is_active
-          ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
-          : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
-      }`}
-    >
-      {player.is_active ? "השבת" : "החזר"}
-    </button>
-  )}
+  <div className="flex flex-wrap gap-2">
+    {editingPlayerId === player.id ? (
+      <>
+        <button
+          type="button"
+          onClick={() => updatePlayerName(player, editingPlayerName)}
+          className="px-4 py-2 rounded-xl font-black text-sm border bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+        >
+          שמור
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setEditingPlayerId(null);
+            setEditingPlayerName("");
+          }}
+          className="px-4 py-2 rounded-xl font-black text-sm border bg-slate-500/20 border-slate-500/40 text-slate-300 hover:bg-slate-500/30"
+        >
+          ביטול
+        </button>
+      </>
+    ) : (
+      <>
+        <button
+          type="button"
+          onClick={() => {
+            setEditingPlayerId(player.id);
+            setEditingPlayerName(player.name || "");
+          }}
+          className="px-4 py-2 rounded-xl font-black text-sm border bg-sky-500/20 border-sky-500/40 text-sky-300 hover:bg-sky-500/30"
+        >
+          ערוך שם
+        </button>
+
+        {player.role === "admin" ? (
+          <span className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-black border bg-yellow-500/15 text-yellow-300 border-yellow-500/40">
+            אדמין מוגן
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() =>
+              updatePlayerActive(player.id, !player.is_active)
+            }
+            className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
+              player.is_active
+                ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
+                : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+            }`}
+          >
+            {player.is_active ? "השבת" : "החזר"}
+          </button>
+        )}
+      </>
+    )}
+  </div>
 </td>
               </tr>
             ))}
