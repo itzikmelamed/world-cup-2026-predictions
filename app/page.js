@@ -789,6 +789,7 @@ return "matchesCards";
 });
   const [predictions, setPredictions] = useState({});
   const [results, setResults] = useState({});
+  const [savingPrediction, setSavingPrediction] = useState(false);
   const [bonusPredictions, setBonusPredictions] = useState({});
   const [officialBonus, setOfficialBonus] = useState({
   champion: "",
@@ -801,86 +802,92 @@ useEffect(() => {
   localStorage.setItem("currentPage", page);
 }, [page]);
   async function updatePrediction(matchId, side, value) {
-  const { data: latestSettings, error: settingsError } = await supabase
-  .from("app_settings")
-  .select("manually_unlocked_matches")
-  .eq("id", 1)
-  .single();
+  if (savingPrediction) return;
 
-if (settingsError) {
-  console.error("Error checking latest app settings:", settingsError);
-  showMessage("שגיאה בבדיקת סטטוס נעילה", "error");
-  return;
-}
+  setSavingPrediction(true);
 
-const latestManuallyUnlockedMatches =
-  latestSettings?.manually_unlocked_matches || [];
+  try {
+    const { data: latestSettings, error: settingsError } = await supabase
+      .from("app_settings")
+      .select("manually_unlocked_matches")
+      .eq("id", 1)
+      .single();
 
-const match = matches.find((m) => m.id === matchId);
+    if (settingsError) {
+      console.error("Error checking latest app settings:", settingsError);
+      showMessage("שגיאה בבדיקת סטטוס נעילה", "error");
+      return;
+    }
 
-if (
-  match &&
-  isMatchLocked(
-    match,
-    latestManuallyUnlockedMatches,
-    knockoutMatches,
-    results
-  )
-) {
-  showMessage("לא ניתן לשמור, המשחק נעול או קרוב להתחלה", "error");
-  return;
-}
+    const latestManuallyUnlockedMatches =
+      latestSettings?.manually_unlocked_matches || [];
 
-  const currentPrediction =
-    predictions[selectedPlayer]?.[matchId] || {
-      home: "",
-      away: "",
+    const match = matches.find((m) => m.id === matchId);
+
+    if (
+      match &&
+      isMatchLocked(
+        match,
+        latestManuallyUnlockedMatches,
+        knockoutMatches,
+        results
+      )
+    ) {
+      showMessage("לא ניתן לשמור, המשחק נעול או קרוב להתחלה", "error");
+      return;
+    }
+
+    const currentPrediction =
+      predictions[selectedPlayer]?.[matchId] || {
+        home: "",
+        away: "",
+      };
+
+    const updatedPrediction = {
+      ...currentPrediction,
+      [side]: value,
     };
 
-  const updatedPrediction = {
-    ...currentPrediction,
-    [side]: value,
-  };
-
-  setPredictions((prev) => ({
-    ...prev,
-    [selectedPlayer]: {
-      ...(prev[selectedPlayer] || {}),
-      [matchId]: updatedPrediction,
-    },
-  }));
-
- const { data, error } = await supabase
-  .from("predictions")
-  .upsert(
-    [
-      {
-        player_name: selectedPlayer,
-        match_id: matchId,
-        home_score:
-          updatedPrediction.home === ""
-            ? null
-            : Number(updatedPrediction.home),
-        away_score:
-          updatedPrediction.away === ""
-            ? null
-            : Number(updatedPrediction.away),
+    setPredictions((prev) => ({
+      ...prev,
+      [selectedPlayer]: {
+        ...(prev[selectedPlayer] || {}),
+        [matchId]: updatedPrediction,
       },
-    ],
-    {
-      onConflict: "player_name,match_id",
+    }));
+
+    const { error } = await supabase
+      .from("predictions")
+      .upsert(
+        [
+          {
+            player_name: selectedPlayer,
+            match_id: matchId,
+            home_score:
+              updatedPrediction.home === ""
+                ? null
+                : Number(updatedPrediction.home),
+            away_score:
+              updatedPrediction.away === ""
+                ? null
+                : Number(updatedPrediction.away),
+          },
+        ],
+        {
+          onConflict: "player_name,match_id",
+        }
+      );
+
+    if (error) {
+      console.error("Error saving prediction:", error);
+      showMessage("שגיאה בשמירת ההימור: " + error.message, "error");
+      return;
     }
-  )
-  .select();
 
-if (error) {
-  console.error("Error saving prediction:", error);
-  showMessage("שגיאה בשמירת ההימור: " + error.message, "error");
-  return;
-}
-
-
-showMessage("ההימור נשמר בהצלחה");
+    showMessage("ההימור נשמר בהצלחה");
+  } finally {
+    setSavingPrediction(false);
+  }
 }
 
  async function updateResult(matchId, side, value) {
