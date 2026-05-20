@@ -789,6 +789,42 @@ async function updatePlayerName(player, newName) {
   showMessage("שם המשתתף עודכן בהצלחה");
 }
 
+async function approvePlayer(playerId, newRole) {
+  const { error } = await supabase
+    .from("players")
+    .update({
+      is_approved: true,
+      is_active: true,
+      role: newRole,
+    })
+    .eq("id", playerId);
+
+  if (error) {
+    console.error("Error approving player:", error);
+    showMessage("שגיאה באישור המשתמש", "error");
+    return;
+  }
+
+  setDbPlayers((prev) =>
+    prev.map((player) =>
+      player.id === playerId
+        ? {
+            ...player,
+            is_approved: true,
+            is_active: true,
+            role: newRole,
+          }
+        : player
+    )
+  );
+
+  showMessage(
+    newRole === "viewer"
+      ? "המשתמש אושר כצפיין"
+      : "המשתמש אושר כמשתתף"
+  );
+}
+
 async function updateKnockoutTeam(matchId, side, value) {
   const existing = knockoutMatches[matchId] || {};
 
@@ -3011,24 +3047,42 @@ console.log("inactive check", {
         </button>
 
         {player.role === "admin" ? (
-          <span className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-black border bg-yellow-500/15 text-yellow-300 border-yellow-500/40">
-            אדמין מוגן
-          </span>
-        ) : (
-          <button
-            type="button"
-            onClick={() =>
-              updatePlayerActive(player.id, !player.is_active)
-            }
-            className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
-              player.is_active
-                ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
-                : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
-            }`}
-          >
-            {player.is_active ? "השבת" : "החזר"}
-          </button>
-        )}
+  <span className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-black border bg-yellow-500/15 text-yellow-300 border-yellow-500/40">
+    אדמין מוגן
+  </span>
+) : !player.is_approved ? (
+  <>
+    <button
+      type="button"
+      onClick={() => approvePlayer(player.id, "player")}
+      className="px-4 py-2 rounded-xl font-black text-sm border bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+    >
+      אשר כמשתתף
+    </button>
+
+    <button
+      type="button"
+      onClick={() => approvePlayer(player.id, "viewer")}
+      className="px-4 py-2 rounded-xl font-black text-sm border bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30"
+    >
+      אשר כצפיין
+    </button>
+  </>
+) : (
+  <button
+    type="button"
+    onClick={() =>
+      updatePlayerActive(player.id, !player.is_active)
+    }
+    className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
+      player.is_active
+        ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
+        : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+    }`}
+  >
+    {player.is_active ? "השבת" : "החזר"}
+  </button>
+)}
       </>
     )}
   </div>
