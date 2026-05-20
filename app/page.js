@@ -1411,10 +1411,30 @@ async function signIn() {
     (player) => player.email === data.user.email
   );
 
-  if (matchingPlayer) {
-    setSelectedPlayer(matchingPlayer.name);
-    setRole(matchingPlayer.role || "player");
+  if (!matchingPlayer) {
+    showMessage("המשתמש לא נמצא ברשימת המשתתפים", "error");
+    return;
   }
+
+  if (!matchingPlayer.is_approved) {
+    setRole("pending");
+    setSelectedPlayer("");
+    showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+    return;
+  }
+
+  if (!matchingPlayer.is_active) {
+    setRole("blocked");
+    setSelectedPlayer("");
+    showMessage("החשבון שלך הושבת", "error");
+    return;
+  }
+
+  setSelectedPlayer(
+    matchingPlayer.role === "viewer" ? "" : matchingPlayer.name
+  );
+
+  setRole(matchingPlayer.role || "player");
 
   await refreshAllData();
 
