@@ -1208,7 +1208,7 @@ function isBonusLocked(bonusManuallyUnlocked) {
     return false;
   }
 
-  const bonusDeadline = new Date(2026, 4, 20, 15,47);
+  const bonusDeadline = new Date(2026, 5, 11, 17, 0);
 
   return new Date() >= bonusDeadline;
 }
