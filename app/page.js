@@ -227,7 +227,12 @@ const [allBetsStageFilter, setAllBetsStageFilter] = useState("all");
 const [allBetsStatusFilter, setAllBetsStatusFilter] = useState("all");
 const [allBetsSearch, setAllBetsSearch] = useState("");
 const [matchCardsFilter, setMatchCardsFilter] = useState("all");
- const activePlayers = dbPlayers.filter((player) => player.is_active);
+const activePlayers = dbPlayers.filter(
+  (player) =>
+    player.is_active &&
+    player.is_approved &&
+    player.role !== "viewer"
+);
  const currentPlayer = dbPlayers.find(
   (player) => player.email === authUser?.email
 );
