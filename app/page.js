@@ -269,11 +269,13 @@ useEffect(() => {
   );
 
   if (matchingPlayer) {
-    if (!matchingPlayer.is_approved) {
-      setSelectedPlayer("");
-      setRole("pending");
-      showMessage("החשבון שלך ממתין לאישור אדמין", "error");
-    } else if (!matchingPlayer.is_active) {
+   if (!matchingPlayer.is_approved) {
+  setSelectedPlayer("");
+  setRole("pending");
+  await refreshAllData();
+  showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+}
+    else if (!matchingPlayer.is_active) {
       setSelectedPlayer("");
       setRole("blocked");
       showMessage("החשבון שלך הושבת", "error");
@@ -1855,8 +1857,9 @@ console.log("inactive check", {
 });
 if (
   authUser &&
-  loggedInPlayer &&
-  loggedInPlayer.is_approved === false
+  (role === "pending" ||
+    (loggedInPlayer &&
+      loggedInPlayer.is_approved === false))
 ) {
   return (
     <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-6 flex items-center justify-center">
