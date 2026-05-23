@@ -284,20 +284,7 @@ useEffect(() => {
     }
   }
 }, [authUser, dbPlayers]);
-useEffect(() => {
-  if (
-    role === "viewer" &&
-    (page === "matches" ||
-      page === "matchesCards" ||
-      page === "bonus")
-  ) {
-    setPage("leaderboard");
-  }
 
-  if (role === "pending") {
-    setPage("leaderboard");
-  }
-}, [role, page]);
       useEffect(() => {
   if (authUser) return;
 
@@ -951,6 +938,20 @@ useEffect(() => {
   }
 return "matchesCards";
 });
+useEffect(() => {
+  if (
+    role === "viewer" &&
+    (page === "matches" ||
+      page === "matchesCards" ||
+      page === "bonus")
+  ) {
+    setPage("leaderboard");
+  }
+
+  if (role === "pending") {
+    setPage("leaderboard");
+  }
+}, [role, page]);
   const [predictions, setPredictions] = useState({});
   const [results, setResults] = useState({});
   const [savingPrediction, setSavingPrediction] = useState(false);
