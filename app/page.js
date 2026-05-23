@@ -2125,26 +2125,30 @@ console.log("inactive check", {
     הימורי משחקים
   </button>
 )}
-          <button
-  onClick={() => setPage("matchesCards")}
+         {role !== "viewer" && (
+  <button
+    onClick={() => setPage("matchesCards")}
   className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
     page === "matchesCards"
       ? "bg-yellow-400 text-slate-950"
       : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
- הימורי משחקים
+הימורי משחקים
 </button>
-          <button
-  onClick={() => setPage("bonus")}
+)}
+          {role !== "viewer" && (
+  <button
+    onClick={() => setPage("bonus")}
   className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
     page === "bonus"
       ? "bg-yellow-400 text-slate-950"
       : "bg-slate-800 hover:bg-slate-700 text-slate-200"
   }`}
 >
-  הימורי בונוס
+ הימורי בונוס
 </button>
+)}
 <button
   onClick={() => setPage("bonusAll")}
   className={`whitespace-nowrap px-5 py-3 rounded-2xl font-black transition-all duration-200 ${
