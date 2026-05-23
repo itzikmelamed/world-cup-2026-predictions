@@ -1853,6 +1853,38 @@ console.log("inactive check", {
   loggedInPlayer,
   isActive: loggedInPlayer?.is_active,
 });
+if (
+  authUser &&
+  loggedInPlayer &&
+  loggedInPlayer.is_approved === false
+) {
+  return (
+    <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-6 flex items-center justify-center">
+      <div className="max-w-md w-full bg-slate-900 border border-yellow-500/40 rounded-3xl p-6 text-center">
+        <h1 className="text-2xl font-black text-yellow-300 mb-3">
+          החשבון שלך ממתין לאישור אדמין
+        </h1>
+
+        <p className="text-slate-300 font-bold mb-6">
+          נרשמת בהצלחה, אך עדיין צריך אישור מנהל לפני שתוכל להשתמש במערכת.
+        </p>
+
+        <button
+          type="button"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            setAuthUser(null);
+            setSelectedPlayer("");
+            setRole("");
+          }}
+          className="bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black px-5 py-3 rounded-2xl"
+        >
+          התנתק
+        </button>
+      </div>
+    </main>
+  );
+}
   if (authUser && loggedInPlayer && loggedInPlayer.is_active === false) {
   return (
     <main dir="rtl" className="min-h-screen bg-slate-950 text-white p-6 flex items-center justify-center">
