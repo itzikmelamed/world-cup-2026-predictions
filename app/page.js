@@ -284,6 +284,20 @@ useEffect(() => {
     }
   }
 }, [authUser, dbPlayers]);
+useEffect(() => {
+  if (
+    role === "viewer" &&
+    (page === "matches" ||
+      page === "matchesCards" ||
+      page === "bonus")
+  ) {
+    setPage("leaderboard");
+  }
+
+  if (role === "pending") {
+    setPage("leaderboard");
+  }
+}, [role, page]);
       useEffect(() => {
   if (authUser) return;
 
