@@ -272,7 +272,6 @@ useEffect(() => {
    if (!matchingPlayer.is_approved) {
   setSelectedPlayer("");
   setRole("pending");
-  await refreshAllData();
   showMessage("החשבון שלך ממתין לאישור אדמין", "error");
 }
     else if (!matchingPlayer.is_active) {
