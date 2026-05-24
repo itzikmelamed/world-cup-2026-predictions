@@ -934,6 +934,57 @@ async function updatePlayerRole(playerId, newRole) {
   );
 }
 
+async function deletePlayerCompletely(player) {
+  const confirmed = window.confirm(
+    `האם אתה בטוח שברצונך למחוק לגמרי את ${player.name}? פעולה זו תמחק גם את כל ההימורים והבונוסים שלו.`
+  );
+
+  if (!confirmed) return;
+
+  const secondConfirm = window.confirm(
+    "אישור נוסף: המחיקה היא לצמיתות מתוך מערכת המשחק. להמשיך?"
+  );
+
+  if (!secondConfirm) return;
+
+  const { error: predictionsError } = await supabase
+    .from("predictions")
+    .delete()
+    .eq("player_name", player.name);
+
+  if (predictionsError) {
+    console.error("Error deleting predictions:", predictionsError);
+    showMessage("שגיאה במחיקת הימורי המשחקים", "error");
+    return;
+  }
+
+  const { error: bonusError } = await supabase
+    .from("bonus_predictions")
+    .delete()
+    .eq("player_name", player.name);
+
+  if (bonusError) {
+    console.error("Error deleting bonus predictions:", bonusError);
+    showMessage("שגיאה במחיקת הימורי הבונוס", "error");
+    return;
+  }
+
+  const { error: playerError } = await supabase
+    .from("players")
+    .delete()
+    .eq("id", player.id);
+
+  if (playerError) {
+    console.error("Error deleting player:", playerError);
+    showMessage("שגיאה במחיקת המשתמש", "error");
+    return;
+  }
+
+  setDbPlayers((prev) => prev.filter((p) => p.id !== player.id));
+
+  showMessage("המשתמש נמחק לגמרי ממערכת המשחק");
+}
+
 async function updateKnockoutTeam(matchId, side, value) {
   const existing = knockoutMatches[matchId] || {};
 
@@ -3327,6 +3378,14 @@ if (
     >
       {player.is_active ? "השבת" : "החזר"}
     </button>
+
+    <button
+  type="button"
+  onClick={() => deletePlayerCompletely(player)}
+  className="px-3 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border bg-red-900/30 border-red-500/50 text-red-300 hover:bg-red-900/50"
+>
+  מחק
+</button>
   </>
 )}
       </>
