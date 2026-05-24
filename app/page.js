@@ -262,60 +262,77 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  if (!authUser) return;
+  if (!authUser?.email) return;
 
-  const matchingPlayer = dbPlayers.find(
-    (player) => player.email === authUser.email
-  );
+  let cancelled = false;
 
-  async function createGooglePlayer() {
-    const fullName =
-      authUser.user_metadata?.full_name ||
-      authUser.user_metadata?.name ||
-      authUser.email?.split("@")[0] ||
-      "משתתף חדש";
+  async function syncAuthUserToPlayer() {
+    const { data: existingPlayers, error: findError } = await supabase
+      .from("players")
+      .select("*")
+      .eq("email", authUser.email)
+      .order("is_approved", { ascending: false })
+      .order("id", { ascending: true });
 
-    const { error } = await supabase.from("players").insert([
-      {
-        name: fullName,
-        email: authUser.email,
-        role: "player",
-        is_active: true,
-        is_approved: false,
-      },
-    ]);
-
-    if (error) {
-      console.error("Error creating Google player:", error);
+    if (findError) {
+      console.error("Error finding player by email:", findError);
       return;
     }
 
-    await refreshAllData();
+    let player = existingPlayers?.[0];
+
+    if (!player) {
+      const fullName =
+        authUser.user_metadata?.full_name ||
+        authUser.user_metadata?.name ||
+        authUser.email?.split("@")[0] ||
+        "משתתף חדש";
+
+      const { data: newPlayer, error: insertError } = await supabase
+        .from("players")
+        .insert([
+          {
+            name: fullName,
+            email: authUser.email,
+            role: "player",
+            is_active: true,
+            is_approved: false,
+          },
+        ])
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error("Error creating Google player:", insertError);
+        return;
+      }
+
+      player = newPlayer;
+      await refreshAllData();
+    }
+
+    if (cancelled || !player) return;
+
+    if (!player.is_approved) {
+      setSelectedPlayer("");
+      setRole("pending");
+      showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+    } else if (!player.is_active) {
+      setSelectedPlayer("");
+      setRole("blocked");
+      showMessage("החשבון שלך הושבת", "error");
+    } else {
+      setSelectedPlayer(player.role === "viewer" ? "" : player.name);
+      setRole(player.role || "player");
+    }
   }
 
-  if (!matchingPlayer) {
-    createGooglePlayer();
-    return;
-  }
+  syncAuthUserToPlayer();
 
-  if (!matchingPlayer.is_approved) {
-    setSelectedPlayer("");
-    setRole("pending");
-    showMessage("החשבון שלך ממתין לאישור אדמין", "error");
-  } else if (!matchingPlayer.is_active) {
-    setSelectedPlayer("");
-    setRole("blocked");
-    showMessage("החשבון שלך הושבת", "error");
-  } else {
-    setSelectedPlayer(
-      matchingPlayer.role === "viewer"
-        ? ""
-        : matchingPlayer.name
-    );
-
-    setRole(matchingPlayer.role || "player");
-  }
-}, [authUser, dbPlayers]);
+  return () => {
+    cancelled = true;
+  };
+}, [authUser?.email]);
 
       useEffect(() => {
   if (authUser) return;
