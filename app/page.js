@@ -243,14 +243,20 @@ useEffect(() => {
   if (!authUser?.email) return;
 
   async function updatePresence() {
-    await supabase
-      .from("players")
-      .update({
-        last_seen: new Date().toISOString(),
-        current_page: page,
-      })
-      .eq("email", authUser.email);
+  const { error } = await supabase
+    .from("players")
+    .update({
+      last_seen: new Date().toISOString(),
+      current_page: page,
+    })
+    .eq("email", authUser.email);
+
+  if (error) {
+    console.error("Presence update error:", error);
+  } else {
+    console.log("Presence updated");
   }
+}
 
   updatePresence();
 
