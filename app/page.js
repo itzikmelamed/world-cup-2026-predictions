@@ -2067,6 +2067,15 @@ if (
     </main>
   );
 }
+function formatLastSeen(value) {
+  if (!value) return "לא זמין";
+
+  return new Date(value).toLocaleString("he-IL", {
+    timeZone: "Asia/Jerusalem",
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
   return (
     
     <main
@@ -3241,7 +3250,9 @@ if (
               <th className="px-4 py-3 text-right">אימייל</th>
               <th className="px-4 py-3 text-right">תפקיד</th>
               <th className="px-4 py-3 text-right">סטטוס</th>
-              <th className="px-4 py-3 text-right">פעולה</th>
+<th className="px-4 py-3 text-right">נראה לאחרונה</th>
+<th className="px-4 py-3 text-right">עמוד נוכחי</th>
+<th className="px-4 py-3 text-right">פעולה</th>
             </tr>
           </thead>
 
@@ -3317,6 +3328,13 @@ if (
       {player.is_active ? "פעיל" : "לא פעיל"}
     </span>
   )}
+</td>
+<td className="px-4 py-3 text-slate-300 whitespace-nowrap">
+  {formatLastSeen(player.last_seen)}
+</td>
+
+<td className="px-4 py-3 text-slate-300 whitespace-nowrap">
+  {player.current_page || "לא זמין"}
 </td>
 
                 <td className="px-4 py-3 whitespace-nowrap">
