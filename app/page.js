@@ -1571,6 +1571,18 @@ async function signIn() {
 
   showMessage("התחברת בהצלחה");
 }
+async function signInWithGoogle() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin,
+    },
+  });
+
+  if (error) {
+    showMessage("שגיאה בהתחברות עם Google: " + error.message, "error");
+  }
+}
 
 async function signOut() {
   const { error } = await supabase.auth.signOut();
@@ -2055,6 +2067,12 @@ if (
           >
             התחברות
           </button>
+          <button
+  onClick={signInWithGoogle}
+  className="bg-white hover:bg-slate-100 text-slate-950 px-4 py-3 rounded-2xl font-black shadow-lg border border-slate-300"
+>
+  התחברות עם Google
+</button>
         </div>
       </div>
     ) : (
