@@ -240,6 +240,25 @@ const activePlayers = dbPlayers.filter(
   (player) => player.email === authUser?.email
 );
 useEffect(() => {
+  if (!authUser?.email) return;
+
+  async function updatePresence() {
+    await supabase
+      .from("players")
+      .update({
+        last_seen: new Date().toISOString(),
+        current_page: page,
+      })
+      .eq("email", authUser.email);
+  }
+
+  updatePresence();
+
+  const interval = setInterval(updatePresence, 30000);
+
+  return () => clearInterval(interval);
+}, [authUser?.email, page]);
+useEffect(() => {
   async function loadSession() {
     const {
       data: { session },
