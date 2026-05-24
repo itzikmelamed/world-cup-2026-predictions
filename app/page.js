@@ -240,31 +240,6 @@ const activePlayers = dbPlayers.filter(
   (player) => player.email === authUser?.email
 );
 useEffect(() => {
-  if (!authUser?.email) return;
-
-  async function updatePresence() {
-  const { error } = await supabase
-    .from("players")
-    .update({
-      last_seen: new Date().toISOString(),
-      current_page: page,
-    })
-    .eq("email", authUser.email);
-
-  if (error) {
-    console.error("Presence update error:", error);
-  } else {
-    console.log("Presence updated");
-  }
-}
-
-  updatePresence();
-
-  const interval = setInterval(updatePresence, 30000);
-
-  return () => clearInterval(interval);
-}, [authUser?.email, page]);
-useEffect(() => {
   async function loadSession() {
     const {
       data: { session },
@@ -1077,6 +1052,31 @@ useEffect(() => {
     setPage("leaderboard");
   }
 }, [role, page]);
+useEffect(() => {
+  if (!authUser?.email) return;
+
+  async function updatePresence() {
+    const { error } = await supabase
+      .from("players")
+      .update({
+        last_seen: new Date().toISOString(),
+        current_page: page,
+      })
+      .eq("email", authUser.email);
+
+    if (error) {
+      console.error("Presence update error:", error);
+    } else {
+      console.log("Presence updated");
+    }
+  }
+
+  updatePresence();
+
+  const interval = setInterval(updatePresence, 30000);
+
+  return () => clearInterval(interval);
+}, [authUser?.email, page]);
   const [predictions, setPredictions] = useState({});
   const [results, setResults] = useState({});
   const [savingPrediction, setSavingPrediction] = useState(false);
