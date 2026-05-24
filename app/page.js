@@ -3103,11 +3103,19 @@ if (
           <tbody>
             {[...dbPlayers]
   .sort((a, b) => {
-    if (a.role === "admin" && b.role !== "admin") return -1;
-    if (a.role !== "admin" && b.role === "admin") return 1;
+    const rank = (p) => {
+      if (p.role === "admin") return 0;
+      if (p.is_approved && p.is_active && p.role === "player") return 1;
+      if (p.is_approved && p.role === "viewer") return 2;
+      if (!p.is_active) return 3;
+      if (!p.is_approved) return 4;
+      return 3;
+    };
 
-    if (a.is_active && !b.is_active) return -1;
-    if (!a.is_active && b.is_active) return 1;
+    const ra = rank(a);
+    const rb = rank(b);
+
+    if (ra !== rb) return ra - rb;
 
     return a.name.localeCompare(b.name, "he");
   })
