@@ -262,26 +262,58 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  if (!authUser || dbPlayers.length === 0) return;
+  if (!authUser) return;
 
   const matchingPlayer = dbPlayers.find(
     (player) => player.email === authUser.email
   );
 
-  if (matchingPlayer) {
-   if (!matchingPlayer.is_approved) {
-  setSelectedPlayer("");
-  setRole("pending");
-  showMessage("החשבון שלך ממתין לאישור אדמין", "error");
-}
-    else if (!matchingPlayer.is_active) {
-      setSelectedPlayer("");
-      setRole("blocked");
-      showMessage("החשבון שלך הושבת", "error");
-    } else {
-      setSelectedPlayer(matchingPlayer.role === "viewer" ? "" : matchingPlayer.name);
-      setRole(matchingPlayer.role || "player");
+  async function createGooglePlayer() {
+    const fullName =
+      authUser.user_metadata?.full_name ||
+      authUser.user_metadata?.name ||
+      authUser.email?.split("@")[0] ||
+      "משתתף חדש";
+
+    const { error } = await supabase.from("players").insert([
+      {
+        name: fullName,
+        email: authUser.email,
+        role: "player",
+        is_active: true,
+        is_approved: false,
+      },
+    ]);
+
+    if (error) {
+      console.error("Error creating Google player:", error);
+      return;
     }
+
+    await refreshAllData();
+  }
+
+  if (!matchingPlayer) {
+    createGooglePlayer();
+    return;
+  }
+
+  if (!matchingPlayer.is_approved) {
+    setSelectedPlayer("");
+    setRole("pending");
+    showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+  } else if (!matchingPlayer.is_active) {
+    setSelectedPlayer("");
+    setRole("blocked");
+    showMessage("החשבון שלך הושבת", "error");
+  } else {
+    setSelectedPlayer(
+      matchingPlayer.role === "viewer"
+        ? ""
+        : matchingPlayer.name
+    );
+
+    setRole(matchingPlayer.role || "player");
   }
 }, [authUser, dbPlayers]);
 
@@ -1575,7 +1607,7 @@ async function signInWithGoogle() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin,
+      redirectTo: "https://world-cup-2026-predictions-liart.vercel.app",
     },
   });
 
