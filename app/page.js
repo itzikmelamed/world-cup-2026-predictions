@@ -3092,7 +3092,7 @@ if (
         <table className="min-w-full text-sm">
           <thead className="bg-slate-800 text-slate-200">
             <tr>
-              <th className="px-4 py-3 text-right">שם</th>
+              <th className="px-4 py-3 text-right sticky right-0 z-30 bg-slate-800">שם</th>
               <th className="px-4 py-3 text-right">אימייל</th>
               <th className="px-4 py-3 text-right">תפקיד</th>
               <th className="px-4 py-3 text-right">סטטוס</th>
@@ -3116,7 +3116,7 @@ if (
                 key={player.id}
                 className="border-t border-slate-800 hover:bg-slate-800/50 transition"
               >
-                <td className="px-4 py-3 font-black text-white whitespace-nowrap">
+                <td className="px-4 py-3 font-black text-white whitespace-nowrap sticky right-0 z-20 bg-slate-900 border-l border-slate-800">
   {editingPlayerId === player.id ? (
     <input
       value={editingPlayerName}
