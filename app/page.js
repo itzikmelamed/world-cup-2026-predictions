@@ -2273,9 +2273,11 @@ if (
     מחובר כמשתתף: {loggedInPlayer.name}
   </div>
 )}
-<div className="mt-2 font-black text-white-900">
-  משתתפים מהענן: {dbPlayers.map((p) => p.name).join(", ")}
-</div>
+{role === "admin" && (
+  <div className="mt-2 font-black text-white-900">
+    משתתפים מהענן: {dbPlayers.map((p) => p.name).join(", ")}
+  </div>
+)}
 
 </section>
 
