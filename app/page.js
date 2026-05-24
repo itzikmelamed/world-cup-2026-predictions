@@ -3167,13 +3167,13 @@ if (
 </td>
 
                 <td className="px-4 py-3 whitespace-nowrap">
-  <div className="flex flex-wrap gap-2">
+  <div className="flex flex-wrap gap-1 md:gap-2">
     {editingPlayerId === player.id ? (
       <>
         <button
           type="button"
           onClick={() => updatePlayerName(player, editingPlayerName)}
-          className="px-4 py-2 rounded-xl font-black text-sm border bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+          className="px-2 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
         >
           שמור
         </button>
@@ -3184,7 +3184,7 @@ if (
             setEditingPlayerId(null);
             setEditingPlayerName("");
           }}
-          className="px-4 py-2 rounded-xl font-black text-sm border bg-slate-500/20 border-slate-500/40 text-slate-300 hover:bg-slate-500/30"
+          className="px-2 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border bg-slate-500/20 border-slate-500/40 text-slate-300 hover:bg-slate-500/30"
         >
           ביטול
         </button>
@@ -3197,7 +3197,7 @@ if (
             setEditingPlayerId(player.id);
             setEditingPlayerName(player.name || "");
           }}
-          className="px-4 py-2 rounded-xl font-black text-sm border bg-sky-500/20 border-sky-500/40 text-sky-300 hover:bg-sky-500/30"
+          className="px-2 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border bg-sky-500/20 border-sky-500/40 text-sky-300 hover:bg-sky-500/30"
         >
           ערוך שם
         </button>
@@ -3211,7 +3211,7 @@ if (
     <button
       type="button"
       onClick={() => approvePlayer(player.id, "player")}
-      className="px-4 py-2 rounded-xl font-black text-sm border bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
+      className="px-2 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
     >
       אשר כמשתתף
     </button>
@@ -3219,7 +3219,7 @@ if (
     <button
       type="button"
       onClick={() => approvePlayer(player.id, "viewer")}
-      className="px-4 py-2 rounded-xl font-black text-sm border bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30"
+      className="px-2 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30"
     >
       אשר כצפיין
     </button>
@@ -3234,7 +3234,7 @@ if (
           player.role === "viewer" ? "player" : "viewer"
         )
       }
-      className="px-4 py-2 rounded-xl font-black text-sm border bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30"
+      className="px-2 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border bg-purple-500/20 border-purple-500/40 text-purple-300 hover:bg-purple-500/30"
     >
       {player.role === "viewer" ? "הפוך למשתתף" : "הפוך לצפיין"}
     </button>
@@ -3244,7 +3244,7 @@ if (
       onClick={() =>
         updatePlayerActive(player.id, !player.is_active)
       }
-      className={`px-4 py-2 rounded-xl font-black text-sm border transition ${
+      className={`px-2 py-1 md:px-4 md:py-2 rounded-xl font-black text-xs md:text-sm border transition ${
         player.is_active
           ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
           : "bg-green-500/20 border-green-500/40 text-green-300 hover:bg-green-500/30"
