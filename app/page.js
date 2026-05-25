@@ -1029,6 +1029,7 @@ async function refreshAllData() {
   await loadKnockoutMatches();
 }
 
+const [page, setPage] = useState("matchesCards");
   const [predictions, setPredictions] = useState({});
   const [results, setResults] = useState({});
   const [savingPrediction, setSavingPrediction] = useState(false);
