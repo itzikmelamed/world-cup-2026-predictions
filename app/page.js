@@ -1029,15 +1029,20 @@ async function refreshAllData() {
   await loadKnockoutMatches();
 }
 useEffect(() => {
+  async function loadServerTime() {
+    const { data, error } = await supabase.rpc("get_server_time");
+
+    if (error) {
+      console.error("Error loading server time:", error);
+      return;
+    }
+
+    setServerTime(new Date(data));
+  }
+
+  loadServerTime();
   refreshAllData();
 }, []);
-
-  const [page, setPage] = useState(() => {
-  if (typeof window !== "undefined") {
-  return localStorage.getItem("currentPage") || "matchesCards";
-  }
-return "matchesCards";
-});
 useEffect(() => {
   if (
     role === "viewer" &&
@@ -1090,6 +1095,8 @@ const [editingPlayerName, setEditingPlayerName] = useState("");
 const [groupStageFinished, setGroupStageFinished] = useState(false);
 const [manuallyUnlockedMatches, setManuallyUnlockedMatches] = useState([]);
 const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
+const [serverTime, setServerTime] = useState(null);
+
 useEffect(() => {
   localStorage.setItem("currentPage", page);
 }, [page]);
