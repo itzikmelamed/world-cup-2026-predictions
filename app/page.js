@@ -2076,6 +2076,14 @@ function formatLastSeen(value) {
     timeStyle: "short",
   });
 }
+function isPlayerOnline(lastSeen) {
+  if (!lastSeen) return false;
+
+  const now = new Date();
+  const last = new Date(lastSeen);
+
+  return now - last < 2 * 60 * 1000;
+}
   return (
     
     <main
@@ -3329,8 +3337,17 @@ function formatLastSeen(value) {
     </span>
   )}
 </td>
-<td className="px-4 py-3 text-slate-300 whitespace-nowrap">
-  {formatLastSeen(player.last_seen)}
+<td className="px-4 py-3 whitespace-nowrap">
+  {isPlayerOnline(player.last_seen) ? (
+    <div className="flex items-center gap-2 text-green-400 font-black">
+      <span className="w-3 h-3 rounded-full bg-green-400 inline-block"></span>
+      אונליין
+    </div>
+  ) : (
+    <span className="text-slate-300">
+      {formatLastSeen(player.last_seen)}
+    </span>
+  )}
 </td>
 
 <td className="px-4 py-3 text-slate-300 whitespace-nowrap">
