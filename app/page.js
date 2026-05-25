@@ -3862,15 +3862,15 @@ function isPlayerOnline(lastSeen) {
       <table className="border-collapse min-w-[760px] text-xs md:text-sm">
         <thead>
           <tr className="bg-slate-950 text-slate-300 sticky top-0 z-30">
-            <th className="sticky right-0 z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[45px] min-w-[45px] max-w-[45px]">
+            <th className="md:sticky md:right-0 z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[45px] min-w-[45px] max-w-[45px]">
               #
             </th>
 
-            <th className="sticky right-[45px] z-40 bg-slate-950 text-right p-2 border-l border-slate-800 w-[95px] min-w-[95px] max-w-[95px]">
+            <th className="md:sticky md:right-[45px] z-40 bg-slate-950 text-right p-2 border-l border-slate-800 w-[95px] min-w-[95px] max-w-[95px]">
               משתתף
             </th>
 
-            <th className="sticky right-[140px] z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[65px] min-w-[65px] max-w-[65px]">
+            <th className="md:sticky md:right-[140px] z-40 bg-slate-950 text-center p-2 border-l border-slate-800 w-[65px] min-w-[65px] max-w-[65px]">
               סה״כ
             </th>
 
@@ -3899,7 +3899,7 @@ function isPlayerOnline(lastSeen) {
   className="border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80 transition-colors duration-200"
 >
               <td
-  className={`sticky right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px] ${
+  className={`md:sticky md:right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px] ${
     index === 0
       ? "text-yellow-300"
       : index === 1
@@ -3919,7 +3919,7 @@ function isPlayerOnline(lastSeen) {
 </td>
 
               <td
-  className={`sticky right-[45px] z-20 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] truncate ${
+ className={`md:sticky md:right-[45px] z-20 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] truncate ${
     index === 0
       ? "bg-slate-900 text-yellow-300"
       : index === 1
@@ -3933,7 +3933,7 @@ function isPlayerOnline(lastSeen) {
 </td>
 
               <td
-  className={`sticky right-[140px] z-20 text-center p-2 border-l border-slate-800 font-black text-lg w-[65px] min-w-[65px] max-w-[65px] ${
+  className={`md:sticky md:right-[140px] z-20 text-center p-2 border-l border-slate-800 font-black text-lg w-[65px] min-w-[65px] max-w-[65px] ${
     index === 0
       ? "bg-slate-900 text-yellow-300"
       : index === 1
