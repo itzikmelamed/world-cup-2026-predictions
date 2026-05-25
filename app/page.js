@@ -1523,7 +1523,7 @@ function isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches = {}, res
 
   const lockTime = new Date(matchDateTime.getTime() - 5 * 60 * 1000);
 
-  return new Date() >= lockTime;
+  return serverTime ? serverTime >= lockTime : true;
 }
 function isBonusLocked(bonusManuallyUnlocked) {
   if (bonusManuallyUnlocked) {
