@@ -1058,6 +1058,9 @@ useEffect(() => {
       return;
     }
 
+    console.log("Server time raw:", data);
+console.log("Server time local:", new Date(data));
+
     setServerTime(new Date(data));
   }
 
