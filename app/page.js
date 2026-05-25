@@ -25,7 +25,7 @@ const players = [
 ];
 
 const matches = [
-  { id: 1, date: "25.05.2026", time: "15:49", stage: "בתים", group: "A", home: "Mexico", away: "South Africa" },
+  { id: 1, date: "11.06.2026", time: "22:00", stage: "בתים", group: "A", home: "Mexico", away: "South Africa" },
   { id: 2, date: "12.06.2026", time: "05:00", stage: "בתים", group: "A", home: "South Korea", away: "Czech Republic" },
   { id: 3, date: "12.06.2026", time: "22:00", stage: "בתים", group: "B", home: "Canada", away: "Bosnia & Herzegovina" },
   { id: 4, date: "13.06.2026", time: "04:00", stage: "בתים", group: "D", home: "USA", away: "Paraguay" },
@@ -1540,7 +1540,7 @@ function isBonusLocked(bonusManuallyUnlocked) {
     return false;
   }
 
-  const bonusDeadline = new Date(2026, 5, 11, 17, 0);
+  const bonusDeadline = new Date(2026, 4, 25, 15,57);
 
   return serverTime ? serverTime >= bonusDeadline : true;
 }
