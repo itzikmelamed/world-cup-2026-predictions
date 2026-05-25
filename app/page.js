@@ -1540,7 +1540,7 @@ function isBonusLocked(bonusManuallyUnlocked) {
     return false;
   }
 
-  const bonusDeadline = new Date(2026, 4, 25, 15,57);
+  const bonusDeadline = new Date(2026, 5, 11, 17, 0);
 
   return serverTime ? serverTime >= bonusDeadline : true;
 }
