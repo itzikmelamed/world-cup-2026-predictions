@@ -1542,7 +1542,7 @@ function isBonusLocked(bonusManuallyUnlocked) {
 
   const bonusDeadline = new Date(2026, 5, 11, 17, 0);
 
-  return new Date() >= bonusDeadline;
+  return serverTime ? serverTime >= bonusDeadline : true;
 }
   const leaderboard = useMemo(() => {
   return activePlayers
