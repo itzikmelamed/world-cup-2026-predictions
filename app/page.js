@@ -1028,6 +1028,26 @@ async function refreshAllData() {
   await loadAppSettings();
   await loadKnockoutMatches();
 }
+
+  const [predictions, setPredictions] = useState({});
+  const [results, setResults] = useState({});
+  const [savingPrediction, setSavingPrediction] = useState(false);
+  const [editingPlayerId, setEditingPlayerId] = useState(null);
+const [editingPlayerName, setEditingPlayerName] = useState("");
+  const [bonusPredictions, setBonusPredictions] = useState({});
+  const [officialBonus, setOfficialBonus] = useState({
+  champion: "",
+  topScorer: "",
+});
+const [groupStageFinished, setGroupStageFinished] = useState(false);
+const [manuallyUnlockedMatches, setManuallyUnlockedMatches] = useState([]);
+const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
+const [serverTime, setServerTime] = useState(null);
+
+useEffect(() => {
+  localStorage.setItem("currentPage", page);
+}, [page]);
+
 useEffect(() => {
   async function loadServerTime() {
     const { data, error } = await supabase.rpc("get_server_time");
@@ -1043,6 +1063,7 @@ useEffect(() => {
   loadServerTime();
   refreshAllData();
 }, []);
+
 useEffect(() => {
   if (
     role === "viewer" &&
@@ -1057,6 +1078,7 @@ useEffect(() => {
     setPage("leaderboard");
   }
 }, [role, page]);
+
 useEffect(() => {
   if (!authUser?.email) return;
 
@@ -1082,24 +1104,7 @@ useEffect(() => {
 
   return () => clearInterval(interval);
 }, [authUser?.email, page]);
-  const [predictions, setPredictions] = useState({});
-  const [results, setResults] = useState({});
-  const [savingPrediction, setSavingPrediction] = useState(false);
-  const [editingPlayerId, setEditingPlayerId] = useState(null);
-const [editingPlayerName, setEditingPlayerName] = useState("");
-  const [bonusPredictions, setBonusPredictions] = useState({});
-  const [officialBonus, setOfficialBonus] = useState({
-  champion: "",
-  topScorer: "",
-});
-const [groupStageFinished, setGroupStageFinished] = useState(false);
-const [manuallyUnlockedMatches, setManuallyUnlockedMatches] = useState([]);
-const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
-const [serverTime, setServerTime] = useState(null);
 
-useEffect(() => {
-  localStorage.setItem("currentPage", page);
-}, [page]);
   async function updatePrediction(matchId, side, value) {
   if (savingPrediction) return;
 
