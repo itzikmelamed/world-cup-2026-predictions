@@ -1046,6 +1046,12 @@ const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
 const [serverTime, setServerTime] = useState(null);
 
 useEffect(() => {
+  const savedPage = localStorage.getItem("currentPage");
+  if (savedPage) {
+    setPage(savedPage);
+  }
+}, []);
+useEffect(() => {
   localStorage.setItem("currentPage", page);
 }, [page]);
 
