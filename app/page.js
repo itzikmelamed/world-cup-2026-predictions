@@ -213,6 +213,7 @@ export default function Home() {
  const [openMatchId, setOpenMatchId] = useState(null);
   const [role, setRole] = useState("");
   const [dbPlayers, setDbPlayers] = useState([]);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
   const [authEmail, setAuthEmail] = useState("");
 const [authPassword, setAuthPassword] = useState("");
 const [authUser, setAuthUser] = useState(null);
@@ -2267,51 +2268,63 @@ function isPlayerOnline(lastSeen) {
 
     {!authUser ? (
       <div className="space-y-3">
-        <input
-          type="text"
-          placeholder="שם המשתתף - נדרש להרשמה"
-          value={participantName}
-          onChange={(e) => setParticipantName(e.target.value)}
-          className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
-        />
+        {showAdminLogin && (
+  <>
+    <input
+      type="text"
+      placeholder="שם המשתתף - נדרש להרשמה"
+      value={participantName}
+      onChange={(e) => setParticipantName(e.target.value)}
+      className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
+    />
 
-        <input
-          type="email"
-          placeholder="אימייל"
-          value={authEmail}
-          onChange={(e) => setAuthEmail(e.target.value)}
-          className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
-        />
+    <input
+      type="email"
+      placeholder="אימייל"
+      value={authEmail}
+      onChange={(e) => setAuthEmail(e.target.value)}
+      className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
+    />
 
-        <input
-          type="password"
-          placeholder="סיסמה"
-          value={authPassword}
-          onChange={(e) => setAuthPassword(e.target.value)}
-          className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
-        />
+    <input
+      type="password"
+      placeholder="סיסמה"
+      value={authPassword}
+      onChange={(e) => setAuthPassword(e.target.value)}
+      className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
+    />
 
-        <div className="grid grid-cols-2 gap-3 pt-2">
-          <button
-            onClick={signUp}
-            className="bg-green-500 hover:bg-green-600 text-black px-4 py-3 rounded-2xl font-black shadow-lg"
-          >
-            הרשמה
-          </button>
+    <div className="grid grid-cols-2 gap-3 pt-2">
+      <button
+        onClick={signUp}
+        className="bg-green-500 hover:bg-green-600 text-black px-4 py-3 rounded-2xl font-black shadow-lg"
+      >
+        הרשמה
+      </button>
 
-          <button
-            onClick={signIn}
-            className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl font-black shadow-lg"
-          >
-            התחברות
-          </button>
-          <button
+      <button
+        onClick={signIn}
+        className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-3 rounded-2xl font-black shadow-lg"
+      >
+        התחברות
+      </button>
+    </div>
+  </>
+)}
+
+<button
   onClick={signInWithGoogle}
   className="bg-white hover:bg-slate-100 text-slate-950 px-4 py-3 rounded-2xl font-black shadow-lg border border-slate-300"
 >
   התחברות עם Google
 </button>
-        </div>
+
+<button
+  onClick={() => setShowAdminLogin((prev) => !prev)}
+  className="text-slate-400 hover:text-white text-sm font-bold mt-3"
+>
+  {showAdminLogin ? "הסתר כניסת מנהל" : "כניסת מנהל"}
+</button>
       </div>
     ) : (
       <div className="rounded-2xl bg-green-500/10 border border-green-400/30 p-4">
