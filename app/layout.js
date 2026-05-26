@@ -22,9 +22,9 @@ export const metadata = {
     statusBarStyle: "black-translucent",
     title: "World Cup Predictor 2026",
   },
- icons: {
-  icon: "/icon.png",
-  apple: "/icon.png",
+icons: {
+  icon: "/worldcup-icon.png",
+  apple: "/worldcup-icon.png",
 },
 };
 
