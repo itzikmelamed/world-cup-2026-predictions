@@ -3866,7 +3866,7 @@ function isPlayerOnline(lastSeen) {
               #
             </th>
 
-            <th className="sticky right-0 md:right-[45px] z-40 bg-slate-950 text-right p-2 border-l border-slate-800 w-[95px] min-w-[95px] max-w-[95px]">
+            <th className="md:sticky md:right-[45px] z-40 bg-slate-950 text-right p-2 border-l border-slate-800 w-[95px] min-w-[95px] max-w-[95px]">
               משתתף
             </th>
 
@@ -3919,7 +3919,7 @@ function isPlayerOnline(lastSeen) {
 </td>
 
               <td
- className={`sticky right-0 md:right-[45px] z-20 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] truncate ${
+ className={`md:sticky md:right-[45px] z-20 p-2 border-l border-slate-800 font-black w-[95px] min-w-[95px] max-w-[95px] truncate ${
     index === 0
       ? "bg-slate-900 text-yellow-300"
       : index === 1
