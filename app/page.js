@@ -2294,13 +2294,8 @@ function isPlayerOnline(lastSeen) {
       className="w-full bg-slate-800 border border-slate-700 rounded-2xl p-3 font-bold outline-none focus:border-yellow-400"
     />
 
-    <div className="grid grid-cols-2 gap-3 pt-2">
-      <button
-        onClick={signUp}
-        className="bg-green-500 hover:bg-green-600 text-black px-4 py-3 rounded-2xl font-black shadow-lg"
-      >
-        הרשמה
-      </button>
+    <div className="pt-2">
+      
 
       <button
         onClick={signIn}
