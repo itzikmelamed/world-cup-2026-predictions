@@ -1130,7 +1130,7 @@ useEffect(() => {
   try {
      const { data: currentLoggedIn, error: playerCheckError } = await supabase
   .from("players")
-  .select("id, email, role, is_active, is_approved")
+  .select("id, name, email, role, is_active, is_approved")
   .eq("email", authUser?.email)
   .single();
 
@@ -1184,11 +1184,13 @@ if (currentLoggedIn.role === "viewer") {
       return;
     }
 
-    const currentPrediction =
-      predictions[selectedPlayer]?.[matchId] || {
-        home: "",
-        away: "",
-      };
+    const playerName = currentLoggedIn.name;
+
+const currentPrediction =
+  predictions[playerName]?.[matchId] || {
+    home: "",
+    away: "",
+  };
 
     const updatedPrediction = {
       ...currentPrediction,
@@ -1197,10 +1199,10 @@ if (currentLoggedIn.role === "viewer") {
 
     setPredictions((prev) => ({
       ...prev,
-      [selectedPlayer]: {
-        ...(prev[selectedPlayer] || {}),
-        [matchId]: updatedPrediction,
-      },
+      [playerName]: {
+  ...(prev[playerName] || {}),
+  [matchId]: updatedPrediction,
+},
     }));
 
     const { error } = await supabase
@@ -1208,7 +1210,7 @@ if (currentLoggedIn.role === "viewer") {
       .upsert(
         [
           {
-            player_name: selectedPlayer,
+            player_name: playerName,
             match_id: matchId,
             home_score:
               updatedPrediction.home === ""
