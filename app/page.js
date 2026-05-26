@@ -1128,16 +1128,32 @@ useEffect(() => {
   setSavingPrediction(true);
 
   try {
-      const currentLoggedIn = dbPlayers.find((p) => p.email === authUser?.email);
-      if (!currentLoggedIn || !currentLoggedIn.is_approved) {
-        showMessage("החשבון שלך ממתין לאישור אדמין", "error");
-        return;
-      }
+     const { data: currentLoggedIn, error: playerCheckError } = await supabase
+  .from("players")
+  .select("id, email, role, is_active, is_approved")
+  .eq("email", authUser?.email)
+  .single();
 
-      if (currentLoggedIn.role === "viewer") {
-        showMessage("אין לך הרשאה להגיש הימורים", "error");
-        return;
-      }
+if (playerCheckError || !currentLoggedIn) {
+  console.error("Error checking player permission:", playerCheckError);
+  showMessage("שגיאה בבדיקת הרשאות משתמש", "error");
+  return;
+}
+
+if (!currentLoggedIn.is_active) {
+  showMessage("החשבון שלך מושבת", "error");
+  return;
+}
+
+if (!currentLoggedIn.is_approved) {
+  showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+  return;
+}
+
+if (currentLoggedIn.role === "viewer") {
+  showMessage("אין לך הרשאה להגיש הימורים", "error");
+  return;
+}
     const { data: latestSettings, error: settingsError } = await supabase
       .from("app_settings")
       .select("manually_unlocked_matches")
