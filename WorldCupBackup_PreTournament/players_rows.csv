@@ -1,11 +1,18 @@
-id,role,email,name,is_active
-1,admin,itzik12a@gmail.com,איציק,true
-5,player,yahelzana@gmail.com,יהל,true
-8,player,ohad86@hotmail.com,אוהד,true
-26,player,a@gmak.co.il,אבירם,true
-27,player,a@gmail.com,,true
-28,player,1@1.com,טל,true
-29,player,alex1212@gmail.com,אלברט,true
-30,player,giorq@gmail.com,מראדונה,true
-31,player,maldini@gmail.com,מאלדיני,true
-32,player,taltubi82@gmail.com,טל טובי,true
+id,role,email,name,is_active,is_approved,last_seen,current_page
+1,admin,itzik12a@gmail.com,איציק,true,true,2026-05-26 09:15:47.591+00,playersAdmin
+5,player,yahelzana@gmail.com,יהל,true,true,2026-05-25 14:19:59.009+00,leaderboard
+8,player,ohad86@hotmail.com,אוהד,true,true,,
+26,player,a@gmak.co.il,אבירם,true,true,,
+27,player,a@gmail.com,,true,true,,
+29,player,alex1212@gmail.com,אלברט,true,true,2026-05-24 11:42:54.771+00,matchesCards
+30,player,giorq@gmail.com,מראדונה,true,true,,
+31,player,maldini@gmail.com,מאלדיני 12,true,true,,
+32,player,taltubi82@gmail.com,טל טובי,true,true,2026-05-26 08:29:59.84+00,rules
+35,viewer,aqwe@gmail.com,דרוגבה,true,true,,
+36,player,nadavtubi2012@gmail.com,נדב,true,true,,
+37,viewer,asa@gmail.com,פירלו,true,true,,
+38,viewer,zaq@gmail.com,גטוסו,true,true,,
+110,player,tamerabj@gmail.com,Tamer Abj,true,true,2026-05-26 06:20:51.59+00,rules
+116,player,aqws@gmail.com,aqws,true,true,,
+118,player,melabes@gmail.com,Tal Melamed,true,true,2026-05-25 21:51:51.375+00,leaderboard
+119,player,goalstalgia90@gmail.com,goalstalgia,true,true,2026-05-26 09:15:47.591+00,matchesCards
