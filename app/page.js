@@ -416,15 +416,7 @@ const buildGroupWinnersPayload = (playerBonus) => {
 
 async function updateBonusQualifier(groupName, index, value) {
   if (!selectedPlayer) return;
-  const currentLoggedIn = dbPlayers.find((p) => p.email === authUser?.email);
-  if (!currentLoggedIn || !currentLoggedIn.is_approved) {
-    showMessage("החשבון שלך ממתין לאישור אדמין", "error");
-    return;
-  }
-  if (currentLoggedIn.role === "viewer") {
-    showMessage("אין לך הרשאה לשמור ניחושי בונוס", "error");
-    return;
-  }
+  
   const { data: latestSettings, error: settingsError } = await supabase
   .from("app_settings")
   .select("bonus_manually_unlocked")
@@ -449,16 +441,6 @@ if (isBonusLocked(latestBonusManuallyUnlocked)) {
 
   return;
 }
-
-  const currentBonus = bonusPredictions[selectedPlayer] || {};
-  const currentGroup = currentBonus[groupName] || ["", ""];
-  const nextGroup = [...currentGroup];
-  nextGroup[index] = value;
-
-  const updatedBonus = {
-    ...currentBonus,
-    [groupName]: nextGroup,
-  };
 
   const { data: currentBonusPlayer, error: playerCheckError } = await supabase
   .from("players")
@@ -488,6 +470,16 @@ if (currentBonusPlayer.role === "viewer") {
 }
 
 const playerName = currentBonusPlayer.name;
+
+const currentBonus = bonusPredictions[playerName] || {};
+const currentGroup = currentBonus[groupName] || ["", ""];
+const nextGroup = [...currentGroup];
+nextGroup[index] = value;
+
+const updatedBonus = {
+  ...currentBonus,
+  [groupName]: nextGroup,
+};
 
 setBonusPredictions((prev) => ({
   ...prev,
