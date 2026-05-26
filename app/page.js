@@ -524,15 +524,43 @@ if (isBonusLocked(latestBonusManuallyUnlocked)) {
     [field === "champion" ? "champion" : "topScorer"]: value,
   };
 
+  const { data: currentLoggedIn, error: playerCheckError } = await supabase
+  .from("players")
+  .select("id, name, email, role, is_active, is_approved")
+  .eq("email", authUser?.email)
+  .single();
+
+if (playerCheckError || !currentLoggedIn) {
+  console.error("Error checking player permission:", playerCheckError);
+  showMessage("שגיאה בבדיקת הרשאות משתמש", "error");
+  return;
+}
+
+if (!currentLoggedIn.is_active) {
+  showMessage("החשבון שלך מושבת", "error");
+  return;
+}
+
+if (!currentLoggedIn.is_approved) {
+  showMessage("החשבון שלך ממתין לאישור אדמין", "error");
+  return;
+}
+
+if (currentLoggedIn.role === "viewer") {
+  showMessage("אין לך הרשאה לשמור הימורי בונוס", "error");
+  return;
+}
+
+const playerName = currentLoggedIn.name;
   setBonusPredictions((prev) => ({
     ...prev,
-    [selectedPlayer]: updatedBonus,
+    [playerName]: updatedBonus,
   }));
 
   const groupWinners = buildGroupWinnersPayload(updatedBonus);
   const { error } = await supabase.from("bonus_predictions").upsert(
     {
-      player_name: selectedPlayer,
+      player_name: playerName,
       champion: updatedBonus.champion || null,
       top_scorer: updatedBonus.topScorer || null,
       group_winners: groupWinners,
