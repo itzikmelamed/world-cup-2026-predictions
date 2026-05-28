@@ -2477,7 +2477,9 @@ function isPlayerOnline(lastSeen) {
 
 </section>
 
-        <nav className="mb-6 flex gap-2 overflow-x-auto rounded-3xl border border-slate-800 bg-slate-900/70 backdrop-blur-md p-2 shadow-2xl scrollbar-hide">
+        <nav className={`mb-6 gap-2 overflow-x-auto rounded-3xl border border-slate-800 bg-slate-900/70 backdrop-blur-md p-2 shadow-2xl scrollbar-hide ${
+  role === "admin" ? "flex" : "hidden md:flex"
+}`}>
           {false && (
   <button
     onClick={() => setPage("matches")}
