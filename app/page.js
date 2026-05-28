@@ -2228,7 +2228,7 @@ function isPlayerOnline(lastSeen) {
     
     <main
   dir="rtl"
-  className="min-h-screen bg-slate-950 text-white p-2 md:p-8 text-xs md:text-base"
+  className="min-h-screen pb-24 bg-slate-950 text-white p-2 md:p-8 text-xs md:text-base"
 >
       {message && (
   <div
@@ -4758,6 +4758,85 @@ if (pts === 4.5) {
     Built for the ultimate World Cup experience
   </div>
 </footer>
+{authUser && (
+  <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 backdrop-blur-xl">
+    <div className="grid grid-cols-6 h-16">
+
+      <button
+        onClick={() => setPage("matchesCards")}
+        className={`flex flex-col items-center justify-center text-[10px] font-black ${
+          page === "matchesCards"
+            ? "text-yellow-300"
+            : "text-slate-400"
+        }`}
+      >
+        <span className="text-lg">⚽</span>
+        <span>המשחקים שלי</span>
+      </button>
+
+      <button
+        onClick={() => setPage("bonus")}
+        className={`flex flex-col items-center justify-center text-[10px] font-black ${
+          page === "bonus"
+            ? "text-yellow-300"
+            : "text-slate-400"
+        }`}
+      >
+        <span className="text-lg">🏆</span>
+        <span>הבונוס שלי</span>
+      </button>
+
+      <button
+        onClick={() => setPage("bonusAll")}
+        className={`flex flex-col items-center justify-center text-[10px] font-black ${
+          page === "bonusAll"
+            ? "text-yellow-300"
+            : "text-slate-400"
+        }`}
+      >
+        <span className="text-lg">👥</span>
+        <span>כל הבונוסים</span>
+      </button>
+
+      <button
+        onClick={() => setPage("all")}
+        className={`flex flex-col items-center justify-center text-[10px] font-black ${
+          page === "all"
+            ? "text-yellow-300"
+            : "text-slate-400"
+        }`}
+      >
+        <span className="text-lg">📋</span>
+        <span>כל ההימורים</span>
+      </button>
+
+      <button
+        onClick={() => setPage("leaderboard")}
+        className={`flex flex-col items-center justify-center text-[10px] font-black ${
+          page === "leaderboard"
+            ? "text-yellow-300"
+            : "text-slate-400"
+        }`}
+      >
+        <span className="text-lg">🥇</span>
+        <span>דירוג</span>
+      </button>
+
+      <button
+        onClick={() => setPage("groups")}
+        className={`flex flex-col items-center justify-center text-[10px] font-black ${
+          page === "groups"
+            ? "text-yellow-300"
+            : "text-slate-400"
+        }`}
+      >
+        <span className="text-lg">🌍</span>
+        <span>בתים</span>
+      </button>
+
+    </div>
+  </div>
+)}
 </main>
 );
 }
