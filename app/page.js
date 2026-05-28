@@ -2287,6 +2287,13 @@ function isPlayerOnline(lastSeen) {
         World Cup Predictor 2026
       </h1>
 
+      <button
+  onClick={() => setPage("rules")}
+  className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 px-4 py-2 text-sm font-black text-white backdrop-blur-sm transition-all"
+>
+  ℹ️ חוקים
+</button>
+
       <div className="mt-5 rounded-2xl bg-black/55 border border-white/10 backdrop-blur-sm p-4">
         <div className="text-slate-300 text-base mb-1">סטטוס מערכת</div>
         <div className="text-green-400 text-3xl font-black">● פעילה</div>
