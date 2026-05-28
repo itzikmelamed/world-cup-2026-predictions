@@ -1483,6 +1483,38 @@ function calculateBonusPoints(
 
   return total;
 }
+function getBestThirdPlaceTeams(matches, groups, results) {
+  const thirdPlaceTeams = [];
+
+  Object.keys(groups).forEach((groupName) => {
+    const table = calculateGroupTable(groupName, matches, groups, results);
+
+    if (table[2]) {
+      thirdPlaceTeams.push(table[2]);
+    }
+  });
+
+  thirdPlaceTeams.sort((a, b) => {
+    if (b.points !== a.points) {
+      return b.points - a.points;
+    }
+
+    const goalDiffA = a.goalsFor - a.goalsAgainst;
+    const goalDiffB = b.goalsFor - b.goalsAgainst;
+
+    if (goalDiffB !== goalDiffA) {
+      return goalDiffB - goalDiffA;
+    }
+
+    if (b.goalsFor !== a.goalsFor) {
+      return b.goalsFor - a.goalsFor;
+    }
+
+    return 0;
+  });
+
+  return thirdPlaceTeams.slice(0, 8).map((team) => team.team);
+}
 function calculateScoreBreakdown(
   player,
   predictions,
@@ -1516,10 +1548,21 @@ let correctDirections = 0;
 
   const playerBonus = bonusPredictions[player] || {};
 
+  const bestThirdPlaceTeams = getBestThirdPlaceTeams(
+  matches,
+  groups,
+  results
+);
+
   if (groupStageFinished) {
     Object.keys(groups).forEach((groupName) => {
       const table = calculateGroupTable(groupName, matches, groups, results);
-      const qualifiedTeams = table.slice(0, 2).map((team) => team.team);
+      const topTwoTeams = table.slice(0, 2).map((team) => team.team);
+
+const qualifiedTeams = [
+  ...topTwoTeams,
+  ...bestThirdPlaceTeams,
+];
       const predictedTeams = playerBonus[groupName] || [];
 
       predictedTeams.forEach((team) => {
