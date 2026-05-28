@@ -4266,6 +4266,12 @@ if (pts === 4.5) {
       away: "",
     };
 
+    const shouldHidePrediction =
+  !match.group &&
+  !isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results) &&
+  role !== "admin" &&
+  player.name !== selectedPlayer;
+
   const points = calculatePoints(
     prediction,
     result
@@ -4289,7 +4295,11 @@ if (pts === 4.5) {
 }`}
                             >
                               <div className="font-bold">
-                                {prediction.home !== "" && prediction.away !== "" ? (
+                                {shouldHidePrediction ? (
+  <span className="text-slate-500 text-xs font-black">
+    הימור מוסתר
+  </span>
+) : prediction.home !== "" && prediction.away !== "" ? (
   <span className="inline-flex items-center gap-1" dir="rtl">
     <span>{prediction.home}</span>
     <span>:</span>
@@ -4407,6 +4417,12 @@ if (pts === 4.5) {
   ).map((player) => {
             const prediction = predictions[player.name]?.[match.id];
 
+            const shouldHidePrediction =
+  !match.group &&
+  !isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results) &&
+  role !== "admin" &&
+  player.name !== selectedPlayer;
+
             const points =
               prediction && result
                 ? calculatePoints(prediction, result)
@@ -4426,11 +4442,13 @@ if (pts === 4.5) {
                 </div>
 
                 <div className="text-center text-slate-300 text-sm">
-                  {prediction &&
- prediction.home !== null &&
- prediction.away !== null &&
- prediction.home !== "" &&
- prediction.away !== ""
+                  {shouldHidePrediction
+  ? "הימור מוסתר"
+  : prediction &&
+    prediction.home !== null &&
+    prediction.away !== null &&
+    prediction.home !== "" &&
+    prediction.away !== ""
   ? `${prediction.home} - ${prediction.away}`
   : "-"}
                 </div>
