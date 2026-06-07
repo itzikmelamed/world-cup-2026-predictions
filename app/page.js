@@ -2300,6 +2300,41 @@ function isPlayerOnline(lastSeen) {
     <span className="text-slate-300 ml-2">סטטוס מערכת</span>
     <span className="text-green-400">● פעילה</span>
   </div>
+  <div className="absolute top-20 left-6 z-10 rounded-2xl bg-black/45 border border-yellow-400/20 backdrop-blur-sm px-5 py-3">
+  <div className="text-yellow-300 text-xs font-black mb-2">
+    ⏳ הספירה לאחור למשחק הפתיחה
+  </div>
+
+  <div className="flex gap-4">
+    <div className="text-center">
+      <div className="text-2xl font-black text-white">
+        {countdown.days}
+      </div>
+      <div className="text-xs text-slate-400">ימים</div>
+    </div>
+
+    <div className="text-center">
+      <div className="text-2xl font-black text-white">
+        {countdown.hours}
+      </div>
+      <div className="text-xs text-slate-400">שעות</div>
+    </div>
+
+    <div className="text-center">
+      <div className="text-2xl font-black text-white">
+        {countdown.minutes}
+      </div>
+      <div className="text-xs text-slate-400">דקות</div>
+    </div>
+
+    <div className="text-center">
+      <div className="text-2xl font-black text-white">
+        {countdown.seconds}
+      </div>
+      <div className="text-xs text-slate-400">שניות</div>
+    </div>
+  </div>
+</div>
 
   <div className="absolute bottom-6 left-8 z-10">
     <h1 className="text-4xl md:text-5xl font-black text-white leading-tight drop-shadow-2xl">
