@@ -2300,7 +2300,7 @@ function isPlayerOnline(lastSeen) {
     <span className="text-slate-300 ml-2">סטטוס מערכת</span>
     <span className="text-green-400">● פעילה</span>
   </div>
-  <div className="absolute top-20 left-6 z-10 rounded-2xl bg-black/45 border border-yellow-400/20 backdrop-blur-sm px-5 py-3">
+  <div className="absolute bottom-24 right-6 z-10 rounded-2xl bg-black/45 border border-yellow-400/20 backdrop-blur-sm px-5 py-3">
   <div className="text-yellow-300 text-xs font-black mb-2">
     ⏳ הספירה לאחור למשחק הפתיחה
   </div>
