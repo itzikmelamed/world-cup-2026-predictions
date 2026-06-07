@@ -220,6 +220,12 @@ const [authUser, setAuthUser] = useState(null);
 const [participantName, setParticipantName] = useState("");
 const [message, setMessage] = useState("");
 const nextOpenMatchRef = useRef(null);
+const [countdown, setCountdown] = useState({
+  days: 0,
+  hours: 0,
+  minutes: 0,
+  seconds: 0,
+});
 const [messageType, setMessageType] = useState("");
 const [knockoutMatches, setKnockoutMatches] = useState({});
 const [adminResultsSearch, setAdminResultsSearch] = useState("");
@@ -260,6 +266,38 @@ useEffect(() => {
   return () => {
     subscription.unsubscribe();
   };
+}, []);
+
+useEffect(() => {
+  const openingMatchTime = new Date("2026-06-11T22:00:00+03:00");
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = openingMatchTime - now;
+
+    if (diff <= 0) {
+      setCountdown({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      });
+      return;
+    }
+
+    setCountdown({
+      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+    });
+  }
+
+  updateCountdown();
+
+  const interval = setInterval(updateCountdown, 1000);
+
+  return () => clearInterval(interval);
 }, []);
 
 useEffect(() => {
@@ -2298,6 +2336,41 @@ function isPlayerOnline(lastSeen) {
         <div className="text-slate-300 text-base mb-1">סטטוס מערכת</div>
         <div className="text-green-400 text-3xl font-black">● פעילה</div>
       </div>
+      <div className="mt-4 rounded-2xl bg-black/55 border border-yellow-400/20 backdrop-blur-sm p-4">
+  <div className="text-yellow-300 text-sm font-black mb-3">
+    ⏳ הספירה לאחור למשחק הפתיחה
+  </div>
+
+  <div className="grid grid-cols-4 gap-2 text-center">
+    <div>
+      <div className="text-2xl font-black text-white">
+        {countdown.days}
+      </div>
+      <div className="text-xs text-slate-400">ימים</div>
+    </div>
+
+    <div>
+      <div className="text-2xl font-black text-white">
+        {countdown.hours}
+      </div>
+      <div className="text-xs text-slate-400">שעות</div>
+    </div>
+
+    <div>
+      <div className="text-2xl font-black text-white">
+        {countdown.minutes}
+      </div>
+      <div className="text-xs text-slate-400">דקות</div>
+    </div>
+
+    <div>
+      <div className="text-2xl font-black text-white">
+        {countdown.seconds}
+      </div>
+      <div className="text-xs text-slate-400">שניות</div>
+    </div>
+  </div>
+</div>
     </div>
   </div>
 </header>
