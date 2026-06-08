@@ -1550,38 +1550,6 @@ function calculateBonusPoints(
 
   return total;
 }
-function getBestThirdPlaceTeams(matches, groups, results) {
-  const thirdPlaceTeams = [];
-
-  Object.keys(groups).forEach((groupName) => {
-    const table = calculateGroupTable(groupName, matches, groups, results);
-
-    if (table[2]) {
-      thirdPlaceTeams.push(table[2]);
-    }
-  });
-
-  thirdPlaceTeams.sort((a, b) => {
-    if (b.points !== a.points) {
-      return b.points - a.points;
-    }
-
-    const goalDiffA = a.goalsFor - a.goalsAgainst;
-    const goalDiffB = b.goalsFor - b.goalsAgainst;
-
-    if (goalDiffB !== goalDiffA) {
-      return goalDiffB - goalDiffA;
-    }
-
-    if (b.goalsFor !== a.goalsFor) {
-      return b.goalsFor - a.goalsFor;
-    }
-
-    return 0;
-  });
-
-  return thirdPlaceTeams.slice(0, 8).map((team) => team.team);
-}
 function calculateScoreBreakdown(
   player,
   predictions,
@@ -1616,23 +1584,25 @@ let correctDirections = 0;
   const playerBonus = bonusPredictions[player] || {};
 
   const bestThirdPlaceTeams = getBestThirdPlaceTeams(
-  matches,
-  groups,
-  results
-);
+    matches,
+    groups,
+    results,
+    []
+  );
 
-console.log("table bestThirdPlaceTeams count:", bestThirdPlaceTeams.length);
-console.log("table bestThirdPlaceTeams:", bestThirdPlaceTeams);
+  const qualifiedThirdPlaceTeams = bestThirdPlaceTeams
+    .filter((team) => team.isQualified)
+    .map((team) => team.team);
 
   if (groupStageFinished) {
     Object.keys(groups).forEach((groupName) => {
       const table = calculateGroupTable(groupName, matches, groups, results);
       const topTwoTeams = table.slice(0, 2).map((team) => team.team);
 
-const qualifiedTeams = [
-  ...topTwoTeams,
-  ...bestThirdPlaceTeams,
-];
+      const qualifiedTeams = [
+        ...topTwoTeams,
+        ...qualifiedThirdPlaceTeams,
+      ];
       const predictedTeams = playerBonus[groupName] || [];
 
       predictedTeams.forEach((team) => {
@@ -4684,100 +4654,24 @@ if (pts === 4.5) {
     </div>
   </div>
 
-  <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
-    ✓ שתי הראשונות עולות שלב
-  </div>
 </div>
-{(() => {
-  const bestThirdPlaceTeams = getBestThirdPlaceTeams(
-    matches,
-    groups,
-    results,
-    []
-  );
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                document
+                  .getElementById("best-third-place-teams")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+              className="rounded-full bg-slate-800 border border-slate-700 px-4 py-2 text-sm font-black text-slate-200 hover:bg-slate-700"
+            >
+              עבור לטבלת השלישיות
+            </button>
 
-  return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-        <div>
-          <h3 className="text-2xl font-black">
-            דירוג המקומות השלישיים
-          </h3>
-          <div className="text-slate-400 font-bold mt-1">
-            8 המקומות השלישיים הטובים ביותר עולים לשלב הבא
+            <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
+              ✓ שתי הראשונות עולות שלב
+            </div>
           </div>
-        </div>
-
-        <div className="rounded-full bg-yellow-400 text-slate-950 px-4 py-2 text-sm font-black">
-          Top 8 Qualify
-        </div>
-      </div>
-
-      <div className="overflow-auto rounded-2xl border border-slate-800">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-950 text-slate-300">
-            <tr>
-              <th className="p-3 text-right">#</th>
-              <th className="p-3 text-right">בית</th>
-              <th className="p-3 text-right">נבחרת</th>
-              <th className="p-3 text-center">מש'</th>
-              <th className="p-3 text-center">נק'</th>
-              <th className="p-3 text-center">הפרש</th>
-              <th className="p-3 text-center">זכות</th>
-              <th className="p-3 text-center">סטטוס</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {bestThirdPlaceTeams.map((team) => (
-              <tr
-                key={`${team.group}-${team.team}`}
-                className={
-                  team.isQualified
-                    ? "border-t border-slate-800 bg-emerald-500/10"
-                    : "border-t border-slate-800 bg-red-500/10"
-                }
-              >
-                <td className="p-3 font-black">
-                  {team.rank}
-                </td>
-                <td className="p-3 font-bold">
-                  בית {team.group}
-                </td>
-                <td className="p-3 font-black">
-                  {team.team}
-                </td>
-                <td className="p-3 text-center">
-                  {team.played}
-                </td>
-                <td className="p-3 text-center font-black">
-                  {team.points}
-                </td>
-                <td className="p-3 text-center">
-                  {team.gd}
-                </td>
-                <td className="p-3 text-center">
-                  {team.gf}
-                </td>
-                <td className="p-3 text-center">
-                  {team.isQualified ? (
-                    <span className="rounded-full bg-emerald-500 text-white px-3 py-1 text-xs font-black">
-                      עולה
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-red-500 text-white px-3 py-1 text-xs font-black">
-                      לא עולה
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-})()}
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {Object.keys(groups).map((groupName) => {
                 const table = calculateGroupTable(
@@ -4888,6 +4782,100 @@ if (pts === 4.5) {
                 );
               })}
             </div>
+
+            {(() => {
+              const bestThirdPlaceTeams = getBestThirdPlaceTeams(
+                matches,
+                groups,
+                results,
+                []
+              );
+
+              return (
+                <div
+                  id="best-third-place-teams"
+                  className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                    <div>
+                      <h3 className="text-2xl font-black">
+                        דירוג המקומות השלישיים
+                      </h3>
+                      <div className="text-slate-400 font-bold mt-1">
+                        8 המקומות השלישיים הטובים ביותר עולים לשלב הבא
+                      </div>
+                    </div>
+
+                    <div className="rounded-full bg-yellow-400 text-slate-950 px-4 py-2 text-sm font-black">
+                      Top 8 Qualify
+                    </div>
+                  </div>
+
+                  <div className="overflow-auto rounded-2xl border border-slate-800">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-950 text-slate-300">
+                        <tr>
+                          <th className="p-3 text-right">#</th>
+                          <th className="p-3 text-right">בית</th>
+                          <th className="p-3 text-right">נבחרת</th>
+                          <th className="p-3 text-center">מש'</th>
+                          <th className="p-3 text-center">נק'</th>
+                          <th className="p-3 text-center">הפרש</th>
+                          <th className="p-3 text-center">זכות</th>
+                          <th className="p-3 text-center">סטטוס</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {bestThirdPlaceTeams.map((team) => (
+                          <tr
+                            key={`${team.group}-${team.team}`}
+                            className={
+                              team.isQualified
+                                ? "border-t border-slate-800 bg-emerald-500/10"
+                                : "border-t border-slate-800 bg-red-500/10"
+                            }
+                          >
+                            <td className="p-3 font-black">
+                              {team.rank}
+                            </td>
+                            <td className="p-3 font-bold">
+                              בית {team.group}
+                            </td>
+                            <td className="p-3 font-black">
+                              {team.team}
+                            </td>
+                            <td className="p-3 text-center">
+                              {team.played}
+                            </td>
+                            <td className="p-3 text-center font-black">
+                              {team.points}
+                            </td>
+                            <td className="p-3 text-center">
+                              {team.gd}
+                            </td>
+                            <td className="p-3 text-center">
+                              {team.gf}
+                            </td>
+                            <td className="p-3 text-center">
+                              {team.isQualified ? (
+                                <span className="rounded-full bg-emerald-500 text-white px-3 py-1 text-xs font-black">
+                                  עולה
+                                </span>
+                              ) : (
+                                <span className="rounded-full bg-red-500 text-white px-3 py-1 text-xs font-black">
+                                  לא עולה
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            })()}
           </section>
         )}
         {page === "rules" && (
