@@ -693,7 +693,15 @@ async function loadAppSettings() {
   setManuallyUnlockedMatches(data.manually_unlocked_matches || []);
   setBonusManuallyUnlocked(data.bonus_manually_unlocked || false);
   setGroupStageFinished(data.group_stage_finished || false);
-  setManualThirdPlaceQualifiers(data.manual_third_place_qualifiers || []);
+  const manualThirdPlaceData = data.manual_third_place_qualifiers || {};
+  setManualThirdPlaceQualifiers(
+    Array.isArray(manualThirdPlaceData)
+      ? manualThirdPlaceData.reduce(
+          (acc, team) => ({ ...acc, [team]: true }),
+          {}
+        )
+      : manualThirdPlaceData
+  );
   setOfficialBonus(
   data.official_bonus || {
     champion: "",
@@ -1132,7 +1140,7 @@ const [editingPlayerName, setEditingPlayerName] = useState("");
 const [groupStageFinished, setGroupStageFinished] = useState(false);
 const [manuallyUnlockedMatches, setManuallyUnlockedMatches] = useState([]);
 const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
-const [manualThirdPlaceQualifiers, setManualThirdPlaceQualifiers] = useState([]);
+const [manualThirdPlaceQualifiers, setManualThirdPlaceQualifiers] = useState({});
 const [serverTime, setServerTime] = useState(null);
 
 useEffect(() => {
@@ -1465,7 +1473,7 @@ function calculateGroupTable(groupName, matches, groups, results) {
     return b.gf - a.gf;
   });
 }
-function getBestThirdPlaceTeams(matches, groups, results, manualThirdPlaceQualifiers = []) {
+function getBestThirdPlaceTeams(matches, groups, results, manualOverrides = {}) {
   const thirdPlaceTeams = Object.keys(groups)
     .map((groupName) => {
       const table = calculateGroupTable(groupName, matches, groups, results);
@@ -1473,10 +1481,19 @@ function getBestThirdPlaceTeams(matches, groups, results, manualThirdPlaceQualif
 
       if (!thirdTeam) return null;
 
+      const hasManualOverride = Object.prototype.hasOwnProperty.call(
+        manualOverrides,
+        thirdTeam.team
+      );
+      const isManualQualified = hasManualOverride
+        ? manualOverrides[thirdTeam.team] === true
+        : false;
+
       return {
         ...thirdTeam,
         group: groupName,
-        isManualQualified: manualThirdPlaceQualifiers.includes(thirdTeam.team),
+        hasManualOverride,
+        isManualQualified,
       };
     })
     .filter(Boolean);
@@ -1491,7 +1508,9 @@ function getBestThirdPlaceTeams(matches, groups, results, manualThirdPlaceQualif
     ...team,
     rank: index + 1,
     isAutoQualified: index < 8,
-    isQualified: team.isManualQualified || index < 8,
+    isQualified: team.hasManualOverride
+      ? team.isManualQualified
+      : index < 8,
   }));
 }
 function calculateBonusPoints(
@@ -4815,26 +4834,35 @@ if (pts === 4.5) {
                 manualThirdPlaceQualifiers
               );
 
-              const hasManualOverride = manualThirdPlaceQualifiers.length > 0;
-              
-              const handleToggleTeam = async (teamName) => {
-                const newQualifiers = manualThirdPlaceQualifiers.includes(teamName)
-                  ? manualThirdPlaceQualifiers.filter(t => t !== teamName)
-                  : [...manualThirdPlaceQualifiers, teamName];
-                
-                if (newQualifiers.length > 8) {
+              const hasManualOverride =
+                Object.keys(manualThirdPlaceQualifiers).length > 0;
+
+              const handleManualOverride = async (teamName, value) => {
+                const newOverrides = {
+                  ...manualThirdPlaceQualifiers,
+                  [teamName]: value,
+                };
+
+                const finalQualifiedCount = getBestThirdPlaceTeams(
+                  matches,
+                  groups,
+                  results,
+                  newOverrides
+                ).filter((team) => team.isQualified).length;
+
+                if (finalQualifiedCount > 8) {
                   showMessage("ניתן לבחור מקסימום 8 נבחרות עולות", "error");
                   return;
                 }
-                
-                const success = await saveManualThirdPlaceQualifiers(newQualifiers);
+
+                const success = await saveManualThirdPlaceQualifiers(newOverrides);
                 if (success) {
                   showMessage("בחירה ידנית נשמרה");
                 }
               };
-              
+
               const handleReset = async () => {
-                const success = await saveManualThirdPlaceQualifiers([]);
+                const success = await saveManualThirdPlaceQualifiers({});
                 if (success) {
                   showMessage("חזרה לחישוב אוטומטי");
                 }
@@ -4945,17 +4973,35 @@ if (pts === 4.5) {
                             </td>
                             {role === "admin" && (
                               <td className="p-3 text-center">
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleTeam(team.team)}
-                                  className={`rounded-full px-3 py-1 text-xs font-black transition-colors ${
-                                    manualThirdPlaceQualifiers.includes(team.team)
-                                      ? "bg-emerald-500 text-white hover:bg-emerald-600"
-                                      : "bg-slate-700 text-slate-200 hover:bg-slate-600"
-                                  }`}
-                                >
-                                  {manualThirdPlaceQualifiers.includes(team.team) ? "בחור" : "ביטול"}
-                                </button>
+                                {(() => {
+                                  const manualValue = manualThirdPlaceQualifiers[team.team];
+                                  return (
+                                    <div className="inline-flex gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleManualOverride(team.team, true)}
+                                        className={`rounded-full px-3 py-1 text-xs font-black transition-colors ${
+                                          manualValue === true
+                                            ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                                            : "bg-slate-700 text-slate-200 hover:bg-slate-600"
+                                        }`}
+                                      >
+                                        עולה
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleManualOverride(team.team, false)}
+                                        className={`rounded-full px-3 py-1 text-xs font-black transition-colors ${
+                                          manualValue === false
+                                            ? "bg-red-500 text-white hover:bg-red-600"
+                                            : "bg-slate-700 text-slate-200 hover:bg-slate-600"
+                                        }`}
+                                      >
+                                        לא עולה
+                                      </button>
+                                    </div>
+                                  );
+                                })()}
                               </td>
                             )}
                           </tr>
