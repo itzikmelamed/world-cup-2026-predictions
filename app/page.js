@@ -1463,6 +1463,31 @@ function calculateGroupTable(groupName, matches, groups, results) {
     return b.gf - a.gf;
   });
 }
+function getBestThirdPlaceTeams(matches, groups, results, manualThirdPlaceQualifiers = []) {
+  const thirdPlaceTeams = Object.keys(groups).map((groupName) => {
+    const table = calculateGroupTable(groupName, matches, groups, results);
+    const thirdTeam = table[2];
+
+    return {
+      ...thirdTeam,
+      group: groupName,
+      isManualQualified: manualThirdPlaceQualifiers.includes(thirdTeam.team),
+    };
+  });
+
+  const sorted = thirdPlaceTeams.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    if (b.gd !== a.gd) return b.gd - a.gd;
+    return b.gf - a.gf;
+  });
+
+  return sorted.map((team, index) => ({
+    ...team,
+    rank: index + 1,
+    isAutoQualified: index < 8,
+    isQualified: team.isManualQualified || index < 8,
+  }));
+}
 function calculateBonusPoints(
   player,
   bonusPredictions,
@@ -4656,6 +4681,96 @@ if (pts === 4.5) {
     ✓ שתי הראשונות עולות שלב
   </div>
 </div>
+{(() => {
+  const bestThirdPlaceTeams = getBestThirdPlaceTeams(
+    matches,
+    groups,
+    results,
+    []
+  );
+
+  return (
+    <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-5 shadow-2xl">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+        <div>
+          <h3 className="text-2xl font-black">
+            דירוג המקומות השלישיים
+          </h3>
+          <div className="text-slate-400 font-bold mt-1">
+            8 המקומות השלישיים הטובים ביותר עולים לשלב הבא
+          </div>
+        </div>
+
+        <div className="rounded-full bg-yellow-400 text-slate-950 px-4 py-2 text-sm font-black">
+          Top 8 Qualify
+        </div>
+      </div>
+
+      <div className="overflow-auto rounded-2xl border border-slate-800">
+        <table className="w-full text-sm">
+          <thead className="bg-slate-950 text-slate-300">
+            <tr>
+              <th className="p-3 text-right">#</th>
+              <th className="p-3 text-right">בית</th>
+              <th className="p-3 text-right">נבחרת</th>
+              <th className="p-3 text-center">מש'</th>
+              <th className="p-3 text-center">נק'</th>
+              <th className="p-3 text-center">הפרש</th>
+              <th className="p-3 text-center">זכות</th>
+              <th className="p-3 text-center">סטטוס</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {bestThirdPlaceTeams.map((team) => (
+              <tr
+                key={`${team.group}-${team.team}`}
+                className={
+                  team.isQualified
+                    ? "border-t border-slate-800 bg-emerald-500/10"
+                    : "border-t border-slate-800 bg-red-500/10"
+                }
+              >
+                <td className="p-3 font-black">
+                  {team.rank}
+                </td>
+                <td className="p-3 font-bold">
+                  בית {team.group}
+                </td>
+                <td className="p-3 font-black">
+                  {team.team}
+                </td>
+                <td className="p-3 text-center">
+                  {team.played}
+                </td>
+                <td className="p-3 text-center font-black">
+                  {team.points}
+                </td>
+                <td className="p-3 text-center">
+                  {team.gd}
+                </td>
+                <td className="p-3 text-center">
+                  {team.gf}
+                </td>
+                <td className="p-3 text-center">
+                  {team.isQualified ? (
+                    <span className="rounded-full bg-emerald-500 text-white px-3 py-1 text-xs font-black">
+                      עולה
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-red-500 text-white px-3 py-1 text-xs font-black">
+                      לא עולה
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+})()}
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {Object.keys(groups).map((groupName) => {
                 const table = calculateGroupTable(
