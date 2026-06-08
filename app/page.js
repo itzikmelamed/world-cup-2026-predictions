@@ -1464,18 +1464,22 @@ function calculateGroupTable(groupName, matches, groups, results) {
   });
 }
 function getBestThirdPlaceTeams(matches, groups, results, manualThirdPlaceQualifiers = []) {
-  const thirdPlaceTeams = Object.keys(groups).map((groupName) => {
-    const table = calculateGroupTable(groupName, matches, groups, results);
-    const thirdTeam = table[2];
+  const thirdPlaceTeams = Object.keys(groups)
+    .map((groupName) => {
+      const table = calculateGroupTable(groupName, matches, groups, results);
+      const thirdTeam = table[2];
 
-    return {
-      ...thirdTeam,
-      group: groupName,
-      isManualQualified: manualThirdPlaceQualifiers.includes(thirdTeam.team),
-    };
-  });
+      if (!thirdTeam) return null;
 
-  const sorted = thirdPlaceTeams.sort((a, b) => {
+      return {
+        ...thirdTeam,
+        group: groupName,
+        isManualQualified: manualThirdPlaceQualifiers.includes(thirdTeam.team),
+      };
+    })
+    .filter(Boolean);
+
+  const sorted = [...thirdPlaceTeams].sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
     if (b.gd !== a.gd) return b.gd - a.gd;
     return b.gf - a.gf;
