@@ -1621,9 +1621,8 @@ let correctDirections = 0;
   results
 );
 
-console.log("groups count:", Object.keys(groups).length);
-console.log("groups:", Object.keys(groups));
-console.log("bestThirdPlaceTeams:", bestThirdPlaceTeams);
+console.log("table bestThirdPlaceTeams count:", bestThirdPlaceTeams.length);
+console.log("table bestThirdPlaceTeams:", bestThirdPlaceTeams);
 
   if (groupStageFinished) {
     Object.keys(groups).forEach((groupName) => {
