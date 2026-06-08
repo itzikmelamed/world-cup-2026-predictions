@@ -693,6 +693,7 @@ async function loadAppSettings() {
   setManuallyUnlockedMatches(data.manually_unlocked_matches || []);
   setBonusManuallyUnlocked(data.bonus_manually_unlocked || false);
   setGroupStageFinished(data.group_stage_finished || false);
+  setManualThirdPlaceQualifiers(data.manual_third_place_qualifiers || []);
   setOfficialBonus(
   data.official_bonus || {
     champion: "",
@@ -1131,6 +1132,7 @@ const [editingPlayerName, setEditingPlayerName] = useState("");
 const [groupStageFinished, setGroupStageFinished] = useState(false);
 const [manuallyUnlockedMatches, setManuallyUnlockedMatches] = useState([]);
 const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
+const [manualThirdPlaceQualifiers, setManualThirdPlaceQualifiers] = useState([]);
 const [serverTime, setServerTime] = useState(null);
 
 useEffect(() => {
@@ -1587,7 +1589,7 @@ let correctDirections = 0;
     matches,
     groups,
     results,
-    []
+    manualThirdPlaceQualifiers
   );
 
   const qualifiedThirdPlaceTeams = bestThirdPlaceTeams
@@ -1912,14 +1914,20 @@ function showMessage(text, type = "success") {
     setMessageType("");
   }, 3000);
 }
-async function saveAppSettings(updatedMatches, updatedBonus, updatedGroupStage) {
+async function saveAppSettings(updatedMatches, updatedBonus, updatedGroupStage, updatedThirdPlace = null) {
+  const updateObj = {
+    manually_unlocked_matches: updatedMatches,
+    bonus_manually_unlocked: updatedBonus,
+    group_stage_finished: updatedGroupStage,
+  };
+  
+  if (updatedThirdPlace !== null) {
+    updateObj.manual_third_place_qualifiers = updatedThirdPlace;
+  }
+  
   const { error } = await supabase
     .from("app_settings")
-    .update({
-      manually_unlocked_matches: updatedMatches,
-      bonus_manually_unlocked: updatedBonus,
-      group_stage_finished: updatedGroupStage,
-    })
+    .update(updateObj)
     .eq("id", 1);
 
   if (error) {
@@ -1930,6 +1938,22 @@ async function saveAppSettings(updatedMatches, updatedBonus, updatedGroupStage) 
 
 showMessage("הגדרות הניהול נשמרו בהצלחה");
 return true;
+}
+
+async function saveManualThirdPlaceQualifiers(qualifiers) {
+  const { error } = await supabase
+    .from("app_settings")
+    .update({ manual_third_place_qualifiers: qualifiers })
+    .eq("id", 1);
+
+  if (error) {
+    console.error("Error saving manual third place qualifiers:", error);
+    showMessage("שגיאה בשמירת בחירה ידנית: " + error.message, "error");
+    return false;
+  }
+  
+  setManualThirdPlaceQualifiers(qualifiers);
+  return true;
 }
 const filteredAllBetsMatches = matches.filter((match) => {
   const searchText = allBetsSearch.trim().toLowerCase();
@@ -4665,7 +4689,7 @@ if (pts === 4.5) {
               }
               className="rounded-full bg-slate-800 border border-slate-700 px-4 py-2 text-sm font-black text-slate-200 hover:bg-slate-700"
             >
-              עבור לטבלת השלישיות
+              מעבר לדירוג מקומות 3
             </button>
 
             <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
@@ -4788,8 +4812,33 @@ if (pts === 4.5) {
                 matches,
                 groups,
                 results,
-                []
+                manualThirdPlaceQualifiers
               );
+
+              const hasManualOverride = manualThirdPlaceQualifiers.length > 0;
+              
+              const handleToggleTeam = async (teamName) => {
+                const newQualifiers = manualThirdPlaceQualifiers.includes(teamName)
+                  ? manualThirdPlaceQualifiers.filter(t => t !== teamName)
+                  : [...manualThirdPlaceQualifiers, teamName];
+                
+                if (newQualifiers.length > 8) {
+                  showMessage("ניתן לבחור מקסימום 8 נבחרות עולות", "error");
+                  return;
+                }
+                
+                const success = await saveManualThirdPlaceQualifiers(newQualifiers);
+                if (success) {
+                  showMessage("בחירה ידנית נשמרה");
+                }
+              };
+              
+              const handleReset = async () => {
+                const success = await saveManualThirdPlaceQualifiers([]);
+                if (success) {
+                  showMessage("חזרה לחישוב אוטומטי");
+                }
+              };
 
               return (
                 <div
@@ -4810,6 +4859,31 @@ if (pts === 4.5) {
                       Top 8 Qualify
                     </div>
                   </div>
+                  
+                  {role === "admin" && (
+                    <div className="mb-4 flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm font-bold text-slate-300">
+                          מצב: {hasManualOverride ? "בחירה ידנית" : "אוטומטי"}
+                        </div>
+                        {hasManualOverride && (
+                          <button
+                            type="button"
+                            onClick={handleReset}
+                            className="rounded-full bg-slate-700 border border-slate-600 px-3 py-1 text-xs font-black text-slate-200 hover:bg-slate-600"
+                          >
+                            חזור לחישוב אוטומטי
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {role !== "admin" && (
+                    <div className="mb-4 text-sm font-bold text-slate-300">
+                      מצב: {hasManualOverride ? "בחירה ידנית" : "אוטומטי"}
+                    </div>
+                  )}
 
                   <div className="overflow-auto rounded-2xl border border-slate-800">
                     <table className="w-full text-sm">
@@ -4823,6 +4897,7 @@ if (pts === 4.5) {
                           <th className="p-3 text-center">הפרש</th>
                           <th className="p-3 text-center">זכות</th>
                           <th className="p-3 text-center">סטטוס</th>
+                          {role === "admin" && <th className="p-3 text-center">שליטה</th>}
                         </tr>
                       </thead>
 
@@ -4868,6 +4943,21 @@ if (pts === 4.5) {
                                 </span>
                               )}
                             </td>
+                            {role === "admin" && (
+                              <td className="p-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleTeam(team.team)}
+                                  className={`rounded-full px-3 py-1 text-xs font-black transition-colors ${
+                                    manualThirdPlaceQualifiers.includes(team.team)
+                                      ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                                      : "bg-slate-700 text-slate-200 hover:bg-slate-600"
+                                  }`}
+                                >
+                                  {manualThirdPlaceQualifiers.includes(team.team) ? "בחור" : "ביטול"}
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         ))}
                       </tbody>
