@@ -3376,6 +3376,14 @@ function isPlayerOnline(lastSeen) {
           const leftSemi = semiMatches.slice(0, 1);
           const rightSemi = semiMatches.slice(1, 2);
 
+          const rowStarts = {
+            round32: [1, 3, 5, 7, 9, 11, 13, 15],
+            round16: [2, 6, 10, 14],
+            quarter: [4, 12],
+            semi: [8],
+            final: [8],
+          };
+
           const renderMatchCard = (match, side) => {
             const homeTeam = getDisplayTeam(match, "home");
             const awayTeam = getDisplayTeam(match, "away");
@@ -3432,13 +3440,20 @@ function isPlayerOnline(lastSeen) {
             );
           };
 
-          const renderColumn = (title, matches, side, spacing) => (
+          const renderGridColumn = (title, matches, side, starts) => (
             <div key={title} className="min-w-[260px]">
               <div className="mb-3 rounded-2xl bg-slate-950 px-4 py-3 text-center font-black text-slate-200">
                 {title}
               </div>
-              <div className={spacing}>
-                {matches.map((match) => renderMatchCard(match, side))}
+              <div
+                className="grid min-h-[760px]"
+                style={{ gridTemplateRows: "repeat(15, minmax(0, 1fr))" }}
+              >
+                {matches.map((match, index) => (
+                  <div style={{ gridRowStart: starts[index] }} key={match.id}>
+                    {renderMatchCard(match, side)}
+                  </div>
+                ))}
               </div>
             </div>
           );
@@ -3466,50 +3481,54 @@ function isPlayerOnline(lastSeen) {
               </button>
             </div>
 
-            <div className="overflow-x-auto">
-              <div className="min-w-[1700px] flex items-start gap-6 py-4">
-                {renderColumn("32 האחרונות", leftRound32, "left", "space-y-3")}
-                {renderColumn("שמינית", leftRound16, "left", "space-y-10")}
-                {renderColumn("רבע גמר", leftQuarter, "left", "space-y-20")}
-                {renderColumn("חצי גמר", leftSemi, "left", "space-y-32")}
+            <div className="overflow-auto rounded-3xl border border-slate-800 bg-slate-950/10 max-h-[70vh]">
+              <div className="min-w-[1700px] p-4">
+                <div className="flex items-start gap-6">
+                  {renderGridColumn("32 האחרונות", leftRound32, "left", rowStarts.round32)}
+                  {renderGridColumn("שמינית", leftRound16, "left", rowStarts.round16)}
+                  {renderGridColumn("רבע גמר", leftQuarter, "left", rowStarts.quarter)}
+                  {renderGridColumn("חצי גמר", leftSemi, "left", rowStarts.semi)}
 
-                <div className="min-w-[280px] flex flex-col items-center gap-6">
-                  <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-xl w-full">
-                    <div className="mb-3 text-center text-xs uppercase tracking-[0.3em] text-slate-500">
-                      גמר
-                    </div>
-                    {finalMatch ? (
-                      <div>{renderMatchCard(finalMatch, "center")}</div>
-                    ) : (
-                      <div className="rounded-3xl border border-slate-700 bg-slate-950 px-4 py-6 text-center text-sm text-slate-500">
-                        אין משחק גמר
+                  <div className="min-w-[280px] flex flex-col items-center gap-6">
+                    <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-xl w-full">
+                      <div className="mb-3 text-center text-xs uppercase tracking-[0.3em] text-slate-500">
+                        גמר
                       </div>
-                    )}
+                      {finalMatch ? (
+                        <div style={{ gridRowStart: rowStarts.final[0] }}>
+                          {renderMatchCard(finalMatch, "center")}
+                        </div>
+                      ) : (
+                        <div className="rounded-3xl border border-slate-700 bg-slate-950 px-4 py-6 text-center text-sm text-slate-500">
+                          אין משחק גמר
+                        </div>
+                      )}
+                    </div>
+
+                    {finalWinner && isRealTeamName(finalWinner) ? (
+                      <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center text-slate-100 shadow-xl w-full">
+                        <div className="text-xs uppercase tracking-[0.3em] text-emerald-300 mb-2">
+                          מנצח
+                        </div>
+                        <div className="flex items-center justify-center gap-2 font-black text-lg">
+                          {getFlagUrl(finalWinner) && (
+                            <img
+                              src={getFlagUrl(finalWinner)}
+                              alt={finalWinner}
+                              className="h-7 w-7 rounded-full object-cover"
+                            />
+                          )}
+                          <span>{finalWinner}</span>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
 
-                  {finalWinner && isRealTeamName(finalWinner) ? (
-                    <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center text-slate-100 shadow-xl w-full">
-                      <div className="text-xs uppercase tracking-[0.3em] text-emerald-300 mb-2">
-                        מנצח
-                      </div>
-                      <div className="flex items-center justify-center gap-2 font-black text-lg">
-                        {getFlagUrl(finalWinner) && (
-                          <img
-                            src={getFlagUrl(finalWinner)}
-                            alt={finalWinner}
-                            className="h-7 w-7 rounded-full object-cover"
-                          />
-                        )}
-                        <span>{finalWinner}</span>
-                      </div>
-                    </div>
-                  ) : null}
+                  {renderGridColumn("חצי גמר", rightSemi, "right", rowStarts.semi)}
+                  {renderGridColumn("רבע גמר", rightQuarter, "right", rowStarts.quarter)}
+                  {renderGridColumn("שמינית", rightRound16, "right", rowStarts.round16)}
+                  {renderGridColumn("32 האחרונות", rightRound32, "right", rowStarts.round32)}
                 </div>
-
-                {renderColumn("חצי גמר", rightSemi, "right", "space-y-32")}
-                {renderColumn("רבע גמר", rightQuarter, "right", "space-y-20")}
-                {renderColumn("שמינית", rightRound16, "right", "space-y-10")}
-                {renderColumn("32 האחרונות", rightRound32, "right", "space-y-3")}
               </div>
             </div>
           </section>
