@@ -3441,12 +3441,12 @@ function isPlayerOnline(lastSeen) {
           };
 
           const renderGridColumn = (title, matches, side, starts) => (
-            <div key={title} className="min-w-[220px]">
+            <div key={title} className="min-w-[200px]">
               <div className="mb-2 rounded-2xl bg-slate-950 px-3 py-2 text-center font-black text-slate-200 text-sm">
                 {title}
               </div>
               <div
-                className="grid min-h-[620px]"
+                className="grid min-h-[560px]"
                 style={{ gridTemplateRows: "repeat(15, minmax(0, 1fr))" }}
               >
                 {matches.map((match, index) => (
@@ -3482,14 +3482,14 @@ function isPlayerOnline(lastSeen) {
             </div>
 
             <div className="overflow-auto rounded-3xl border border-slate-800 bg-slate-950/10 max-h-[68vh]">
-              <div className="min-w-[1500px] p-3">
-                <div className="flex items-start gap-4">
+              <div className="min-w-[1440px] p-2">
+                <div className="flex items-start gap-3">
                   {renderGridColumn("32 האחרונות", leftRound32, "left", rowStarts.round32)}
                   {renderGridColumn("שמינית", leftRound16, "left", rowStarts.round16)}
                   {renderGridColumn("רבע גמר", leftQuarter, "left", rowStarts.quarter)}
                   {renderGridColumn("חצי גמר", leftSemi, "left", rowStarts.semi)}
 
-                  <div className="min-w-[240px] flex flex-col items-center gap-4">
+                  <div className="min-w-[220px] flex flex-col items-center gap-3">
                     <div className="rounded-3xl border border-slate-800 bg-slate-900 p-3 shadow-xl w-full">
                       <div className="mb-2 text-center text-[11px] uppercase tracking-[0.3em] text-slate-500">
                         גמר
@@ -3505,11 +3505,11 @@ function isPlayerOnline(lastSeen) {
                       )}
                     </div>
 
-                    {finalWinner && isRealTeamName(finalWinner) ? (
-                      <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-center text-slate-100 shadow-xl w-full">
-                        <div className="text-[11px] uppercase tracking-[0.3em] text-emerald-300 mb-2">
-                          מנצח
-                        </div>
+                    <div className="rounded-3xl border border-amber-400/30 bg-amber-400/10 p-3 text-center text-slate-100 shadow-xl w-full">
+                      <div className="mb-2 text-[11px] uppercase tracking-[0.3em] text-amber-200">
+                        🏆 אלופת העולם
+                      </div>
+                      {finalWinner && isRealTeamName(finalWinner) ? (
                         <div className="flex items-center justify-center gap-2 font-black text-base">
                           {getFlagUrl(finalWinner) && (
                             <img
@@ -3520,8 +3520,10 @@ function isPlayerOnline(lastSeen) {
                           )}
                           <span>{finalWinner}</span>
                         </div>
-                      </div>
-                    ) : null}
+                      ) : (
+                        <div className="text-[0.95rem] text-slate-300">טרם נקבעה</div>
+                      )}
+                    </div>
                   </div>
 
                   {renderGridColumn("חצי גמר", rightSemi, "right", rowStarts.semi)}
