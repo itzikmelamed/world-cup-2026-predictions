@@ -3367,14 +3367,86 @@ function isPlayerOnline(lastSeen) {
             .sort((a, b) => a.id - b.id);
           const finalMatch = matches.find((match) => match.stage === "גמר" && !match.group);
 
-          const leftRound32 = round32Matches.slice(0, 8);
-          const rightRound32 = round32Matches.slice(8);
-          const leftRound16 = round16Matches.slice(0, 4);
-          const rightRound16 = round16Matches.slice(4);
-          const leftQuarter = quarterMatches.slice(0, 2);
-          const rightQuarter = quarterMatches.slice(2);
-          const leftSemi = semiMatches.slice(0, 1);
-          const rightSemi = semiMatches.slice(1, 2);
+          const parseWinnerMatchIds = (value) => {
+            const ids = [];
+            for (const match of String(value).matchAll(/Winner M(\d+)/gi)) {
+              ids.push(Number(match[1]));
+            }
+            return ids;
+          };
+
+          const orderMatchesByNextRound = (currentMatches, nextMatches) => {
+            const matchById = Object.fromEntries(currentMatches.map((match) => [match.id, match]));
+            const ordered = [];
+            const used = new Set();
+
+            nextMatches.forEach((parentMatch) => {
+              const feederIds = [
+                ...parseWinnerMatchIds(parentMatch.home),
+                ...parseWinnerMatchIds(parentMatch.away),
+              ];
+
+              feederIds.forEach((id) => {
+                if (matchById[id] && !used.has(id)) {
+                  ordered.push(matchById[id]);
+                  used.add(id);
+                }
+              });
+            });
+
+            currentMatches.forEach((match) => {
+              if (!used.has(match.id)) {
+                ordered.push(match);
+              }
+            });
+
+            return ordered;
+          };
+
+          const matchById = Object.fromEntries(
+            [...round32Matches, ...round16Matches, ...quarterMatches, ...semiMatches]
+              .map((match) => [match.id, match])
+          );
+
+          const collectBranchMatchIds = (rootMatch) => {
+            const ids = new Set();
+            const collect = (match) => {
+              if (!match || ids.has(match.id)) return;
+              ids.add(match.id);
+              const feederIds = [
+                ...parseWinnerMatchIds(match.home),
+                ...parseWinnerMatchIds(match.away),
+              ];
+              feederIds.forEach((childId) => collect(matchById[childId]));
+            };
+            collect(rootMatch);
+            return ids;
+          };
+
+          const leftBranchMatchIds = finalMatch
+            ? collectBranchMatchIds(matchById[101])
+            : new Set();
+          const rightBranchMatchIds = finalMatch
+            ? collectBranchMatchIds(matchById[102])
+            : new Set();
+
+          const leftRound32 = round32Matches.filter((match) => leftBranchMatchIds.has(match.id));
+          const rightRound32 = round32Matches.filter((match) => rightBranchMatchIds.has(match.id));
+          const leftRound16 = round16Matches.filter((match) => leftBranchMatchIds.has(match.id));
+          const rightRound16 = round16Matches.filter((match) => rightBranchMatchIds.has(match.id));
+          const leftQuarter = quarterMatches.filter((match) => leftBranchMatchIds.has(match.id));
+          const rightQuarter = quarterMatches.filter((match) => rightBranchMatchIds.has(match.id));
+          const leftSemi = semiMatches.filter((match) => leftBranchMatchIds.has(match.id));
+          const rightSemi = semiMatches.filter((match) => rightBranchMatchIds.has(match.id));
+
+          const orderedLeftRound32 = orderMatchesByNextRound(leftRound32, leftRound16);
+          const orderedRightRound32 = orderMatchesByNextRound(rightRound32, rightRound16);
+          const orderedLeftRound16 = orderMatchesByNextRound(leftRound16, leftQuarter);
+          const orderedRightRound16 = orderMatchesByNextRound(rightRound16, rightQuarter);
+          const orderedLeftQuarter = orderMatchesByNextRound(leftQuarter, leftSemi);
+          const orderedRightQuarter = orderMatchesByNextRound(rightQuarter, rightSemi);
+          const orderedLeftSemi = orderMatchesByNextRound(leftSemi, finalMatch ? [finalMatch] : []);
+          const orderedRightSemi = orderMatchesByNextRound(rightSemi, finalMatch ? [finalMatch] : []);
 
           const rowStarts = {
             round32: [1, 3, 5, 7, 9, 11, 13, 15],
@@ -3484,10 +3556,10 @@ function isPlayerOnline(lastSeen) {
             <div className="overflow-auto rounded-3xl border border-slate-800 bg-slate-950/10 max-h-[68vh]">
               <div className="min-w-[1440px] p-2">
                 <div className="flex items-start gap-3">
-                  {renderGridColumn("32 האחרונות", leftRound32, "left", rowStarts.round32)}
-                  {renderGridColumn("שמינית", leftRound16, "left", rowStarts.round16)}
-                  {renderGridColumn("רבע גמר", leftQuarter, "left", rowStarts.quarter)}
-                  {renderGridColumn("חצי גמר", leftSemi, "left", rowStarts.semi)}
+                  {renderGridColumn("32 האחרונות", orderedLeftRound32, "left", rowStarts.round32)}
+                  {renderGridColumn("שמינית", orderedLeftRound16, "left", rowStarts.round16)}
+                  {renderGridColumn("רבע גמר", orderedLeftQuarter, "left", rowStarts.quarter)}
+                  {renderGridColumn("חצי גמר", orderedLeftSemi, "left", rowStarts.semi)}
 
                   <div className="min-w-[220px] flex flex-col items-center gap-3">
                     <div className="rounded-3xl border border-slate-800 bg-slate-900 p-3 shadow-xl w-full">
@@ -3526,10 +3598,10 @@ function isPlayerOnline(lastSeen) {
                     </div>
                   </div>
 
-                  {renderGridColumn("חצי גמר", rightSemi, "right", rowStarts.semi)}
-                  {renderGridColumn("רבע גמר", rightQuarter, "right", rowStarts.quarter)}
-                  {renderGridColumn("שמינית", rightRound16, "right", rowStarts.round16)}
-                  {renderGridColumn("32 האחרונות", rightRound32, "right", rowStarts.round32)}
+                  {renderGridColumn("חצי גמר", orderedRightSemi, "right", rowStarts.semi)}
+                  {renderGridColumn("רבע גמר", orderedRightQuarter, "right", rowStarts.quarter)}
+                  {renderGridColumn("שמינית", orderedRightRound16, "right", rowStarts.round16)}
+                  {renderGridColumn("32 האחרונות", orderedRightRound32, "right", rowStarts.round32)}
                 </div>
               </div>
             </div>
