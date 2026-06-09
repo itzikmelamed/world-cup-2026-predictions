@@ -3403,19 +3403,19 @@ function isPlayerOnline(lastSeen) {
                   <div className="absolute left-0 top-1/2 h-[2px] w-12 -translate-y-1/2 bg-slate-700" />
                 )}
 
-                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-3 shadow-xl">
-                  <div className="mb-2 text-xs uppercase tracking-[0.3em] text-slate-500">
+                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-2 shadow-xl">
+                  <div className="mb-1.5 text-[11px] uppercase tracking-[0.3em] text-slate-500">
                     משחק {match.id}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {[
                       { team: homeTeam, label: homeLabel, isWinner: homeWin, score: result.home },
                       { team: awayTeam, label: awayLabel, isWinner: awayWin, score: result.away },
                     ].map(({ team, label, isWinner, score }) => (
                       <div
                         key={`${match.id}-${label}`}
-                        className={`flex items-center justify-between gap-3 rounded-2xl border px-3 py-2 ${
+                        className={`flex items-center justify-between gap-2 rounded-2xl border px-2 py-1.5 ${
                           isWinner
                             ? "border-emerald-500/40 bg-emerald-500/10"
                             : "border-slate-700 bg-slate-950"
@@ -3426,12 +3426,12 @@ function isPlayerOnline(lastSeen) {
                             <img
                               src={getFlagUrl(team)}
                               alt={label}
-                              className="h-6 w-6 rounded-full object-cover"
+                              className="h-5 w-5 rounded-full object-cover"
                             />
                           )}
-                          <span className="font-black text-slate-100 text-sm">{label}</span>
+                          <span className="font-black text-slate-100 text-[0.86rem]">{label}</span>
                         </div>
-                        <span className="text-sm text-slate-400">{score !== "" ? score : "-"}</span>
+                        <span className="text-xs text-slate-400">{score !== "" ? score : "-"}</span>
                       </div>
                     ))}
                   </div>
@@ -3441,12 +3441,12 @@ function isPlayerOnline(lastSeen) {
           };
 
           const renderGridColumn = (title, matches, side, starts) => (
-            <div key={title} className="min-w-[260px]">
-              <div className="mb-3 rounded-2xl bg-slate-950 px-4 py-3 text-center font-black text-slate-200">
+            <div key={title} className="min-w-[220px]">
+              <div className="mb-2 rounded-2xl bg-slate-950 px-3 py-2 text-center font-black text-slate-200 text-sm">
                 {title}
               </div>
               <div
-                className="grid min-h-[760px]"
+                className="grid min-h-[620px]"
                 style={{ gridTemplateRows: "repeat(15, minmax(0, 1fr))" }}
               >
                 {matches.map((match, index) => (
@@ -3481,17 +3481,17 @@ function isPlayerOnline(lastSeen) {
               </button>
             </div>
 
-            <div className="overflow-auto rounded-3xl border border-slate-800 bg-slate-950/10 max-h-[70vh]">
-              <div className="min-w-[1700px] p-4">
-                <div className="flex items-start gap-6">
+            <div className="overflow-auto rounded-3xl border border-slate-800 bg-slate-950/10 max-h-[68vh]">
+              <div className="min-w-[1500px] p-3">
+                <div className="flex items-start gap-4">
                   {renderGridColumn("32 האחרונות", leftRound32, "left", rowStarts.round32)}
                   {renderGridColumn("שמינית", leftRound16, "left", rowStarts.round16)}
                   {renderGridColumn("רבע גמר", leftQuarter, "left", rowStarts.quarter)}
                   {renderGridColumn("חצי גמר", leftSemi, "left", rowStarts.semi)}
 
-                  <div className="min-w-[280px] flex flex-col items-center gap-6">
-                    <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-xl w-full">
-                      <div className="mb-3 text-center text-xs uppercase tracking-[0.3em] text-slate-500">
+                  <div className="min-w-[240px] flex flex-col items-center gap-4">
+                    <div className="rounded-3xl border border-slate-800 bg-slate-900 p-3 shadow-xl w-full">
+                      <div className="mb-2 text-center text-[11px] uppercase tracking-[0.3em] text-slate-500">
                         גמר
                       </div>
                       {finalMatch ? (
@@ -3499,23 +3499,23 @@ function isPlayerOnline(lastSeen) {
                           {renderMatchCard(finalMatch, "center")}
                         </div>
                       ) : (
-                        <div className="rounded-3xl border border-slate-700 bg-slate-950 px-4 py-6 text-center text-sm text-slate-500">
+                        <div className="rounded-3xl border border-slate-700 bg-slate-950 px-3 py-4 text-center text-[0.9rem] text-slate-500">
                           אין משחק גמר
                         </div>
                       )}
                     </div>
 
                     {finalWinner && isRealTeamName(finalWinner) ? (
-                      <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center text-slate-100 shadow-xl w-full">
-                        <div className="text-xs uppercase tracking-[0.3em] text-emerald-300 mb-2">
+                      <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-center text-slate-100 shadow-xl w-full">
+                        <div className="text-[11px] uppercase tracking-[0.3em] text-emerald-300 mb-2">
                           מנצח
                         </div>
-                        <div className="flex items-center justify-center gap-2 font-black text-lg">
+                        <div className="flex items-center justify-center gap-2 font-black text-base">
                           {getFlagUrl(finalWinner) && (
                             <img
                               src={getFlagUrl(finalWinner)}
                               alt={finalWinner}
-                              className="h-7 w-7 rounded-full object-cover"
+                              className="h-6 w-6 rounded-full object-cover"
                             />
                           )}
                           <span>{finalWinner}</span>
