@@ -3352,13 +3352,108 @@ function isPlayerOnline(lastSeen) {
     </div>
   </section>
 )}
-        {page === "knockoutBracket" && (
+        {page === "knockoutBracket" && (() => {
+          const round32Matches = matches
+            .filter((match) => match.stage === "32 האחרונות" && !match.group)
+            .sort((a, b) => a.id - b.id);
+          const round16Matches = matches
+            .filter((match) => match.stage === "שמינית" && !match.group)
+            .sort((a, b) => a.id - b.id);
+          const quarterMatches = matches
+            .filter((match) => match.stage === "רבע גמר" && !match.group)
+            .sort((a, b) => a.id - b.id);
+          const semiMatches = matches
+            .filter((match) => match.stage === "חצי גמר" && !match.group)
+            .sort((a, b) => a.id - b.id);
+          const finalMatch = matches.find((match) => match.stage === "גמר" && !match.group);
+
+          const leftRound32 = round32Matches.slice(0, 8);
+          const rightRound32 = round32Matches.slice(8);
+          const leftRound16 = round16Matches.slice(0, 4);
+          const rightRound16 = round16Matches.slice(4);
+          const leftQuarter = quarterMatches.slice(0, 2);
+          const rightQuarter = quarterMatches.slice(2);
+          const leftSemi = semiMatches.slice(0, 1);
+          const rightSemi = semiMatches.slice(1, 2);
+
+          const renderMatchCard = (match, side) => {
+            const homeTeam = getDisplayTeam(match, "home");
+            const awayTeam = getDisplayTeam(match, "away");
+            const result = results[match.id] || { home: "", away: "" };
+            const winner = knockoutMatches[match.id]?.winner_team;
+            const homeLabel = isRealTeamName(homeTeam) ? homeTeam : "טרם נקבע";
+            const awayLabel = isRealTeamName(awayTeam) ? awayTeam : "טרם נקבע";
+            const homeWin = winner && winner === homeTeam;
+            const awayWin = winner && winner === awayTeam;
+
+            return (
+              <div key={match.id} className="relative">
+                {side === "left" && (
+                  <div className="absolute right-0 top-1/2 h-[2px] w-12 -translate-y-1/2 bg-slate-700" />
+                )}
+                {side === "right" && (
+                  <div className="absolute left-0 top-1/2 h-[2px] w-12 -translate-y-1/2 bg-slate-700" />
+                )}
+
+                <div className="rounded-3xl border border-slate-800 bg-slate-900 p-3 shadow-xl">
+                  <div className="mb-2 text-xs uppercase tracking-[0.3em] text-slate-500">
+                    משחק {match.id}
+                  </div>
+
+                  <div className="space-y-2">
+                    {[
+                      { team: homeTeam, label: homeLabel, isWinner: homeWin, score: result.home },
+                      { team: awayTeam, label: awayLabel, isWinner: awayWin, score: result.away },
+                    ].map(({ team, label, isWinner, score }) => (
+                      <div
+                        key={`${match.id}-${label}`}
+                        className={`flex items-center justify-between gap-3 rounded-2xl border px-3 py-2 ${
+                          isWinner
+                            ? "border-emerald-500/40 bg-emerald-500/10"
+                            : "border-slate-700 bg-slate-950"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {getFlagUrl(team) && (
+                            <img
+                              src={getFlagUrl(team)}
+                              alt={label}
+                              className="h-6 w-6 rounded-full object-cover"
+                            />
+                          )}
+                          <span className="font-black text-slate-100 text-sm">{label}</span>
+                        </div>
+                        <span className="text-sm text-slate-400">{score !== "" ? score : "-"}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          const renderColumn = (title, matches, side, spacing) => (
+            <div key={title} className="min-w-[260px]">
+              <div className="mb-3 rounded-2xl bg-slate-950 px-4 py-3 text-center font-black text-slate-200">
+                {title}
+              </div>
+              <div className={spacing}>
+                {matches.map((match) => renderMatchCard(match, side))}
+              </div>
+            </div>
+          );
+
+          const finalWinner = finalMatch
+            ? knockoutMatches[finalMatch.id]?.winner_team
+            : null;
+
+          return (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
             <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
               <div>
                 <h2 className="text-2xl font-black">עץ הנוקאאוט</h2>
                 <div className="text-slate-400 font-bold mt-1">
-                  מבט חזותי על שלב 32, שמינית, רבע, חצי וגמר
+                  מבט חזותי על תבנית נוקאאוט סימטרית
                 </div>
               </div>
 
@@ -3372,99 +3467,55 @@ function isPlayerOnline(lastSeen) {
             </div>
 
             <div className="overflow-x-auto">
-              <div className="grid grid-flow-col auto-cols-min gap-6 pb-4">
-                {[
-                  "32 האחרונות",
-                  "שמינית",
-                  "רבע גמר",
-                  "חצי גמר",
-                  "גמר",
-                ].map((stage) => {
-                  const stageMatches = matches
-                    .filter((match) => match.stage === stage && !match.group)
-                    .sort((a, b) => a.id - b.id);
+              <div className="min-w-[1700px] flex items-start gap-6 py-4">
+                {renderColumn("32 האחרונות", leftRound32, "left", "space-y-3")}
+                {renderColumn("שמינית", leftRound16, "left", "space-y-10")}
+                {renderColumn("רבע גמר", leftQuarter, "left", "space-y-20")}
+                {renderColumn("חצי גמר", leftSemi, "left", "space-y-32")}
 
-                  return (
-                    <div key={stage} className="min-w-[280px]">
-                      <div className="mb-3 rounded-2xl bg-slate-950 px-4 py-3 text-center font-black text-slate-200">
-                        {stage}
+                <div className="min-w-[280px] flex flex-col items-center gap-6">
+                  <div className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-xl w-full">
+                    <div className="mb-3 text-center text-xs uppercase tracking-[0.3em] text-slate-500">
+                      גמר
+                    </div>
+                    {finalMatch ? (
+                      <div>{renderMatchCard(finalMatch, "center")}</div>
+                    ) : (
+                      <div className="rounded-3xl border border-slate-700 bg-slate-950 px-4 py-6 text-center text-sm text-slate-500">
+                        אין משחק גמר
                       </div>
+                    )}
+                  </div>
 
-                      <div className="space-y-6">
-                        {stageMatches.map((match) => {
-                          const homeTeam = getDisplayTeam(match, "home");
-                          const awayTeam = getDisplayTeam(match, "away");
-                          const result = results[match.id] || { home: "", away: "" };
-                          const winner = knockoutMatches[match.id]?.winner_team;
-                          const homeLabel = isRealTeamName(homeTeam) ? homeTeam : "טרם נקבע";
-                          const awayLabel = isRealTeamName(awayTeam) ? awayTeam : "טרם נקבע";
-                          const homeWin = winner && winner === homeTeam;
-                          const awayWin = winner && winner === awayTeam;
-
-                          return (
-                            <div key={match.id} className="relative">
-                              <div className="rounded-3xl border border-slate-800 bg-slate-900 p-3 shadow-xl">
-                                <div className="mb-3 text-sm uppercase tracking-[0.2em] text-slate-400">
-                                  משחק {match.id}
-                                </div>
-
-                                <div className="space-y-2">
-                                  {[
-                                    { team: homeTeam, label: homeLabel, isWinner: homeWin, score: result.home },
-                                    { team: awayTeam, label: awayLabel, isWinner: awayWin, score: result.away },
-                                  ].map(({ team, label, isWinner, score }) => (
-                                    <div
-                                      key={`${match.id}-${label}`}
-                                      className={`flex items-center justify-between gap-3 rounded-2xl border px-3 py-3 ${
-                                        isWinner
-                                          ? "border-emerald-500/40 bg-emerald-500/10"
-                                          : "border-slate-700 bg-slate-950"
-                                      }`}
-                                    >
-                                      <div className="flex items-center gap-2">
-                                        {getFlagUrl(team) && (
-                                          <img
-                                            src={getFlagUrl(team)}
-                                            alt={label}
-                                            className="h-6 w-6 rounded-full object-cover"
-                                          />
-                                        )}
-                                        <span className="font-black text-slate-100">{label}</span>
-                                      </div>
-                                      <span className="text-sm text-slate-400">
-                                        {typeof score === "string" && score !== "" ? score : score !== "" ? score : "-"}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-
-                                <div className="mt-3 rounded-2xl bg-slate-950/80 px-3 py-2 text-sm text-slate-300">
-                                  {result.home !== "" && result.away !== "" ? (
-                                    <div className="flex items-center justify-between gap-3">
-                                      <span>{result.home}</span>
-                                      <span className="text-slate-500">VS</span>
-                                      <span>{result.away}</span>
-                                    </div>
-                                  ) : (
-                                    <div className="text-center text-slate-500">טרם נקבע</div>
-                                  )}
-                                </div>
-                              </div>
-
-                              {stage !== "גמר" && (
-                                <div className="pointer-events-none absolute right-[-18px] top-1/2 hidden h-[2px] w-14 bg-slate-700 md:block" />
-                              )}
-                            </div>
-                          );
-                        })}
+                  {finalWinner && isRealTeamName(finalWinner) ? (
+                    <div className="rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center text-slate-100 shadow-xl w-full">
+                      <div className="text-xs uppercase tracking-[0.3em] text-emerald-300 mb-2">
+                        מנצח
+                      </div>
+                      <div className="flex items-center justify-center gap-2 font-black text-lg">
+                        {getFlagUrl(finalWinner) && (
+                          <img
+                            src={getFlagUrl(finalWinner)}
+                            alt={finalWinner}
+                            className="h-7 w-7 rounded-full object-cover"
+                          />
+                        )}
+                        <span>{finalWinner}</span>
                       </div>
                     </div>
-                  );
-                })}
+                  ) : null}
+                </div>
+
+                {renderColumn("חצי גמר", rightSemi, "right", "space-y-32")}
+                {renderColumn("רבע גמר", rightQuarter, "right", "space-y-20")}
+                {renderColumn("שמינית", rightRound16, "right", "space-y-10")}
+                {renderColumn("32 האחרונות", rightRound32, "right", "space-y-3")}
               </div>
             </div>
           </section>
-        )}
+          );
+        })()}
+
                 {page === "bonusAll" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
             <h2 className="text-2xl font-black mb-6">
