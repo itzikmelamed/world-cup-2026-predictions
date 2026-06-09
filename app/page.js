@@ -4964,17 +4964,27 @@ if (pts === 4.5) {
 
 </div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <button
-              type="button"
-              onClick={() =>
-                document
-                  .getElementById("best-third-place-teams")
-                  ?.scrollIntoView({ behavior: "smooth", block: "start" })
-              }
-              className="rounded-full bg-slate-800 border border-slate-700 px-4 py-2 text-sm font-black text-slate-200 hover:bg-slate-700"
-            >
-              מעבר לדירוג מקומות 3
-            </button>
+            <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full max-w-2xl">
+              <button
+                type="button"
+                onClick={() =>
+                  document
+                    .getElementById("best-third-place-teams")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
+                className="rounded-full bg-slate-800 border border-slate-700 px-4 py-2 text-sm font-black text-slate-200 hover:bg-slate-700"
+              >
+                מעבר לדירוג מקומות 3
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPage("knockoutBracket")}
+                className="rounded-full bg-slate-800 border border-slate-700 px-4 py-2 text-sm font-black text-slate-200 hover:bg-slate-700"
+              >
+                ⚔️ עץ הנוקאאוט
+              </button>
+            </div>
 
             <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
               ✓ שתי הראשונות עולות שלב
