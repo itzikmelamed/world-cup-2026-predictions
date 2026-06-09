@@ -3147,6 +3147,14 @@ function isPlayerOnline(lastSeen) {
       {filter.label}
     </button>
   ))}
+
+  <button
+    type="button"
+    onClick={() => setPage("knockoutBracket")}
+    className="whitespace-nowrap px-4 py-2 rounded-2xl font-black text-sm transition-all bg-slate-800 hover:bg-slate-700 text-slate-200"
+  >
+    עץ הנוקאאוט
+  </button>
 </div>
     <div className="grid gap-4">
       {matches
@@ -3344,6 +3352,118 @@ function isPlayerOnline(lastSeen) {
     </div>
   </section>
 )}
+        {page === "knockoutBracket" && (
+          <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
+            <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <h2 className="text-2xl font-black">עץ הנוקאאוט</h2>
+                <div className="text-slate-400 font-bold mt-1">
+                  מבט חזותי על שלב 32, שמינית, רבע, חצי וגמר
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setPage("matchesCards")}
+                className="rounded-2xl bg-yellow-400 px-4 py-2 text-sm font-black text-slate-950 hover:bg-yellow-300"
+              >
+                חזרה להימורים
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <div className="flex gap-4 min-w-max pb-4">
+                {[
+                  "32 האחרונות",
+                  "שמינית",
+                  "רבע גמר",
+                  "חצי גמר",
+                  "גמר",
+                ].map((stage) => {
+                  const stageMatches = matches
+                    .filter((match) => match.stage === stage && !match.group)
+                    .sort((a, b) => a.id - b.id);
+
+                  return (
+                    <div key={stage} className="min-w-[240px]">
+                      <div className="mb-3 rounded-2xl bg-slate-950 px-4 py-3 text-center font-black text-slate-200">
+                        {stage}
+                      </div>
+
+                      <div className="space-y-4">
+                        {stageMatches.map((match) => {
+                          const homeTeam = getDisplayTeam(match, "home");
+                          const awayTeam = getDisplayTeam(match, "away");
+                          const result = results[match.id] || { home: "", away: "" };
+                          const winner = knockoutMatches[match.id]?.winner_team;
+                          const homeLabel = isRealTeamName(homeTeam) ? homeTeam : "טרם נקבע";
+                          const awayLabel = isRealTeamName(awayTeam) ? awayTeam : "טרם נקבע";
+                          const homeWin = winner && winner === homeTeam;
+                          const awayWin = winner && winner === awayTeam;
+
+                          return (
+                            <div
+                              key={match.id}
+                              className="rounded-3xl border border-slate-800 bg-slate-900 p-4 shadow-xl"
+                            >
+                              <div className="mb-3 text-sm uppercase tracking-[0.2em] text-slate-400">
+                                משחק {match.id}
+                              </div>
+
+                              <div className="space-y-3">
+                                {[
+                                  { team: homeTeam, label: homeLabel, isWinner: homeWin },
+                                  { team: awayTeam, label: awayLabel, isWinner: awayWin },
+                                ].map(({ team, label, isWinner }) => (
+                                  <div
+                                    key={`${match.id}-${label}`}
+                                    className={`flex items-center justify-between gap-3 rounded-2xl border px-3 py-3 ${
+                                      isWinner
+                                        ? "border-emerald-500/40 bg-emerald-500/10"
+                                        : "border-slate-700 bg-slate-950"
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      {getFlagUrl(team) && (
+                                        <img
+                                          src={getFlagUrl(team)}
+                                          alt={label}
+                                          className="h-6 w-6 rounded-full object-cover"
+                                        />
+                                      )}
+                                      <span className="font-black text-slate-100">{label}</span>
+                                    </div>
+                                    {result.home !== "" && result.away !== "" ? (
+                                      <span className="text-sm text-slate-400">
+                                        {team === homeTeam ? result.home : result.away}
+                                      </span>
+                                    ) : null}
+                                  </div>
+                                ))}
+                              </div>
+
+                              <div className="mt-4 rounded-2xl bg-slate-950/80 px-3 py-2 text-sm text-slate-300">
+                                {result.home !== "" && result.away !== "" ? (
+                                  <div className="flex items-center justify-between gap-3">
+                                    <span>{result.home}</span>
+                                    <span className="text-slate-500">VS</span>
+                                    <span>{result.away}</span>
+                                  </div>
+                                ) : (
+                                  <div className="text-center text-slate-500">טרם נקבע</div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
                 {page === "bonusAll" && (
           <section className="bg-slate-900 border border-slate-800 rounded-3xl p-4">
             <h2 className="text-2xl font-black mb-6">
