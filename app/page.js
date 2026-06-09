@@ -5388,7 +5388,7 @@ if (pts === 4.5) {
 </footer>
 {authUser && (
   <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 border-t border-slate-800 backdrop-blur-xl">
-    <div className="grid grid-cols-6 h-16">
+    <div className={`grid h-16 ${role === "viewer" ? "grid-cols-4" : "grid-cols-6"}`}>
 
       {role !== "viewer" && (
   <>
