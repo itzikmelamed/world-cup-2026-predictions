@@ -1713,6 +1713,48 @@ function isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches = {}, res
 
   return serverTime ? serverTime >= lockTime : true;
 }
+function getPredictionWarning(match, prediction, role, serverTime, manuallyUnlockedMatches, knockoutMatches = {}, results = {}) {
+  const hasPrediction =
+    prediction &&
+    ((prediction.home !== "" && prediction.home != null) ||
+      (prediction.away !== "" && prediction.away != null));
+
+  if (role !== "player" && role !== "admin") return null;
+  if (!serverTime) return null;
+  if (hasPrediction) return null;
+  if (isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)) return null;
+
+  const [day, month, year] = match.date.split(".");
+  const [hours, minutes] = match.time.split(":");
+
+  const matchDateTime = new Date(
+    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
+  );
+  const lockTime = new Date(matchDateTime.getTime() - 5 * 60 * 1000);
+  const diffMs = lockTime.getTime() - serverTime.getTime();
+
+  if (diffMs <= 0) return null;
+  if (diffMs < 30 * 60 * 1000) {
+    return {
+      text: "🚨 דחוף",
+      classes: "bg-red-500/20 border border-red-500/40 text-red-300",
+    };
+  }
+  if (diffMs < 3 * 60 * 60 * 1000) {
+    return {
+      text: "⚠️ נסגר בקרוב",
+      classes: "bg-orange-500/20 border border-orange-500/40 text-orange-300",
+    };
+  }
+  if (diffMs < 24 * 60 * 60 * 1000) {
+    return {
+      text: "⏳ פחות מ-24 שעות",
+      classes: "bg-yellow-400/20 border border-yellow-400/40 text-yellow-300",
+    };
+  }
+
+  return null;
+}
 function isBonusLocked(bonusManuallyUnlocked) {
   if (bonusManuallyUnlocked) {
     return false;
@@ -3189,6 +3231,16 @@ function isPlayerOnline(lastSeen) {
           results
         );
 
+        const warning = getPredictionWarning(
+          match,
+          prediction,
+          role,
+          serverTime,
+          manuallyUnlockedMatches,
+          knockoutMatches,
+          results
+        );
+
         const knockoutStatus = getKnockoutStatus(match);
 
         return (
@@ -3241,9 +3293,16 @@ function isPlayerOnline(lastSeen) {
   </div>
 </div>
 
-            <div className="text-sm text-slate-400 font-bold mb-4">
+            <div className="text-sm text-slate-400 font-bold mb-2">
               {match.date} | {match.time}
             </div>
+            {warning && (
+              <div
+                className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-black mb-3 ${warning.classes}`}
+              >
+                {warning.text}
+              </div>
+            )}
             {!match.group &&
   knockoutMatches[match.id]?.winner_team &&
   [
