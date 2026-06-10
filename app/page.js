@@ -508,7 +508,10 @@ if (currentBonusPlayer.role === "viewer") {
   return;
 }
 
-const playerName = currentBonusPlayer.name;
+const playerName =
+    currentBonusPlayer.role === "admin" && selectedPlayer
+      ? selectedPlayer
+      : currentBonusPlayer.name;
 
 const currentBonus = bonusPredictions[playerName] || {};
 const currentGroup = currentBonus[groupName] || ["", ""];
@@ -611,7 +614,10 @@ if (currentBonusPlayer.role === "viewer") {
   return;
 }
 
-const playerName = currentBonusPlayer.name;
+const playerName =
+    currentBonusPlayer.role === "admin" && selectedPlayer
+      ? selectedPlayer
+      : currentBonusPlayer.name;
   setBonusPredictions((prev) => ({
     ...prev,
     [playerName]: updatedBonus,
@@ -1282,7 +1288,10 @@ if (currentLoggedIn.role === "viewer") {
       return;
     }
 
-    const playerName = currentLoggedIn.name;
+    const playerName =
+      currentLoggedIn.role === "admin" && selectedPlayer
+        ? selectedPlayer
+        : currentLoggedIn.name;
 
 const currentPrediction =
   predictions[playerName]?.[matchId] || {
