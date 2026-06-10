@@ -1755,6 +1755,34 @@ function getPredictionWarning(match, prediction, role, serverTime, manuallyUnloc
 
   return null;
 }
+function getMatchCountdownText(match, serverTime) {
+  if (!serverTime) return null;
+
+  const [day, month, year] = match.date.split(".");
+  const [hours, minutes] = match.time.split(":");
+  const matchDateTime = new Date(
+    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
+  );
+
+  const diffMs = matchDateTime.getTime() - serverTime.getTime();
+  if (diffMs <= 0) {
+    return "המשחק התחיל";
+  }
+
+  const totalMinutes = Math.ceil(diffMs / (60 * 1000));
+  const hoursRemaining = Math.floor(totalMinutes / 60);
+  const minutesRemaining = totalMinutes % 60;
+
+  if (hoursRemaining === 0) {
+    return `מתחיל בעוד ${minutesRemaining} דקות`;
+  }
+
+  if (minutesRemaining === 0) {
+    return `מתחיל בעוד ${hoursRemaining} שעות`;
+  }
+
+  return `מתחיל בעוד ${hoursRemaining} שעות ו-${minutesRemaining} דקות`;
+}
 function isBonusLocked(bonusManuallyUnlocked) {
   if (bonusManuallyUnlocked) {
     return false;
@@ -3155,6 +3183,11 @@ function isPlayerOnline(lastSeen) {
         משחק {nextMatch.id} | {nextMatch.date} | {nextMatch.time} |{" "}
         {nextMatch.group ? `בית ${nextMatch.group}` : nextMatch.stage}
       </div>
+      {serverTime && (
+        <div className="text-slate-300 text-sm mt-1">
+          {getMatchCountdownText(nextMatch, serverTime)}
+        </div>
+      )}
 
       <button
         type="button"
