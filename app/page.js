@@ -1746,7 +1746,7 @@ function getPredictionWarning(match, prediction, role, serverTime, manuallyUnloc
       classes: "bg-orange-500/20 border border-orange-500/40 text-orange-300",
     };
   }
-  if (diffMs < 500 * 60 * 60 * 1000) {
+  if (diffMs < 24 * 60 * 60 * 1000) {
     return {
       text: "⏳ פחות מ-24 שעות",
       classes: "bg-yellow-400/20 border border-yellow-400/40 text-yellow-300",
