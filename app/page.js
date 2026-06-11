@@ -4665,8 +4665,8 @@ function isPlayerOnline(lastSeen) {
     </div>
 
     {selectedProfile ? (
-      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center">
-        <div className="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-950 p-5 text-slate-100 shadow-2xl">
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 pb-24 sm:items-center sm:pb-0">
+        <div className="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-950 p-5 text-slate-100 shadow-2xl max-h-[calc(100vh-7rem)] overflow-y-auto">
           <div className="flex items-start justify-between gap-4">
             <div>
               <div className="text-xl font-black">{selectedProfile.player}</div>
