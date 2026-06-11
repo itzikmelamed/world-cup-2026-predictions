@@ -1737,7 +1737,8 @@ function getDailyTopPerformer(activePlayers, predictions, results, matches, serv
 
 function getPlayerProfile(row, predictions, matches) {
   const savedPredictions = predictions[row.player] || {};
-  const completedPredictions = Object.values(savedPredictions).filter(
+  // number of saved predictions by this player (for "הימורים שמולאו")
+  const savedPredictionsCount = Object.values(savedPredictions).filter(
     (prediction) =>
       prediction &&
       prediction.home != null &&
@@ -1746,10 +1747,25 @@ function getPlayerProfile(row, predictions, matches) {
       prediction.away !== ""
   ).length;
 
-  const successCount = row.exactHits + row.correctDirections;
-  const successRate = completedPredictions > 0
-    ? Math.round((successCount / completedPredictions) * 100)
+  // completedMatches: matches that have a final result in `results` (passed via outer scope)
+  const completedMatchesCount = matches.filter((match) => {
+    const result = results[match.id];
+    return (
+      result &&
+      result.home != null &&
+      result.home !== "" &&
+      result.away != null &&
+      result.away !== ""
+    );
+  }).length;
+
+  // Use matchPoints from the leaderboard row (sum of calculatePoints for matches)
+  const playerMatchPoints = row.matchPoints || 0;
+
+  const successRate = completedMatchesCount > 0
+    ? Math.round((playerMatchPoints / (completedMatchesCount * 4.5)) * 100)
     : 0;
+
   const totalMatches = matches?.length;
 
   return {
@@ -1758,12 +1774,12 @@ function getPlayerProfile(row, predictions, matches) {
     exactHits: row.exactHits,
     correctDirections: row.correctDirections,
     bonusPoints: row.qualifiersPoints + row.championPoints + row.topScorerPoints,
-    successCount,
-    completedPredictions,
+    successCount: row.exactHits + row.correctDirections,
+    completedPredictions: savedPredictionsCount,
     successRate,
     matchProgress: totalMatches
-      ? `${completedPredictions} מתוך ${totalMatches}`
-      : `${completedPredictions}`,
+      ? `${savedPredictionsCount} מתוך ${totalMatches}`
+      : `${savedPredictionsCount}`,
   };
 }
 
