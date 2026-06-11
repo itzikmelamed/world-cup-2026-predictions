@@ -2380,6 +2380,63 @@ const getKnockoutStatus = (match) => {
   return "ready";
 };
 
+const getMatchPredictionDistribution = (match) => {
+  const homeTeam = getDisplayTeam(match, "home");
+  const awayTeam = getDisplayTeam(match, "away");
+
+  if (
+    !homeTeam ||
+    !awayTeam ||
+    !isRealTeamName(homeTeam) ||
+    !isRealTeamName(awayTeam)
+  ) {
+    return null;
+  }
+
+  const locked = isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results);
+
+  if (!locked) {
+    return { locked: false };
+  }
+
+  const counts = { home: 0, tie: 0, away: 0 };
+
+  Object.values(predictions).forEach((playerPredictions) => {
+    const prediction = playerPredictions?.[match.id];
+
+    if (
+      prediction &&
+      prediction.home != null &&
+      prediction.home !== "" &&
+      prediction.away != null &&
+      prediction.away !== ""
+    ) {
+      const home = Number(prediction.home);
+      const away = Number(prediction.away);
+
+      if (home > away) counts.home += 1;
+      else if (home === away) counts.tie += 1;
+      else counts.away += 1;
+    }
+  });
+
+  const total = counts.home + counts.tie + counts.away;
+
+  if (total === 0) {
+    return { locked: true, empty: true };
+  }
+
+  return {
+    locked: true,
+    empty: false,
+    homeTeam,
+    awayTeam,
+    homePct: Math.round((counts.home / total) * 100),
+    tiePct: Math.round((counts.tie / total) * 100),
+    awayPct: Math.round((counts.away / total) * 100),
+  };
+};
+
 const knockoutProgression = {
   73: { nextMatch: 89, side: "home" },
   75: { nextMatch: 89, side: "away" },
@@ -5056,6 +5113,7 @@ if (pts === 4.5) {
                         home: "",
                         away: "",
                       };
+                    const distribution = getMatchPredictionDistribution(match);
 
                     return (
                       <tr
@@ -5109,6 +5167,24 @@ if (pts === 4.5) {
     ? `${result.home} : ${result.away}`
     : "-"}
 </div>
+{distribution ? (
+  <div className="mt-2 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
+    {distribution.locked ? (
+      distribution.empty ? (
+        <div>עדיין אין ניחושים</div>
+      ) : (
+        <div className="flex flex-col gap-1 md:flex-row md:items-center md:gap-3">
+          <span className="font-black text-slate-100">📊 ניחושי המשתתפים:</span>
+          <span className="text-slate-300">
+            {distribution.homeTeam} {distribution.homePct}% | תיקו {distribution.tiePct}% | {distribution.awayTeam} {distribution.awayPct}%
+          </span>
+        </div>
+      )
+    ) : (
+      <div>📊 ניחושי המשתתפים יוצגו לאחר נעילת המשחק</div>
+    )}
+  </div>
+) : null}
 {!match.group &&
   knockoutMatches[match.id]?.winner_team &&
   [
@@ -5212,6 +5288,7 @@ if (pts === 4.5) {
             <div className="md:hidden space-y-4">
   {filteredAllBetsMatches.map((match) => {
     const result = results[match.id];
+    const distribution = getMatchPredictionDistribution(match);
     const sortedPlayers = [...activePlayers].sort((a, b) => {
   const predictionA = predictions[a.name]?.[match.id];
   const predictionB = predictions[b.name]?.[match.id];
@@ -5271,6 +5348,26 @@ if (pts === 4.5) {
   ? `${result.home} - ${result.away}`
   : "טרם עודכן"}
           </div>
+          {distribution ? (
+            <div className="mt-2 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
+              {distribution.locked ? (
+                distribution.empty ? (
+                  <div>עדיין אין ניחושים</div>
+                ) : (
+                  <div className="space-y-1">
+                    <div className="font-black text-slate-100">📊 ניחושי המשתתפים:</div>
+                    <div className="grid grid-cols-1 gap-1 text-slate-300">
+                      <div>{distribution.homeTeam} {distribution.homePct}%</div>
+                      <div>תיקו {distribution.tiePct}%</div>
+                      <div>{distribution.awayTeam} {distribution.awayPct}%</div>
+                    </div>
+                  </div>
+                )
+              ) : (
+                <div>📊 ניחושי המשתתפים יוצגו לאחר נעילת המשחק</div>
+              )}
+            </div>
+          ) : null}
           {!match.group &&
   knockoutMatches[match.id]?.winner_team &&
   [
