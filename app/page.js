@@ -2393,7 +2393,9 @@ const getMatchPredictionDistribution = (match) => {
     return null;
   }
 
-  const locked = isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results);
+  const locked = match.group
+    ? true
+    : isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results);
 
   if (!locked) {
     return { locked: false };
