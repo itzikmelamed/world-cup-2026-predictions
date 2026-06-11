@@ -1140,6 +1140,7 @@ const [page, setPage] = useState("matchesCards");
 const [editingPlayerName, setEditingPlayerName] = useState("");
   const [bonusPredictions, setBonusPredictions] = useState({});
   const [showDailyTopList, setShowDailyTopList] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
   const [officialBonus, setOfficialBonus] = useState({
   champion: "",
   topScorer: "",
@@ -1731,6 +1732,38 @@ function getDailyTopPerformer(activePlayers, predictions, results, matches, serv
     points: maxPoints,
     winners,
     title: winners.length === 1 ? "⭐ מצטיין היום" : "⭐ מצטייני היום",
+  };
+}
+
+function getPlayerProfile(row, predictions, matches) {
+  const savedPredictions = predictions[row.player] || {};
+  const completedPredictions = Object.values(savedPredictions).filter(
+    (prediction) =>
+      prediction &&
+      prediction.home != null &&
+      prediction.home !== "" &&
+      prediction.away != null &&
+      prediction.away !== ""
+  ).length;
+
+  const successCount = row.exactHits + row.correctDirections;
+  const successRate = completedPredictions > 0
+    ? Math.round((successCount / completedPredictions) * 100)
+    : 0;
+  const totalMatches = matches?.length;
+
+  return {
+    player: row.player,
+    total: row.total,
+    exactHits: row.exactHits,
+    correctDirections: row.correctDirections,
+    bonusPoints: row.qualifiersPoints + row.championPoints + row.topScorerPoints,
+    successCount,
+    completedPredictions,
+    successRate,
+    matchProgress: totalMatches
+      ? `${completedPredictions} מתוך ${totalMatches}`
+      : `${completedPredictions}`,
   };
 }
 
@@ -4631,6 +4664,57 @@ function isPlayerOnline(lastSeen) {
       ) : null}
     </div>
 
+    {selectedProfile ? (
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center">
+        <div className="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-950 p-5 text-slate-100 shadow-2xl">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="text-xl font-black">{selectedProfile.player}</div>
+              <div className="text-slate-400 text-sm">כרטיס שחקן</div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectedProfile(null)}
+              className="rounded-full bg-slate-800 px-4 py-2 text-sm font-black text-white hover:bg-slate-700"
+            >
+              סגור
+            </button>
+          </div>
+
+          <div className="mt-5 grid gap-3">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+              <div className="text-slate-400 text-sm">סה"כ נקודות</div>
+              <div className="text-2xl font-black text-yellow-300">{selectedProfile.total}</div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                <div className="text-slate-400 text-sm">בול פגיעה</div>
+                <div className="text-lg font-black">{selectedProfile.exactHits}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                <div className="text-slate-400 text-sm">ניחוש כיוון נכון</div>
+                <div className="text-lg font-black">{selectedProfile.correctDirections}</div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+              <div className="text-slate-400 text-sm">נקודות בונוס</div>
+              <div className="text-lg font-black">{selectedProfile.bonusPoints}</div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                <div className="text-slate-400 text-sm">אחוזי הצלחה</div>
+                <div className="text-lg font-black">{selectedProfile.successRate}%</div>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                <div className="text-slate-400 text-sm">הימורים שמולאו</div>
+                <div className="text-lg font-black">{selectedProfile.matchProgress}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null}
+
     <div className="overflow-x-auto rounded-2xl border border-slate-800">
       <table className="border-collapse min-w-[760px] text-xs md:text-sm">
         <thead>
@@ -4669,7 +4753,8 @@ function isPlayerOnline(lastSeen) {
           {leaderboard.map((row, index) => (
             <tr
   key={row.player}
-  className="border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80 transition-colors duration-200"
+  onClick={() => setSelectedProfile(getPlayerProfile(row, predictions, matches))}
+  className="cursor-pointer border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80 transition-colors duration-200"
 >
               <td
   className={`md:sticky md:right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px] ${
