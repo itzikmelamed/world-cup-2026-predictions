@@ -1139,6 +1139,7 @@ const [page, setPage] = useState("matchesCards");
   const [editingPlayerId, setEditingPlayerId] = useState(null);
 const [editingPlayerName, setEditingPlayerName] = useState("");
   const [bonusPredictions, setBonusPredictions] = useState({});
+  const [showDailyTopList, setShowDailyTopList] = useState(false);
   const [officialBonus, setOfficialBonus] = useState({
   champion: "",
   topScorer: "",
@@ -1668,6 +1669,71 @@ correctDirections,
     total,
   };
 }
+function parseMatchDateTime(match) {
+  const [day, month, year] = match.date.split(".");
+  const [hours, minutes] = match.time.split(":");
+
+  return new Date(
+    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
+  );
+}
+
+function isMatchToday(match, serverTime) {
+  if (!match?.date || !match?.time) return false;
+
+  const matchDateTime = parseMatchDateTime(match);
+  const today = serverTime ? new Date(serverTime) : new Date();
+
+  const matchDate = matchDateTime.toLocaleDateString("he-IL", {
+    timeZone: "Asia/Jerusalem",
+  });
+  const todayDate = today.toLocaleDateString("he-IL", {
+    timeZone: "Asia/Jerusalem",
+  });
+
+  return matchDate === todayDate;
+}
+
+function getDailyTopPerformer(activePlayers, predictions, results, matches, serverTime) {
+  const todayMatches = matches.filter((match) => {
+    const result = results[match.id];
+
+    return (
+      result &&
+      result.home != null &&
+      result.home !== "" &&
+      result.away != null &&
+      result.away !== "" &&
+      isMatchToday(match, serverTime)
+    );
+  });
+
+  if (todayMatches.length === 0) {
+    return { hasResultsToday: false };
+  }
+
+  const scores = activePlayers.map((playerObj) => {
+    const player = playerObj.name;
+    const points = todayMatches.reduce((sum, match) => {
+      const prediction = predictions[player]?.[match.id];
+      const result = results[match.id];
+      return sum + calculatePoints(prediction, result);
+    }, 0);
+
+    return { player, points };
+  });
+
+  const maxPoints = Math.max(...scores.map((row) => row.points));
+  const winners = scores.filter((row) => row.points === maxPoints).map((row) => row.player);
+
+  return {
+    hasResultsToday: true,
+    points: maxPoints,
+    winners,
+    title: winners.length === 1 ? "⭐ מצטיין היום" : "⭐ מצטייני היום",
+  };
+}
+
 function isRealTeamName(team) {
   if (!team) return false;
 
@@ -1845,6 +1911,11 @@ function isBonusLocked(bonusManuallyUnlocked) {
   groupStageFinished,
   groups,
 ]);
+
+const dailyTopPerformer = useMemo(() => {
+  return getDailyTopPerformer(activePlayers, predictions, results, matches, serverTime);
+}, [activePlayers, predictions, results, matches, serverTime]);
+
 async function signUp() {
   const cleanName = participantName.trim();
   const existingPlayer = dbPlayers.find(
@@ -4503,6 +4574,62 @@ function isPlayerOnline(lastSeen) {
     </span>
   </div>
 </div>
+
+    <div className="mb-4 rounded-3xl border border-slate-800 bg-slate-950 p-4 text-slate-100">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="text-lg font-black text-white">
+            {dailyTopPerformer.hasResultsToday
+              ? dailyTopPerformer.title
+              : "עדיין אין מצטיין היום"}
+          </div>
+          {dailyTopPerformer.hasResultsToday ? (
+            <div className="mt-1 text-slate-300 text-sm">
+              {dailyTopPerformer.winners.length <= 3 ? (
+                dailyTopPerformer.winners.join(", ")
+              ) : (
+                <>
+                  {dailyTopPerformer.winners.slice(0, 3).join(", ")}
+                  <button
+                    type="button"
+                    onClick={() => setShowDailyTopList(true)}
+                    className="ml-1 inline-flex items-center text-yellow-300 underline"
+                  >
+                    ועוד {dailyTopPerformer.winners.length - 3}
+                  </button>
+                </>
+              )}
+            </div>
+          ) : null}
+        </div>
+
+        {dailyTopPerformer.hasResultsToday ? (
+          <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
+            {dailyTopPerformer.points} נקודות
+          </div>
+        ) : null}
+      </div>
+
+      {showDailyTopList && dailyTopPerformer.hasResultsToday && dailyTopPerformer.winners.length > 3 ? (
+        <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
+          <div className="font-black text-slate-100">רשימת מצטיינים:</div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {dailyTopPerformer.winners.map((name) => (
+              <span key={name} className="rounded-full bg-slate-800 px-3 py-1">
+                {name}
+              </span>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowDailyTopList(false)}
+            className="mt-3 inline-flex rounded-full bg-slate-700 px-4 py-2 text-sm font-black text-white hover:bg-slate-600"
+          >
+            סגור
+          </button>
+        </div>
+      ) : null}
+    </div>
 
     <div className="overflow-x-auto rounded-2xl border border-slate-800">
       <table className="border-collapse min-w-[760px] text-xs md:text-sm">
