@@ -1141,6 +1141,7 @@ const [editingPlayerName, setEditingPlayerName] = useState("");
   const [bonusPredictions, setBonusPredictions] = useState({});
   const [showDailyTopList, setShowDailyTopList] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [showBullList, setShowBullList] = useState(false);
   const [officialBonus, setOfficialBonus] = useState({
   champion: "",
   topScorer: "",
@@ -1964,6 +1965,21 @@ function isBonusLocked(bonusManuallyUnlocked) {
 const dailyTopPerformer = useMemo(() => {
   return getDailyTopPerformer(activePlayers, predictions, results, matches, serverTime);
 }, [activePlayers, predictions, results, matches, serverTime]);
+
+const bullKing = useMemo(() => {
+  const list = leaderboard || [];
+  if (!list || list.length === 0) return { hasAny: false, winners: [], hits: 0, title: "🎯 מלך הבולים" };
+
+  const maxHits = Math.max(...list.map((r) => r.exactHits || 0));
+  const winners = list.filter((r) => (r.exactHits || 0) === maxHits).map((r) => r.player);
+
+  return {
+    hasAny: maxHits > 0,
+    winners,
+    hits: maxHits,
+    title: winners.length === 1 ? "🎯 מלך הבולים" : "🎯 מלכי הבולים",
+  };
+}, [leaderboard]);
 
 async function signUp() {
   const cleanName = participantName.trim();
@@ -4625,59 +4641,117 @@ function isPlayerOnline(lastSeen) {
 </div>
 
     <div className="mb-4 rounded-3xl border border-slate-800 bg-slate-950 p-4 text-slate-100">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="text-lg font-black text-white">
-            {dailyTopPerformer.hasResultsToday
-              ? dailyTopPerformer.title
-              : "עדיין אין מצטיין היום"}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Daily top performer card */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-lg font-black text-white">
+                {dailyTopPerformer.hasResultsToday ? dailyTopPerformer.title : "עדיין אין מצטיין היום"}
+              </div>
+              {dailyTopPerformer.hasResultsToday ? (
+                <div className="mt-1 text-slate-300 text-sm">
+                  {dailyTopPerformer.winners.length <= 3 ? (
+                    dailyTopPerformer.winners.join(", ")
+                  ) : (
+                    <>
+                      {dailyTopPerformer.winners.slice(0, 3).join(", ")}
+                      <button
+                        type="button"
+                        onClick={() => setShowDailyTopList(true)}
+                        className="ml-1 inline-flex items-center text-yellow-300 underline"
+                      >
+                        ועוד {dailyTopPerformer.winners.length - 3}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : null}
+            </div>
+
+            {dailyTopPerformer.hasResultsToday ? (
+              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
+                {dailyTopPerformer.points} נקודות
+              </div>
+            ) : null}
           </div>
-          {dailyTopPerformer.hasResultsToday ? (
-            <div className="mt-1 text-slate-300 text-sm">
-              {dailyTopPerformer.winners.length <= 3 ? (
-                dailyTopPerformer.winners.join(", ")
-              ) : (
-                <>
-                  {dailyTopPerformer.winners.slice(0, 3).join(", ")}
-                  <button
-                    type="button"
-                    onClick={() => setShowDailyTopList(true)}
-                    className="ml-1 inline-flex items-center text-yellow-300 underline"
-                  >
-                    ועוד {dailyTopPerformer.winners.length - 3}
-                  </button>
-                </>
-              )}
+
+          {showDailyTopList && dailyTopPerformer.hasResultsToday && dailyTopPerformer.winners.length > 3 ? (
+            <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
+              <div className="font-black text-slate-100">רשימת מצטיינים:</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {dailyTopPerformer.winners.map((name) => (
+                  <span key={name} className="rounded-full bg-slate-800 px-3 py-1">
+                    {name}
+                  </span>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDailyTopList(false)}
+                className="mt-3 inline-flex rounded-full bg-slate-700 px-4 py-2 text-sm font-black text-white hover:bg-slate-600"
+              >
+                סגור
+              </button>
             </div>
           ) : null}
         </div>
 
-        {dailyTopPerformer.hasResultsToday ? (
-          <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
-            {dailyTopPerformer.points} נקודות
-          </div>
-        ) : null}
-      </div>
+        {/* Bull-king card */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-lg font-black text-white">{bullKing.title}</div>
+              {bullKing.hasAny ? (
+                <div className="mt-1 text-slate-300 text-sm">
+                  {bullKing.winners.length <= 3 ? (
+                    bullKing.winners.join(", ")
+                  ) : (
+                    <>
+                      {bullKing.winners.slice(0, 3).join(", ")}
+                      <button
+                        type="button"
+                        onClick={() => setShowBullList(true)}
+                        className="ml-1 inline-flex items-center text-yellow-300 underline"
+                      >
+                        ועוד {bullKing.winners.length - 3}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="mt-1 text-slate-400 text-sm">טרם יש בולים</div>
+              )}
+            </div>
 
-      {showDailyTopList && dailyTopPerformer.hasResultsToday && dailyTopPerformer.winners.length > 3 ? (
-        <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
-          <div className="font-black text-slate-100">רשימת מצטיינים:</div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {dailyTopPerformer.winners.map((name) => (
-              <span key={name} className="rounded-full bg-slate-800 px-3 py-1">
-                {name}
-              </span>
-            ))}
+            {bullKing.hasAny ? (
+              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
+                {bullKing.hits} בולים
+              </div>
+            ) : null}
           </div>
-          <button
-            type="button"
-            onClick={() => setShowDailyTopList(false)}
-            className="mt-3 inline-flex rounded-full bg-slate-700 px-4 py-2 text-sm font-black text-white hover:bg-slate-600"
-          >
-            סגור
-          </button>
+
+          {showBullList && bullKing.hasAny && bullKing.winners.length > 3 ? (
+            <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
+              <div className="font-black text-slate-100">רשימת מלכי הבולים:</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {bullKing.winners.map((name) => (
+                  <span key={name} className="rounded-full bg-slate-800 px-3 py-1">
+                    {name}
+                  </span>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowBullList(false)}
+                className="mt-3 inline-flex rounded-full bg-slate-700 px-4 py-2 text-sm font-black text-white hover:bg-slate-600"
+              >
+                סגור
+              </button>
+            </div>
+          ) : null}
         </div>
-      ) : null}
+      </div>
     </div>
 
     {selectedProfile ? (
