@@ -1822,16 +1822,57 @@ function getPlayerProfile(row, predictions, matches) {
   ).length;
 
   // completedMatches: matches that have a final result in `results` (passed via outer scope)
-  const completedMatchesCount = matches.filter((match) => {
-    const result = results[match.id];
-    return (
+  const completedMatches = matches
+    .map((match) => ({ match, result: results[match.id] }))
+    .filter(({ result }) =>
       result &&
       result.home != null &&
       result.home !== "" &&
       result.away != null &&
       result.away !== ""
-    );
-  }).length;
+    )
+    .map(({ match, result }) => {
+      const prediction = savedPredictions[match.id];
+      const points = calculatePoints(prediction, result);
+      const [day, month, year] = match.date.split(".");
+      const [hours, minutes] = match.time.split(":");
+      return {
+        points,
+        timestamp: new Date(
+          Number(year),
+          Number(month) - 1,
+          Number(day),
+          Number(hours),
+          Number(minutes)
+        ).getTime(),
+      };
+    })
+    .sort((a, b) => a.timestamp - b.timestamp);
+
+  const completedMatchesCount = completedMatches.length;
+
+  let bestStreak = 0;
+  let currentStreak = 0;
+  let streak = 0;
+
+  for (const match of completedMatches) {
+    if (match.points > 0) {
+      streak += 1;
+      if (streak > bestStreak) {
+        bestStreak = streak;
+      }
+    } else {
+      streak = 0;
+    }
+  }
+
+  for (let i = completedMatches.length - 1; i >= 0; i -= 1) {
+    if (completedMatches[i].points > 0) {
+      currentStreak += 1;
+    } else {
+      break;
+    }
+  }
 
   // Use matchPoints from the leaderboard row (sum of calculatePoints for matches)
   const playerMatchPoints = row.matchPoints || 0;
@@ -1854,6 +1895,8 @@ function getPlayerProfile(row, predictions, matches) {
     matchProgress: totalMatches
       ? `${savedPredictionsCount} מתוך ${totalMatches}`
       : `${savedPredictionsCount}`,
+    currentStreak,
+    bestStreak,
   };
 }
 
@@ -5014,6 +5057,16 @@ function isPlayerOnline(lastSeen) {
               <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
                 <div className="text-slate-400 text-sm">הימורים שמולאו</div>
                 <div className="text-lg font-black">{selectedProfile.matchProgress}</div>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                <div className="text-slate-400 text-sm">🔥 רצף נוכחי</div>
+                <div className="text-lg font-black">{selectedProfile.currentStreak}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4">
+                <div className="text-slate-400 text-sm">🏆 רצף שיא</div>
+                <div className="text-lg font-black">{selectedProfile.bestStreak}</div>
               </div>
             </div>
           </div>
