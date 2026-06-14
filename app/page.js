@@ -4923,7 +4923,9 @@ function isPlayerOnline(lastSeen) {
             <tr
   key={row.player}
   onClick={() => setSelectedProfile(getPlayerProfile(row, predictions, matches))}
-  className="cursor-pointer border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80 transition-colors duration-200"
+  className={`cursor-pointer border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80 transition-colors duration-200 ${
+    currentPlayer?.name === row.player ? "ring-2 ring-emerald-500/50" : ""
+  }`}
 >
               <td
   className={`md:sticky md:right-0 z-20 bg-slate-900 text-center p-2 border-l border-slate-800 font-black w-[45px] min-w-[45px] max-w-[45px] ${
@@ -4956,7 +4958,14 @@ function isPlayerOnline(lastSeen) {
       : "bg-slate-900 text-white"
   }`}
 >
-  {row.player}
+  <div className="flex items-center justify-between gap-1">
+    <span className="truncate">{row.player}</span>
+    {currentPlayer?.name === row.player && (
+      <span className="inline-block whitespace-nowrap rounded-full bg-emerald-600/80 text-white px-2 py-0.5 text-[10px] font-black">
+        אתה
+      </span>
+    )}
+  </div>
 </td>
 
               <td
