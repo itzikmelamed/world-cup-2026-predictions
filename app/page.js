@@ -2572,46 +2572,6 @@ const getMatchPredictionDistribution = (match) => {
   };
 };
 
-const getMatchHitStats = (match) => {
-  const result = results[match.id];
-
-  if (
-    !result ||
-    result.home == null ||
-    result.home === "" ||
-    result.away == null ||
-    result.away === ""
-  ) {
-    return null;
-  }
-
-  let exactHits = 0;
-  let gotPoints = 0;
-
-  activePlayers.forEach((player) => {
-    const prediction = predictions[player.name]?.[match.id];
-
-    if (
-      prediction &&
-      prediction.home != null &&
-      prediction.home !== "" &&
-      prediction.away != null &&
-      prediction.away !== ""
-    ) {
-      const pts = calculatePoints(prediction, result);
-
-      if (pts === 4.5) exactHits += 1;
-      if (pts > 0) gotPoints += 1;
-    }
-  });
-
-  return {
-    exactHits,
-    gotPoints,
-    total: activePlayers.length,
-  };
-};
-
 const knockoutProgression = {
   73: { nextMatch: 89, side: "home" },
   75: { nextMatch: 89, side: "away" },
@@ -5376,7 +5336,6 @@ if (pts === 4.5) {
                         away: "",
                       };
                     const distribution = getMatchPredictionDistribution(match);
-                    const hitStats = getMatchHitStats(match);
 
                     return (
                       <tr
@@ -5446,18 +5405,6 @@ if (pts === 4.5) {
     ) : (
       <div>📊 ניחושי המשתתפים יוצגו לאחר נעילת המשחק</div>
     )}
-  </div>
-) : null}
-{hitStats ? (
-  <div className="mt-2 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
-    <div className="grid gap-1">
-      <div className="text-slate-300">
-        <span className="text-yellow-300">🎯</span> {hitStats.exactHits} מתוך {hitStats.total} פגעו בול
-      </div>
-      <div className="text-slate-300">
-        <span className="text-sky-300">📈</span> {hitStats.gotPoints} מתוך {hitStats.total} קיבלו נקודות
-      </div>
-    </div>
   </div>
 ) : null}
 {!match.group &&
@@ -5641,18 +5588,6 @@ if (pts === 4.5) {
               ) : (
                 <div>📊 ניחושי המשתתפים יוצגו לאחר נעילת המשחק</div>
               )}
-            </div>
-          ) : null}
-          {hitStats ? (
-            <div className="mt-2 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
-              <div className="grid gap-1">
-                <div className="text-slate-300">
-                  <span className="text-yellow-300">🎯</span> {hitStats.exactHits} מתוך {hitStats.total} פגעו בול
-                </div>
-                <div className="text-slate-300">
-                  <span className="text-sky-300">📈</span> {hitStats.gotPoints} מתוך {hitStats.total} קיבלו נקודות
-                </div>
-              </div>
             </div>
           ) : null}
           {!match.group &&
