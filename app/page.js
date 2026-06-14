@@ -1146,6 +1146,7 @@ const [page, setPage] = useState("matchesCards");
 const [editingPlayerName, setEditingPlayerName] = useState("");
   const [bonusPredictions, setBonusPredictions] = useState({});
   const [showDailyTopList, setShowDailyTopList] = useState(false);
+  const [showYesterdayTopList, setShowYesterdayTopList] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showBullList, setShowBullList] = useState(false);
   const [officialBonus, setOfficialBonus] = useState({
@@ -1703,6 +1704,71 @@ function isMatchToday(match, serverTime) {
   return matchDate === todayDate;
 }
 
+function isMatchOnDate(match, targetDate, serverTime) {
+  if (!match?.date || !match?.time) return false;
+
+  const matchDateTime = parseMatchDateTime(match);
+  const dateToCheck = targetDate ? new Date(targetDate) : serverTime ? new Date(serverTime) : new Date();
+
+  const matchDate = matchDateTime.toLocaleDateString("he-IL", {
+    timeZone: "Asia/Jerusalem",
+  });
+  const targetDateString = dateToCheck.toLocaleDateString("he-IL", {
+    timeZone: "Asia/Jerusalem",
+  });
+
+  return matchDate === targetDateString;
+}
+
+function getDailyTopPerformerForDate(
+  activePlayers,
+  predictions,
+  results,
+  matches,
+  serverTime,
+  targetDate,
+  titleSingular,
+  titlePlural
+) {
+  const matchesForDate = matches.filter((match) => {
+    const result = results[match.id];
+
+    return (
+      result &&
+      result.home != null &&
+      result.home !== "" &&
+      result.away != null &&
+      result.away !== "" &&
+      isMatchOnDate(match, targetDate, serverTime)
+    );
+  });
+
+  if (matchesForDate.length === 0) {
+    return { hasResults: false };
+  }
+
+  const scores = activePlayers.map((playerObj) => {
+    const player = playerObj.name;
+    const points = matchesForDate.reduce((sum, match) => {
+      const prediction = predictions[player]?.[match.id];
+      const result = results[match.id];
+      return sum + calculatePoints(prediction, result);
+    }, 0);
+
+    return { player, points };
+  });
+
+  const maxPoints = Math.max(...scores.map((row) => row.points));
+  const winners = scores.filter((row) => row.points === maxPoints).map((row) => row.player);
+
+  return {
+    hasResults: true,
+    points: maxPoints,
+    winners,
+    title: winners.length === 1 ? titleSingular : titlePlural,
+  };
+}
+
 function getDailyTopPerformer(activePlayers, predictions, results, matches, serverTime) {
   const todayMatches = matches.filter((match) => {
     const result = results[match.id];
@@ -1971,6 +2037,23 @@ function isBonusLocked(bonusManuallyUnlocked) {
 
 const dailyTopPerformer = useMemo(() => {
   return getDailyTopPerformer(activePlayers, predictions, results, matches, serverTime);
+}, [activePlayers, predictions, results, matches, serverTime]);
+
+const yesterdayTopPerformer = useMemo(() => {
+  const currentDate = serverTime ? new Date(serverTime) : new Date();
+  const yesterday = new Date(currentDate);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  return getDailyTopPerformerForDate(
+    activePlayers,
+    predictions,
+    results,
+    matches,
+    serverTime,
+    yesterday,
+    "⭐ מצטיין אתמול",
+    "⭐ מצטייני אתמול"
+  );
 }, [activePlayers, predictions, results, matches, serverTime]);
 
 const bullKing = useMemo(() => {
@@ -4719,8 +4802,62 @@ function isPlayerOnline(lastSeen) {
   </div>
 </div>
 
-    <div className="mb-4 rounded-3xl border border-slate-800 bg-slate-950 p-4 text-slate-100">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="mb-4 rounded-3xl border border-slate-800 bg-slate-950 p-4 text-slate-100">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {/* Yesterday top performer card */}
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-lg font-black text-white">
+                {yesterdayTopPerformer.hasResults ? yesterdayTopPerformer.title : "עדיין אין מצטיין אתמול"}
+              </div>
+              {yesterdayTopPerformer.hasResults ? (
+                <div className="mt-1 text-slate-300 text-sm">
+                  {yesterdayTopPerformer.winners.length <= 3 ? (
+                    yesterdayTopPerformer.winners.join(", ")
+                  ) : (
+                    <>
+                      {yesterdayTopPerformer.winners.slice(0, 3).join(", ")}
+                      <button
+                        type="button"
+                        onClick={() => setShowYesterdayTopList(true)}
+                        className="ml-1 inline-flex items-center text-yellow-300 underline"
+                      >
+                        ועוד {yesterdayTopPerformer.winners.length - 3}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ) : null}
+            </div>
+
+            {yesterdayTopPerformer.hasResults ? (
+              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
+                {yesterdayTopPerformer.points} נקודות
+              </div>
+            ) : null}
+          </div>
+
+          {showYesterdayTopList && yesterdayTopPerformer.hasResults && yesterdayTopPerformer.winners.length > 3 ? (
+            <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
+              <div className="font-black text-slate-100">רשימת מצטייני אתמול:</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {yesterdayTopPerformer.winners.map((name) => (
+                  <span key={name} className="rounded-full bg-slate-800 px-3 py-1">
+                    {name}
+                  </span>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowYesterdayTopList(false)}
+                className="mt-3 inline-flex rounded-full bg-slate-700 px-4 py-2 text-sm font-black text-white hover:bg-slate-600"
+              >
+                סגור
+              </button>
+            </div>
+          ) : null}
+        </div>
         {/* Daily top performer card */}
         <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
           <div className="flex items-center justify-between">
