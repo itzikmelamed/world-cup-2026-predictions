@@ -5138,6 +5138,7 @@ function isPlayerOnline(lastSeen) {
         </tbody>
       </table>
     </div>
+    <div className="mt-4 text-center text-xs text-slate-600">גרסה 1.0</div>
   </section>
 )}
                         {page === "all" && (
