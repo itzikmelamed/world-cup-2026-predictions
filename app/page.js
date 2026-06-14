@@ -472,7 +472,10 @@ if (settingsError) {
 const latestBonusManuallyUnlocked =
   latestSettings?.bonus_manually_unlocked || false;
 
-if (isBonusLocked(latestBonusManuallyUnlocked)) {
+if (
+  isBonusLocked(latestBonusManuallyUnlocked) &&
+  !(role === "admin" && adminBonusEditMode)
+) {
   showMessage(
     "ניחושי הבונוס נעולים ולא ניתן לשנות אותם",
     "error"
@@ -572,7 +575,10 @@ if (settingsError) {
 const latestBonusManuallyUnlocked =
   latestSettings?.bonus_manually_unlocked || false;
 
-if (isBonusLocked(latestBonusManuallyUnlocked)) {
+if (
+  isBonusLocked(latestBonusManuallyUnlocked) &&
+  !(role === "admin" && adminBonusEditMode)
+) {
   showMessage(
     "ניחושי הבונוס נעולים ולא ניתן לשנות אותם",
     "error"
@@ -1149,6 +1155,7 @@ const [editingPlayerName, setEditingPlayerName] = useState("");
 const [groupStageFinished, setGroupStageFinished] = useState(false);
 const [manuallyUnlockedMatches, setManuallyUnlockedMatches] = useState([]);
 const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
+const [adminBonusEditMode, setAdminBonusEditMode] = useState(false);
 const [manualThirdPlaceQualifiers, setManualThirdPlaceQualifiers] = useState({});
 const [serverTime, setServerTime] = useState(null);
 
@@ -2498,6 +2505,7 @@ const knockoutProgression = {
 };
 
   const bonusLocked = isBonusLocked(bonusManuallyUnlocked);
+  const canEditBonus = !bonusLocked || (role === "admin" && adminBonusEditMode);
 console.log("inactive check", {
   authEmail: authUser?.email,
   loggedInPlayer,
@@ -3175,6 +3183,18 @@ function isPlayerOnline(lastSeen) {
                   הימורי בונוס - {selectedPlayer}
                 </h2>
 
+                {role === "admin" && (
+                  <button
+                    type="button"
+                    onClick={() => setAdminBonusEditMode((prev) => !prev)}
+                    className="mb-4 inline-flex items-center justify-center rounded-2xl bg-slate-700 px-4 py-3 font-black text-yellow-300 hover:bg-slate-600 transition"
+                  >
+                    {adminBonusEditMode
+                      ? "🔒 סגור עריכת בונוסים לאדמין"
+                      : "🔓 פתח עריכת בונוסים לאדמין"}
+                  </button>
+                )}
+
                 <p className="text-slate-400 mb-6">
                   בכל בית יש לבחור בדיוק 2 עולות מתוך 4 הקבוצות באותו בית.
                 </p>
@@ -3212,7 +3232,7 @@ function isPlayerOnline(lastSeen) {
                     <div className="space-y-3">
                       <select
                         value={selectedGroup[0]}
-                        disabled={bonusLocked}
+                        disabled={!canEditBonus}
                         onChange={(e) =>
                           updateBonusQualifier(groupName, 0, e.target.value)
                         }
@@ -3240,7 +3260,7 @@ function isPlayerOnline(lastSeen) {
 
                       <select
                         value={selectedGroup[1]}
-                        disabled={bonusLocked}
+                        disabled={!canEditBonus}
                         onChange={(e) =>
                           updateBonusQualifier(groupName, 1, e.target.value)
                         }
@@ -3279,7 +3299,7 @@ function isPlayerOnline(lastSeen) {
 
                 <select
                   value={(bonusPredictions[selectedPlayer] || {}).champion || ""}
-                  disabled={bonusLocked}
+                  disabled={!canEditBonus}
                   onChange={(e) => updateSpecialBonus("champion", e.target.value)}
                   className="w-full bg-slate-700 rounded-xl p-3 font-bold"
                 >
@@ -3312,7 +3332,7 @@ function isPlayerOnline(lastSeen) {
                 <input
                   type="text"
                   value={(bonusPredictions[selectedPlayer] || {}).topScorer || ""}
-                  disabled={bonusLocked}
+                  disabled={!canEditBonus}
                   onChange={(e) => updateSpecialBonus("topScorer", e.target.value)}
                   placeholder="שם השחקן"
                   className="w-full bg-slate-700 rounded-xl p-3 font-bold"
