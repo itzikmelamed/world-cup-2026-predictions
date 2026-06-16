@@ -1149,6 +1149,7 @@ const [editingPlayerName, setEditingPlayerName] = useState("");
   const [showYesterdayTopList, setShowYesterdayTopList] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showBullList, setShowBullList] = useState(false);
+  const [showGuessKingList, setShowGuessKingList] = useState(false);
   const [showHallOfFame, setShowHallOfFame] = useState(false);
   const [officialBonus, setOfficialBonus] = useState({
   champion: "",
@@ -2192,6 +2193,21 @@ const bullKing = useMemo(() => {
     winners,
     hits: maxHits,
     title: winners.length === 1 ? "🎯 מלך הבולים" : "🎯 מלכי הבולים",
+  };
+}, [leaderboard]);
+
+const guessKing = useMemo(() => {
+  const list = leaderboard || [];
+  if (!list || list.length === 0) return { hasAny: false, winners: [], hits: 0, title: "👑 מלך הניחושים" };
+
+  const maxHits = Math.max(...list.map((r) => r.correctDirections || 0));
+  const winners = list.filter((r) => (r.correctDirections || 0) === maxHits).map((r) => r.player);
+
+  return {
+    hasAny: maxHits > 0,
+    winners,
+    hits: maxHits,
+    title: winners.length === 1 ? "👑 מלך הניחושים" : "👑 מלכי הניחושים",
   };
 }, [leaderboard]);
 
@@ -4929,10 +4945,10 @@ function isPlayerOnline(lastSeen) {
       <div className="mb-4 rounded-3xl border border-slate-800 bg-slate-950 p-4 text-slate-100">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Yesterday top performer card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-2.5 sm:p-3">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-lg font-black text-white">
+              <div className="text-base font-black text-white sm:text-lg">
                 {yesterdayTopPerformer.hasResults ? yesterdayTopPerformer.title : "עדיין אין מצטיין אתמול"}
               </div>
               {yesterdayTopPerformer.hasResults ? (
@@ -4956,7 +4972,7 @@ function isPlayerOnline(lastSeen) {
             </div>
 
             {yesterdayTopPerformer.hasResults ? (
-              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
+              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-3 py-1.5 text-right font-black text-yellow-300 sm:px-4 sm:py-2">
                 {yesterdayTopPerformer.points} נקודות
               </div>
             ) : null}
@@ -4983,10 +4999,10 @@ function isPlayerOnline(lastSeen) {
           ) : null}
         </div>
         {/* Daily top performer card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-2.5 sm:p-3">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-lg font-black text-white">
+              <div className="text-base font-black text-white sm:text-lg">
                 {dailyTopPerformer.hasResultsToday ? dailyTopPerformer.title : "עדיין אין מצטיין היום"}
               </div>
               {dailyTopPerformer.hasResultsToday ? (
@@ -5010,7 +5026,7 @@ function isPlayerOnline(lastSeen) {
             </div>
 
             {dailyTopPerformer.hasResultsToday ? (
-              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
+              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-3 py-1.5 text-right font-black text-yellow-300 sm:px-4 sm:py-2">
                 {dailyTopPerformer.points} נקודות
               </div>
             ) : null}
@@ -5038,10 +5054,10 @@ function isPlayerOnline(lastSeen) {
         </div>
 
         {/* Bull-king card */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
-          <div className="flex items-center justify-between">
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 p-2.5 sm:p-3">
+          <div className="flex items-start justify-between gap-3">
             <div>
-              <div className="text-lg font-black text-white">{bullKing.title}</div>
+              <div className="text-base font-black text-white sm:text-lg">{bullKing.title}</div>
               {bullKing.hasAny ? (
                 <div className="mt-1 text-slate-300 text-sm">
                   {bullKing.winners.length <= 3 ? (
@@ -5065,10 +5081,44 @@ function isPlayerOnline(lastSeen) {
             </div>
 
             {bullKing.hasAny ? (
-              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-4 py-2 text-right font-black text-yellow-300">
+              <div className="rounded-2xl bg-slate-900 border border-slate-800 px-3 py-1.5 text-right font-black text-yellow-300 sm:px-4 sm:py-2">
                 {bullKing.hits} בולים
               </div>
             ) : null}
+          </div>
+
+          <div className="mt-3 border-t border-slate-800 pt-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <div className="text-base font-black text-white sm:text-lg">{guessKing.title}</div>
+                {guessKing.hasAny ? (
+                  <div className="mt-1 text-slate-300 text-sm">
+                    {guessKing.winners.length <= 3 ? (
+                      guessKing.winners.join(", ")
+                    ) : (
+                      <>
+                        {guessKing.winners.slice(0, 3).join(", ")}
+                        <button
+                          type="button"
+                          onClick={() => setShowGuessKingList(true)}
+                          className="ml-1 inline-flex items-center text-yellow-300 underline"
+                        >
+                          ועוד {guessKing.winners.length - 3}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <div className="mt-1 text-slate-400 text-sm">טרם יש ניחושים</div>
+                )}
+              </div>
+
+              {guessKing.hasAny ? (
+                <div className="rounded-2xl bg-slate-900 border border-slate-800 px-3 py-1.5 text-right font-black text-yellow-300 sm:px-4 sm:py-2">
+                  {guessKing.hits} ניחושים
+                </div>
+              ) : null}
+            </div>
           </div>
 
           {showBullList && bullKing.hasAny && bullKing.winners.length > 3 ? (
@@ -5090,23 +5140,43 @@ function isPlayerOnline(lastSeen) {
             </button>
           </div>
         ) : null}
+
+          {showGuessKingList && guessKing.hasAny && guessKing.winners.length > 3 ? (
+            <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900 p-3 text-sm text-slate-200">
+              <div className="font-black text-slate-100">רשימת מלכי הניחושים:</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {guessKing.winners.map((name) => (
+                  <span key={name} className="rounded-full bg-slate-800 px-3 py-1">
+                    {name}
+                  </span>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowGuessKingList(false)}
+                className="mt-3 inline-flex rounded-full bg-slate-700 px-4 py-2 text-sm font-black text-white hover:bg-slate-600"
+              >
+              סגור
+            </button>
+          </div>
+        ) : null}
       </div>
 
         {/* Hall of fame card */}
         <button
           type="button"
           onClick={() => setShowHallOfFame(true)}
-          className="rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-3 text-right transition-all hover:border-yellow-300 hover:bg-yellow-400/15"
+          className="rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-2.5 text-right transition-all hover:border-yellow-300 hover:bg-yellow-400/15 sm:p-3"
         >
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="text-lg font-black text-white">🏆 היכל התהילה</div>
+              <div className="text-base font-black text-white sm:text-lg">🏆 היכל התהילה</div>
               <div className="mt-1 text-sm text-slate-300">
                 אלופי הטורנירים וטבלת כל הזמנים
               </div>
             </div>
 
-            <div className="rounded-2xl bg-yellow-400 px-4 py-2 font-black text-slate-950">
+            <div className="rounded-2xl bg-yellow-400 px-3 py-1.5 font-black text-slate-950 sm:px-4 sm:py-2">
               פתח
             </div>
           </div>
