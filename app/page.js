@@ -1149,6 +1149,7 @@ const [editingPlayerName, setEditingPlayerName] = useState("");
   const [showYesterdayTopList, setShowYesterdayTopList] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [showBullList, setShowBullList] = useState(false);
+  const [showHallOfFame, setShowHallOfFame] = useState(false);
   const [officialBonus, setOfficialBonus] = useState({
   champion: "",
   topScorer: "",
@@ -1159,6 +1160,80 @@ const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
 const [adminBonusEditMode, setAdminBonusEditMode] = useState(false);
 const [manualThirdPlaceQualifiers, setManualThirdPlaceQualifiers] = useState({});
 const [serverTime, setServerTime] = useState(null);
+
+// Hall of Fame data
+const hallOfFameTournaments = [
+  {
+    year: "יורו 2012",
+    gold: "ארז",
+    silver: "איציק",
+    bronze: "שלום"
+  },
+  {
+    year: "מונדיאל 2014",
+    gold: "אליאור",
+    silver: "איציק",
+    bronze: "טל קן דרור"
+  },
+  {
+    year: "יורו 2016",
+    gold: "ארז",
+    silver: "שלום",
+    bronze: "טל מלמד"
+  },
+  {
+    year: "מונדיאל 2018",
+    gold: "מוטי",
+    silver: "אוהד",
+    bronze: "איציק ואבירם"
+  },
+  {
+    year: "יורו 2020",
+    gold: "טל קן דרור",
+    silver: "ארז",
+    bronze: "מוטי"
+  },
+  {
+    year: "מונדיאל 2022",
+    gold: "טל טובי",
+    silver: "רונן",
+    bronze: "טל קן דרור"
+  },
+  {
+    year: "יורו 2024",
+    gold: "איציק",
+    silver: "טל מלמד",
+    bronze: "מוטי"
+  }
+];
+
+const hallOfFameAllTimeData = [
+  { name: "ארז", gold: 2, silver: 1, bronze: 0 },
+  { name: "איציק", gold: 1, silver: 2, bronze: 1 },
+  { name: "מוטי", gold: 1, silver: 0, bronze: 2 },
+  { name: "טל קן דרור", gold: 1, silver: 0, bronze: 2 },
+  { name: "אליאור", gold: 1, silver: 0, bronze: 0 },
+  { name: "טל טובי", gold: 1, silver: 0, bronze: 0 },
+  { name: "שלום", gold: 0, silver: 1, bronze: 1 },
+  { name: "טל מלמד", gold: 0, silver: 1, bronze: 1 },
+  { name: "אוהד", gold: 0, silver: 1, bronze: 0 },
+  { name: "רונן", gold: 0, silver: 1, bronze: 0 },
+  { name: "אבירם", gold: 0, silver: 0, bronze: 1 }
+];
+
+const hallOfFameAllTimeSorted = useMemo(() => {
+  return hallOfFameAllTimeData
+    .map(player => ({
+      ...player,
+      totalPodiums: player.gold + player.silver + player.bronze
+    }))
+    .sort((a, b) => {
+      if (b.gold !== a.gold) return b.gold - a.gold;
+      if (b.totalPodiums !== a.totalPodiums) return b.totalPodiums - a.totalPodiums;
+      if (b.silver !== a.silver) return b.silver - a.silver;
+      return b.bronze - a.bronze;
+    });
+}, []);
 
 useEffect(() => {
   const savedPage = localStorage.getItem("currentPage");
@@ -4846,7 +4921,7 @@ function isPlayerOnline(lastSeen) {
 </div>
 
       <div className="mb-4 rounded-3xl border border-slate-800 bg-slate-950 p-4 text-slate-100">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Yesterday top performer card */}
         <div className="rounded-2xl border border-slate-800 bg-slate-950 p-3">
           <div className="flex items-center justify-between">
@@ -5005,13 +5080,150 @@ function isPlayerOnline(lastSeen) {
                 onClick={() => setShowBullList(false)}
                 className="mt-3 inline-flex rounded-full bg-slate-700 px-4 py-2 text-sm font-black text-white hover:bg-slate-600"
               >
-                סגור
-              </button>
+              סגור
+            </button>
+          </div>
+        ) : null}
+      </div>
+
+        {/* Hall of fame card */}
+        <button
+          type="button"
+          onClick={() => setShowHallOfFame(true)}
+          className="rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-3 text-right transition-all hover:border-yellow-300 hover:bg-yellow-400/15"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="text-lg font-black text-white">🏆 היכל התהילה</div>
+              <div className="mt-1 text-sm text-slate-300">
+                אלופי הטורנירים וטבלת כל הזמנים
+              </div>
             </div>
-          ) : null}
-        </div>
+
+            <div className="rounded-2xl bg-yellow-400 px-4 py-2 font-black text-slate-950">
+              פתח
+            </div>
+          </div>
+        </button>
       </div>
     </div>
+
+    {showHallOfFame ? (
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 pb-24 sm:items-center sm:pb-0">
+        <div className="w-full max-w-5xl rounded-3xl border border-slate-800 bg-slate-950 p-4 text-slate-100 shadow-2xl max-h-[calc(100vh-7rem)] overflow-y-auto md:p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h3 className="text-2xl font-black">🏆 היכל התהילה</h3>
+              <div className="mt-1 text-sm font-bold text-slate-400">
+                היסטוריית הזוכים מהטורנירים הקודמים
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowHallOfFame(false)}
+              className="rounded-full bg-slate-800 px-4 py-2 text-sm font-black text-white hover:bg-slate-700"
+            >
+              סגור
+            </button>
+          </div>
+
+          <div className="mt-6 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3 md:p-4">
+              <h4 className="mb-3 text-lg font-black text-yellow-300">
+                אלופי הטורנירים
+              </h4>
+
+              <div className="overflow-x-auto rounded-2xl border border-slate-800">
+                <table className="w-full min-w-[560px] text-sm">
+                  <thead className="bg-slate-950 text-slate-300">
+                    <tr>
+                      <th className="p-3 text-right">טורניר</th>
+                      <th className="p-3 text-center">🥇 זהב</th>
+                      <th className="p-3 text-center">🥈 כסף</th>
+                      <th className="p-3 text-center">🥉 ארד</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {hallOfFameTournaments.map((tournament) => (
+                      <tr
+                        key={tournament.year}
+                        className="border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80"
+                      >
+                        <td className="p-3 font-black text-white">
+                          {tournament.year}
+                        </td>
+                        <td className="p-3 text-center font-black text-yellow-300">
+                          {tournament.gold}
+                        </td>
+                        <td className="p-3 text-center font-black text-slate-200">
+                          {tournament.silver}
+                        </td>
+                        <td className="p-3 text-center font-black text-amber-500">
+                          {tournament.bronze}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-3 md:p-4">
+              <h4 className="mb-3 text-lg font-black text-yellow-300">
+                👑 טבלת כל הזמנים
+              </h4>
+
+              <div className="overflow-x-auto rounded-2xl border border-slate-800">
+                <table className="w-full min-w-[460px] text-sm">
+                  <thead className="bg-slate-950 text-slate-300">
+                    <tr>
+                      <th className="p-3 text-right">#</th>
+                      <th className="p-3 text-right">משתתף</th>
+                      <th className="p-3 text-center">🥇</th>
+                      <th className="p-3 text-center">🥈</th>
+                      <th className="p-3 text-center">🥉</th>
+                      <th className="p-3 text-center">סה״כ פודיומים</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {hallOfFameAllTimeSorted.map((player, index) => (
+                      <tr
+                        key={player.name}
+                        className="border-t border-slate-800 bg-slate-900 hover:bg-slate-800/80"
+                      >
+                        <td className="p-3 font-black text-slate-300">
+                          {index + 1}
+                        </td>
+                        <td className="p-3 font-black text-white">
+                          {player.name}
+                        </td>
+                        <td className="p-3 text-center font-black text-yellow-300">
+                          {player.gold}
+                        </td>
+                        <td className="p-3 text-center font-black text-slate-200">
+                          {player.silver}
+                        </td>
+                        <td className="p-3 text-center font-black text-amber-500">
+                          {player.bronze}
+                        </td>
+                        <td className="p-3 text-center">
+                          <span className="inline-flex min-w-[40px] justify-center rounded-full bg-yellow-400 px-3 py-1 font-black text-slate-950">
+                            {player.totalPodiums}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    ) : null}
 
     {selectedProfile ? (
       <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 pb-24 sm:items-center sm:pb-0">
