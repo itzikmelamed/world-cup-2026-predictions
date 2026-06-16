@@ -1204,6 +1204,12 @@ const hallOfFameTournaments = [
     gold: "איציק",
     silver: "טל מלמד",
     bronze: "מוטי"
+  },
+  {
+    year: "מונדיאל 2026",
+    gold: "—",
+    silver: "—",
+    bronze: "—"
   }
 ];
 
