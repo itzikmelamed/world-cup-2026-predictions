@@ -1770,6 +1770,42 @@ function parseMatchDateTime(match) {
   );
 }
 
+const MATCH_LIVE_WINDOW_MS = 3 * 60 * 60 * 1000;
+
+function hasMatchResult(match, results = {}) {
+  const result = results[match.id];
+
+  return (
+    result?.home !== "" &&
+    result?.home != null &&
+    result?.away !== "" &&
+    result?.away != null
+  );
+}
+
+function isMatchLive(match, currentTime, results = {}) {
+  if (!currentTime || hasMatchResult(match, results)) return false;
+
+  const matchDateTime = parseMatchDateTime(match);
+  const liveUntil = new Date(matchDateTime.getTime() + MATCH_LIVE_WINDOW_MS);
+
+  return currentTime >= matchDateTime && currentTime < liveUntil;
+}
+
+function getJumpTargetMatch(matches, serverTime, results = {}) {
+  const currentTime = serverTime ? new Date(serverTime) : new Date();
+  const sortedMatches = [...matches].sort(
+    (a, b) => parseMatchDateTime(a).getTime() - parseMatchDateTime(b).getTime()
+  );
+
+  return (
+    sortedMatches.find((match) => isMatchLive(match, currentTime, results)) ||
+    sortedMatches.find((match) => parseMatchDateTime(match) > currentTime) ||
+    sortedMatches[sortedMatches.length - 1] ||
+    null
+  );
+}
+
 function isMatchToday(match, serverTime) {
   if (!match?.date || !match?.time) return false;
 
@@ -2005,14 +2041,7 @@ function isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches = {}, res
     const hasRealKnockoutTeams =
       isRealTeamName(homeTeam) && isRealTeamName(awayTeam);
 
-    const matchResult = results[match.id];
-    const hasRealResult =
-      matchResult?.home !== "" &&
-      matchResult?.home != null &&
-      matchResult?.away !== "" &&
-      matchResult?.away != null;
-
-    if (hasRealResult) {
+    if (hasMatchResult(match, results)) {
       return true;
     }
 
@@ -2025,13 +2054,7 @@ function isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches = {}, res
     return false;
   }
 
-  const [day, month, year] = match.date.split(".");
-  const [hours, minutes] = match.time.split(":");
-
-  const matchDateTime = new Date(
-    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
-  );
-
+  const matchDateTime = parseMatchDateTime(match);
   const lockTime = new Date(matchDateTime.getTime() - 5 * 60 * 1000);
 
   return serverTime ? serverTime >= lockTime : true;
@@ -2047,12 +2070,7 @@ function getPredictionWarning(match, prediction, role, serverTime, manuallyUnloc
   if (hasPrediction) return null;
   if (isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)) return null;
 
-  const [day, month, year] = match.date.split(".");
-  const [hours, minutes] = match.time.split(":");
-
-  const matchDateTime = new Date(
-    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
-  );
+  const matchDateTime = parseMatchDateTime(match);
   const lockTime = new Date(matchDateTime.getTime() - 5 * 60 * 1000);
   const diffMs = lockTime.getTime() - serverTime.getTime();
 
@@ -2081,12 +2099,7 @@ function getPredictionWarning(match, prediction, role, serverTime, manuallyUnloc
 function getMatchCountdownText(match, serverTime) {
   if (!serverTime) return null;
 
-  const [day, month, year] = match.date.split(".");
-  const [hours, minutes] = match.time.split(":");
-  const matchDateTime = new Date(
-    `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00+03:00`
-  );
-
+  const matchDateTime = parseMatchDateTime(match);
   const diffMs = matchDateTime.getTime() - serverTime.getTime();
   if (diffMs <= 0) {
     return "המשחק התחיל";
@@ -2447,6 +2460,21 @@ const scrollToNextOpenMatch = () => {
       behavior: "smooth",
       block: "center",
     });
+  }
+};
+const scrollToAllPredictionsJumpMatch = () => {
+  const targetMatch = getJumpTargetMatch(matches, serverTime, results);
+
+  if (!targetMatch) return;
+
+  const el =
+    document.getElementById(`all-predictions-mobile-match-${targetMatch.id}`) ||
+    document.getElementById(`all-predictions-row-${targetMatch.id}`);
+
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    showMessage("המשחק לא מוצג בסינון הנוכחי");
   }
 };
 const scrollToNextIncompleteAdminMatch = () => {
@@ -5627,6 +5655,7 @@ if (pts === 4.5) {
 
                     return (
                       <tr
+  id={`all-predictions-row-${match.id}`}
   key={match.id}
   className={`border-t border-slate-800 ${
     isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)
@@ -5795,6 +5824,15 @@ if (pts === 4.5) {
                 </tbody>
               </table>
             </div>
+            <div className="md:hidden mb-4">
+              <button
+                type="button"
+                onClick={scrollToAllPredictionsJumpMatch}
+                className="w-full rounded-2xl border border-yellow-400/50 bg-yellow-400 px-4 py-3 text-center font-black text-slate-950 shadow-lg shadow-yellow-400/10 transition-all active:scale-[0.99]"
+              >
+                ⚽ קפוץ למשחק הבא
+              </button>
+            </div>
             <div className="md:hidden space-y-4">
   {filteredAllBetsMatches.map((match) => {
     const result = results[match.id];
@@ -5814,6 +5852,7 @@ if (pts === 4.5) {
 
     return (
       <div
+        id={`all-predictions-mobile-match-${match.id}`}
         key={match.id}
         className="bg-slate-950 border border-slate-800 rounded-2xl p-3"
       >
