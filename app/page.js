@@ -269,11 +269,11 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
-  const openingMatchTime = new Date("2026-06-11T22:00:00+03:00");
+  const finalMatchTime = new Date("2026-07-19T22:00:00+03:00");
 
   function updateCountdown() {
     const now = new Date();
-    const diff = openingMatchTime - now;
+    const diff = finalMatchTime - now;
 
     if (diff <= 0) {
       setCountdown({
@@ -1161,6 +1161,28 @@ const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
 const [adminBonusEditMode, setAdminBonusEditMode] = useState(false);
 const [manualThirdPlaceQualifiers, setManualThirdPlaceQualifiers] = useState({});
 const [serverTime, setServerTime] = useState(null);
+
+const qualifiedBonusTeamsByGroup = (() => {
+  if (!groupStageFinished) return {};
+
+  const bestThirdPlaceTeams = getBestThirdPlaceTeams(
+    matches,
+    groups,
+    results,
+    manualThirdPlaceQualifiers
+  );
+
+  return Object.keys(groups).reduce((acc, groupName) => {
+    const table = calculateGroupTable(groupName, matches, groups, results);
+    const topTwoTeams = table.slice(0, 2).map((team) => team.team);
+    const qualifiedThirdPlaceTeams = bestThirdPlaceTeams
+      .filter((team) => team.group === groupName && team.isQualified)
+      .map((team) => team.team);
+
+    acc[groupName] = new Set([...topTwoTeams, ...qualifiedThirdPlaceTeams]);
+    return acc;
+  }, {});
+})();
 
 // Hall of Fame data
 const hallOfFameTournaments = [
@@ -2880,7 +2902,7 @@ function isPlayerOnline(lastSeen) {
   </div>
   <div className="absolute bottom-24 right-6 z-10 rounded-2xl bg-black/45 border border-yellow-400/20 backdrop-blur-sm px-5 py-3">
   <div className="text-yellow-300 text-xs font-black mb-2">
-    ⏳ הספירה לאחור למשחק הפתיחה
+    ⏳ עוד כמה זמן לגמר הגדול
   </div>
 
   <div className="flex gap-4">
@@ -2951,7 +2973,7 @@ function isPlayerOnline(lastSeen) {
       </div>
       <div className="mt-4 rounded-2xl bg-black/55 border border-yellow-400/20 backdrop-blur-sm p-4">
   <div className="text-yellow-300 text-sm font-black mb-3">
-    ⏳ הספירה לאחור למשחק הפתיחה
+    ⏳ עוד כמה זמן לגמר הגדול
   </div>
 
   <div className="grid grid-cols-4 gap-2 text-center">
@@ -4223,18 +4245,28 @@ function isPlayerOnline(lastSeen) {
          {(() => {
   const team =
     (bonusPredictions[player.name]?.[groupName] || ["", ""])[0];
+  const isQualified =
+    groupStageFinished && qualifiedBonusTeamsByGroup[groupName]?.has(team);
+  const highlightClass = groupStageFinished
+    ? isQualified
+      ? "bg-green-500/15 text-green-200 ring-1 ring-green-400/40"
+      : "bg-red-500/15 text-red-200 ring-1 ring-red-400/40"
+    : "";
 
   return team ? (
-    <div className="flex items-center justify-center gap-1">
+    <div className={`inline-flex max-w-full items-center justify-center gap-1 rounded-full px-2 py-1 ${highlightClass}`}>
       {getFlagUrl(team) && (
         <img
           src={getFlagUrl(team)}
           alt={team}
-          className="w-4 h-4 object-cover rounded-full"
+          className="h-4 w-4 shrink-0 rounded-full object-cover"
         />
       )}
 
-      <span>{team}</span>
+      <span className="truncate">{team}</span>
+      {groupStageFinished && (
+        <span className="shrink-0 font-black">{isQualified ? "✓" : "✗"}</span>
+      )}
     </div>
   ) : (
     "-"
@@ -4257,18 +4289,28 @@ function isPlayerOnline(lastSeen) {
           {(() => {
   const team =
     (bonusPredictions[player.name]?.[groupName] || ["", ""])[1];
+  const isQualified =
+    groupStageFinished && qualifiedBonusTeamsByGroup[groupName]?.has(team);
+  const highlightClass = groupStageFinished
+    ? isQualified
+      ? "bg-green-500/15 text-green-200 ring-1 ring-green-400/40"
+      : "bg-red-500/15 text-red-200 ring-1 ring-red-400/40"
+    : "";
 
   return team ? (
-    <div className="flex items-center justify-center gap-1">
+    <div className={`inline-flex max-w-full items-center justify-center gap-1 rounded-full px-2 py-1 ${highlightClass}`}>
       {getFlagUrl(team) && (
         <img
           src={getFlagUrl(team)}
           alt={team}
-          className="w-4 h-4 object-cover rounded-full"
+          className="h-4 w-4 shrink-0 rounded-full object-cover"
         />
       )}
 
-      <span>{team}</span>
+      <span className="truncate">{team}</span>
+      {groupStageFinished && (
+        <span className="shrink-0 font-black">{isQualified ? "✓" : "✗"}</span>
+      )}
     </div>
   ) : (
     "-"
