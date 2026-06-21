@@ -208,6 +208,15 @@ if (
   return 0;
 }
 
+function hasCompletePrediction(prediction) {
+  return (
+    prediction?.home !== "" &&
+    prediction?.home != null &&
+    prediction?.away !== "" &&
+    prediction?.away != null
+  );
+}
+
 export default function Home() {
  const [selectedPlayer, setSelectedPlayer] = useState("");
  const [openMatchId, setOpenMatchId] = useState(null);
@@ -2381,7 +2390,7 @@ async function signInWithGoogle() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "https://world-cup-2026-predictions-liart.vercel.app",
+      redirectTo: window.location.origin,
     },
   });
 
@@ -2673,9 +2682,12 @@ const getMatchPredictionDistribution = (match) => {
     return null;
   }
 
-  const locked = match.group
-    ? true
-    : isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results);
+  const locked = isMatchLocked(
+    match,
+    manuallyUnlockedMatches,
+    knockoutMatches,
+    results
+  );
 
   if (!locked) {
     return { locked: false };
@@ -5694,13 +5706,19 @@ if (pts === 4.5) {
                         away: "",
                       };
                     const distribution = getMatchPredictionDistribution(match);
+                    const locked = isMatchLocked(
+                      match,
+                      manuallyUnlockedMatches,
+                      knockoutMatches,
+                      results
+                    );
 
                     return (
                       <tr
   id={`all-predictions-row-${match.id}`}
   key={match.id}
   className={`border-t border-slate-800 ${
-    isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)
+    locked
       ? "bg-red-950/20"
       : "bg-green-950/10"
   }`}
@@ -5777,7 +5795,7 @@ if (pts === 4.5) {
   </div>
 )}
 <div className="mt-2">
-  {isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results) ? (
+  {locked ? (
     <span className="inline-flex items-center bg-red-500/20 border border-red-500/40 text-red-300 px-3 py-1 rounded-full text-xs font-black">
       🔒 נעול
     </span>
@@ -5796,11 +5814,7 @@ if (pts === 4.5) {
       away: "",
     };
 
-    const shouldHidePrediction =
-  !match.group &&
-  !isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results) &&
-  role !== "admin" &&
-  player.name !== selectedPlayer;
+    const shouldHidePrediction = !locked && player.name !== selectedPlayer;
 
   const points = calculatePoints(
     prediction,
@@ -5826,10 +5840,10 @@ if (pts === 4.5) {
                             >
                               <div className="font-bold">
                                 {shouldHidePrediction ? (
-  <span className="text-slate-500 text-xs font-black">
-    הימור מוסתר
-  </span>
-) : prediction.home !== "" && prediction.away !== "" ? (
+                                  <span className="text-slate-500 text-xs font-black">
+                                    {hasCompletePrediction(prediction) ? "🔒 הימר" : "⏳ טרם הימר"}
+                                  </span>
+                                ) : prediction.home !== "" && prediction.away !== "" ? (
   <span className="inline-flex items-center gap-1" dir="rtl">
     <span>{prediction.home}</span>
     <span>:</span>
@@ -5879,6 +5893,12 @@ if (pts === 4.5) {
   {filteredAllBetsMatches.map((match) => {
     const result = results[match.id];
     const distribution = getMatchPredictionDistribution(match);
+    const locked = isMatchLocked(
+      match,
+      manuallyUnlockedMatches,
+      knockoutMatches,
+      results
+    );
     const sortedPlayers = [...activePlayers].sort((a, b) => {
   const predictionA = predictions[a.name]?.[match.id];
   const predictionB = predictions[b.name]?.[match.id];
@@ -5978,11 +5998,7 @@ if (pts === 4.5) {
   ).map((player) => {
             const prediction = predictions[player.name]?.[match.id];
 
-            const shouldHidePrediction =
-  !match.group &&
-  !isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results) &&
-  role !== "admin" &&
-  player.name !== selectedPlayer;
+            const shouldHidePrediction = !locked && player.name !== selectedPlayer;
 
             const points =
               prediction && result
@@ -6004,8 +6020,8 @@ if (pts === 4.5) {
 
                 <div className="text-center text-slate-300 text-sm">
                   {shouldHidePrediction
-  ? "הימור מוסתר"
-  : prediction &&
+                    ? hasCompletePrediction(prediction) ? "🔒 הימר" : "⏳ טרם הימר"
+                    : prediction &&
     prediction.home !== null &&
     prediction.away !== null &&
     prediction.home !== "" &&
