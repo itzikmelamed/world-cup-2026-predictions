@@ -2493,14 +2493,18 @@ const scrollToNextOpenMatch = () => {
     });
   }
 };
-const scrollToAllPredictionsJumpMatch = () => {
-  const targetMatch = getJumpTargetMatch(matches, serverTime, results);
+const scrollToAllPredictionsJumpMatch = (options = {}) => {
+  const targetMatches =
+    options?.visibleOnly === true ? filteredAllBetsMatches : matches;
+  const targetMatch = getJumpTargetMatch(targetMatches, serverTime, results);
 
   if (!targetMatch) return;
 
-  const el =
-    document.getElementById(`all-predictions-mobile-match-${targetMatch.id}`) ||
-    document.getElementById(`all-predictions-row-${targetMatch.id}`);
+  const candidates = [
+    document.getElementById(`all-predictions-mobile-match-${targetMatch.id}`),
+    document.getElementById(`all-predictions-row-${targetMatch.id}`),
+  ].filter(Boolean);
+  const el = candidates.find((candidate) => candidate.offsetParent) || candidates[0];
 
   if (el) {
     el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -5622,6 +5626,15 @@ function isPlayerOnline(lastSeen) {
 </button>
 
 </div>
+            <div className="hidden md:flex mb-4 justify-end">
+              <button
+                type="button"
+                onClick={() => scrollToAllPredictionsJumpMatch({ visibleOnly: true })}
+                className="rounded-2xl border border-yellow-400/50 bg-yellow-400 px-4 py-3 text-center font-black text-slate-950 shadow-lg shadow-yellow-400/10 transition-all hover:bg-yellow-300"
+              >
+                ⚽ קפוץ למשחק הבא
+              </button>
+            </div>
             <div className="hidden md:block overflow-auto max-h-[75vh] rounded-2xl border border-slate-800 text-xs md:text-sm">
               <table className="border-collapse min-w-max">
                 <thead>
