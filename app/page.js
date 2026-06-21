@@ -407,19 +407,31 @@ useEffect(() => {
     setDbPlayers(data);
   }
   async function loadPredictions() {
-  const { data, error } = await supabase
-    .from("predictions")
-    .select("*");
+  const pageSize = 1000;
+  const rows = [];
 
-  if (error) {
-    console.error("Error loading predictions:", error);
-    return;
+  for (let from = 0; ; from += pageSize) {
+    const { data, error } = await supabase
+      .from("predictions")
+      .select("*")
+      .range(from, from + pageSize - 1);
+
+    if (error) {
+      console.error("Error loading predictions:", error);
+      return;
+    }
+
+    const batch = data || [];
+    rows.push(...batch);
+
+    if (batch.length < pageSize) {
+      break;
+    }
   }
-  
 
   const formatted = {};
 
-  data.forEach((row) => {
+  rows.forEach((row) => {
     if (!formatted[row.player_name]) {
       formatted[row.player_name] = {};
     }
@@ -1151,7 +1163,10 @@ async function refreshAllData() {
 const [page, setPage] = useState("matchesCards");
   const [predictions, setPredictions] = useState({});
   const [results, setResults] = useState({});
-  const [savingPrediction, setSavingPrediction] = useState(false);
+  const [savingPredictionKeys, setSavingPredictionKeys] = useState({});
+  const predictionSaveQueueRef = useRef({});
+  const predictionDraftRef = useRef({});
+  const savingPrediction = Object.keys(savingPredictionKeys).length > 0;
   const [editingPlayerId, setEditingPlayerId] = useState(null);
 const [editingPlayerName, setEditingPlayerName] = useState("");
   const [bonusPredictions, setBonusPredictions] = useState({});
@@ -1352,10 +1367,115 @@ useEffect(() => {
   return () => clearInterval(interval);
 }, [authUser?.email, page]);
 
-  async function updatePrediction(matchId, side, value) {
-  if (savingPrediction) return;
+function setPredictionKeySaving(key, isSaving) {
+  setSavingPredictionKeys((prev) => {
+    if (isSaving) {
+      return { ...prev, [key]: true };
+    }
 
-  setSavingPrediction(true);
+    const next = { ...prev };
+    delete next[key];
+    return next;
+  });
+}
+
+async function savePredictionToSupabase(playerName, matchId, prediction) {
+  return supabase
+    .from("predictions")
+    .upsert(
+      [
+        {
+          player_name: playerName,
+          match_id: matchId,
+          home_score:
+            prediction.home === ""
+              ? null
+              : Number(prediction.home),
+          away_score:
+            prediction.away === ""
+              ? null
+              : Number(prediction.away),
+        },
+      ],
+      {
+        onConflict: "player_name,match_id",
+      }
+    );
+}
+
+async function queuePredictionSave(playerName, matchId, prediction) {
+  const key = `${playerName}-${matchId}`;
+  const queue =
+    predictionSaveQueueRef.current[key] || {
+      inFlight: false,
+      pending: null,
+      latest: null,
+    };
+
+  predictionSaveQueueRef.current[key] = queue;
+  queue.latest = prediction;
+  predictionDraftRef.current[key] = prediction;
+
+  if (queue.inFlight) {
+    queue.pending = prediction;
+    return;
+  }
+
+  queue.inFlight = true;
+  setPredictionKeySaving(key, true);
+
+  let predictionToSave = prediction;
+
+  while (predictionToSave) {
+    queue.pending = null;
+
+    const { error } = await savePredictionToSupabase(
+      playerName,
+      matchId,
+      predictionToSave
+    );
+
+    if (error) {
+      console.error("Error saving prediction:", error);
+      showMessage("שגיאה בשמירת ההימור: " + error.message, "error");
+      break;
+    }
+
+    predictionToSave = queue.pending;
+  }
+
+  queue.inFlight = false;
+  delete predictionSaveQueueRef.current[key];
+  setPredictionKeySaving(key, false);
+
+  if (!predictionToSave) {
+    showMessage("ההימור נשמר בהצלחה");
+  }
+}
+
+  async function updatePrediction(matchId, side, value) {
+  const localPlayerName =
+    role === "admin" && selectedPlayer
+      ? selectedPlayer
+      : loggedInPlayer?.name;
+  const localSaveKey = localPlayerName
+    ? `${localPlayerName}-${matchId}`
+    : null;
+
+  if (localPlayerName && localSaveKey) {
+    const currentDraft =
+      predictionDraftRef.current[localSaveKey] ||
+      predictionSaveQueueRef.current[localSaveKey]?.latest ||
+      predictions[localPlayerName]?.[matchId] || {
+        home: "",
+        away: "",
+      };
+
+    predictionDraftRef.current[localSaveKey] = {
+      ...currentDraft,
+      [side]: value,
+    };
+  }
 
   try {
      const { data: currentLoggedIn, error: playerCheckError } = await supabase
@@ -1400,15 +1520,17 @@ if (currentLoggedIn.role === "viewer") {
       latestSettings?.manually_unlocked_matches || [];
 
     const match = matches.find((m) => m.id === matchId);
-
-    if (
+    const locked =
       match &&
       isMatchLocked(
         match,
         latestManuallyUnlockedMatches,
         knockoutMatches,
         results
-      )
+      );
+
+    if (
+      locked
     ) {
       showMessage("לא ניתן לשמור, המשחק נעול או קרוב להתחלה", "error");
       return;
@@ -1419,16 +1541,26 @@ if (currentLoggedIn.role === "viewer") {
         ? selectedPlayer
         : currentLoggedIn.name;
 
+    const saveKey = `${playerName}-${matchId}`;
+
+    const draftPrediction = predictionDraftRef.current[saveKey];
+
 const currentPrediction =
+  draftPrediction ||
+  predictionSaveQueueRef.current[saveKey]?.latest ||
   predictions[playerName]?.[matchId] || {
     home: "",
     away: "",
   };
 
-    const updatedPrediction = {
-      ...currentPrediction,
-      [side]: value,
-    };
+    const updatedPrediction =
+      draftPrediction ||
+      {
+            ...currentPrediction,
+            [side]: value,
+          };
+
+    predictionDraftRef.current[saveKey] = updatedPrediction;
 
     setPredictions((prev) => ({
       ...prev,
@@ -1438,37 +1570,10 @@ const currentPrediction =
 },
     }));
 
-    const { error } = await supabase
-      .from("predictions")
-      .upsert(
-        [
-          {
-            player_name: playerName,
-            match_id: matchId,
-            home_score:
-              updatedPrediction.home === ""
-                ? null
-                : Number(updatedPrediction.home),
-            away_score:
-              updatedPrediction.away === ""
-                ? null
-                : Number(updatedPrediction.away),
-          },
-        ],
-        {
-          onConflict: "player_name,match_id",
-        }
-      );
-
-    if (error) {
-      console.error("Error saving prediction:", error);
-      showMessage("שגיאה בשמירת ההימור: " + error.message, "error");
-      return;
-    }
-
-    showMessage("ההימור נשמר בהצלחה");
-  } finally {
-    setSavingPrediction(false);
+    await queuePredictionSave(playerName, matchId, updatedPrediction);
+  } catch (error) {
+    console.error("Unexpected error saving prediction:", error);
+    showMessage("שגיאה לא צפויה בשמירת ההימור", "error");
   }
 }
 
@@ -3637,10 +3742,7 @@ function isPlayerOnline(lastSeen) {
     type="number"
     min="0"
     value={prediction.home ?? ""}
-    disabled={
-  savingPrediction ||
-  isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)
-}
+    disabled={isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)}
     onChange={(e) =>
       updatePrediction(match.id, "home", e.target.value)
     }
@@ -3651,10 +3753,7 @@ function isPlayerOnline(lastSeen) {
     type="number"
     min="0"
     value={prediction.away ?? ""}
-    disabled={
-  savingPrediction ||
-  isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)
-}
+    disabled={isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results)}
     onChange={(e) =>
       updatePrediction(match.id, "away", e.target.value)
     }
