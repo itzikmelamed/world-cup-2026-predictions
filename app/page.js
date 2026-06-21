@@ -2663,8 +2663,8 @@ async function saveLeaderboardSnapshot() {
       if (!previousPosition) return [row.player, "חדש"];
 
       const movement = previousPosition - currentPosition;
-      if (movement > 0) return [row.player, `↑${movement}`];
-      if (movement < 0) return [row.player, `↓${Math.abs(movement)}`];
+      if (movement > 0) return [row.player, `↑ +${movement}`];
+      if (movement < 0) return [row.player, `↓ -${Math.abs(movement)}`];
       return [row.player, "→"];
     })
   );
@@ -5773,7 +5773,15 @@ function isPlayerOnline(lastSeen) {
     ? "🥉"
     : index + 1}
   {getLeaderboardMovementLabel(row.player) && (
-    <div className="mt-1 text-[10px] font-black text-sky-300">
+    <div
+      className={`mt-1 text-[10px] font-black ${
+        getLeaderboardMovementLabel(row.player).startsWith("↑")
+          ? "text-green-400"
+          : getLeaderboardMovementLabel(row.player).startsWith("↓")
+          ? "text-red-400"
+          : "text-sky-300"
+      }`}
+    >
       {getLeaderboardMovementLabel(row.player)}
     </div>
   )}
