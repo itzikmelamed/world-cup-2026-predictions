@@ -1538,8 +1538,182 @@ const currentPrediction =
 
   showMessage("תוצאת המשחק נשמרה בהצלחה");
 }
+function hasCompleteResult(result) {
+  return (
+    result &&
+    result.home !== "" &&
+    result.home != null &&
+    result.away !== "" &&
+    result.away != null
+  );
+}
+
+function getHeadToHeadStats(tiedTeams, groupMatches, results) {
+  const tiedTeamNames = new Set(tiedTeams.map((team) => team.team));
+  const stats = Object.fromEntries(
+    tiedTeams.map((team) => [
+      team.team,
+      { points: 0, gf: 0, ga: 0, gd: 0 },
+    ])
+  );
+
+  groupMatches.forEach((match) => {
+    if (!tiedTeamNames.has(match.home) || !tiedTeamNames.has(match.away)) {
+      return;
+    }
+
+    const result = results[match.id];
+    if (!hasCompleteResult(result)) {
+      return;
+    }
+
+    const homeGoals = Number(result.home);
+    const awayGoals = Number(result.away);
+    const homeStats = stats[match.home];
+    const awayStats = stats[match.away];
+
+    homeStats.gf += homeGoals;
+    homeStats.ga += awayGoals;
+    awayStats.gf += awayGoals;
+    awayStats.ga += homeGoals;
+
+    if (homeGoals > awayGoals) {
+      homeStats.points += 3;
+    } else if (homeGoals < awayGoals) {
+      awayStats.points += 3;
+    } else {
+      homeStats.points += 1;
+      awayStats.points += 1;
+    }
+
+    homeStats.gd = homeStats.gf - homeStats.ga;
+    awayStats.gd = awayStats.gf - awayStats.ga;
+  });
+
+  return stats;
+}
+
+function splitBySameHeadToHeadRank(teams, groupMatches, results, originalOrder) {
+  if (teams.length <= 1) return teams.map((team) => [team]);
+
+  const stats = getHeadToHeadStats(teams, groupMatches, results);
+  const sorted = [...teams].sort((a, b) => {
+    const statsA = stats[a.team];
+    const statsB = stats[b.team];
+
+    if (statsB.points !== statsA.points) return statsB.points - statsA.points;
+    if (statsB.gd !== statsA.gd) return statsB.gd - statsA.gd;
+    if (statsB.gf !== statsA.gf) return statsB.gf - statsA.gf;
+    return originalOrder[a.team] - originalOrder[b.team];
+  });
+
+  const groupsByRank = [];
+  sorted.forEach((team) => {
+    const teamStats = stats[team.team];
+    const previousGroup = groupsByRank[groupsByRank.length - 1];
+    const previousTeam = previousGroup?.[0];
+    const previousStats = previousTeam ? stats[previousTeam.team] : null;
+
+    if (
+      previousStats &&
+      previousStats.points === teamStats.points &&
+      previousStats.gd === teamStats.gd &&
+      previousStats.gf === teamStats.gf
+    ) {
+      previousGroup.push(team);
+    } else {
+      groupsByRank.push([team]);
+    }
+  });
+
+  if (groupsByRank.length === 1) {
+    return groupsByRank;
+  }
+
+  return groupsByRank.flatMap((group) =>
+    group.length > 1
+      ? splitBySameHeadToHeadRank(group, groupMatches, results, originalOrder)
+      : [group]
+  );
+}
+
+function compareOptionalTieBreakers(a, b) {
+  if (
+    Number.isFinite(a.fairPlayPoints) &&
+    Number.isFinite(b.fairPlayPoints) &&
+    b.fairPlayPoints !== a.fairPlayPoints
+  ) {
+    return b.fairPlayPoints - a.fairPlayPoints;
+  }
+
+  if (
+    Number.isFinite(a.fifaRanking) &&
+    Number.isFinite(b.fifaRanking) &&
+    a.fifaRanking !== b.fifaRanking
+  ) {
+    return a.fifaRanking - b.fifaRanking;
+  }
+
+  return 0;
+}
+
+function rankTeamsTiedOnPoints(tiedTeams, groupMatches, results, originalOrder) {
+  const headToHeadGroups = splitBySameHeadToHeadRank(
+    tiedTeams,
+    groupMatches,
+    results,
+    originalOrder
+  );
+
+  return headToHeadGroups.flatMap((group) =>
+    [...group].sort((a, b) => {
+      if (b.gd !== a.gd) return b.gd - a.gd;
+      if (b.gf !== a.gf) return b.gf - a.gf;
+
+      const optionalTieBreaker = compareOptionalTieBreakers(a, b);
+      if (optionalTieBreaker !== 0) return optionalTieBreaker;
+
+      return originalOrder[a.team] - originalOrder[b.team];
+    })
+  );
+}
+
+function sortGroupTableByFifaTieBreakers(table, groupName, matches, results, originalOrder) {
+  const groupMatches = matches.filter((match) => match.group === groupName);
+  const sortedByPoints = [...table].sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    return originalOrder[a.team] - originalOrder[b.team];
+  });
+
+  const ranked = [];
+  for (let index = 0; index < sortedByPoints.length; index++) {
+    const samePointTeams = [sortedByPoints[index]];
+
+    while (
+      sortedByPoints[index + 1] &&
+      sortedByPoints[index + 1].points === samePointTeams[0].points
+    ) {
+      samePointTeams.push(sortedByPoints[index + 1]);
+      index++;
+    }
+
+    ranked.push(
+      ...(
+        samePointTeams.length > 1
+          ? rankTeamsTiedOnPoints(samePointTeams, groupMatches, results, originalOrder)
+          : samePointTeams
+      )
+    );
+  }
+
+  return ranked;
+}
+
 function calculateGroupTable(groupName, matches, groups, results) {
   const teams = groups[groupName];
+  const originalOrder = Object.fromEntries(
+    teams.map((team, index) => [team, index])
+  );
 
   const table = teams.map((team) => ({
     team,
@@ -1558,11 +1732,7 @@ function calculateGroupTable(groupName, matches, groups, results) {
     .forEach((match) => {
       const result = results[match.id];
 
-      if (
-        !result ||
-        result.home === "" ||
-        result.away === ""
-      ) {
+      if (!hasCompleteResult(result)) {
         return;
       }
 
@@ -1600,11 +1770,13 @@ function calculateGroupTable(groupName, matches, groups, results) {
       awayTeam.gd = awayTeam.gf - awayTeam.ga;
     });
 
-  return table.sort((a, b) => {
-    if (b.points !== a.points) return b.points - a.points;
-    if (b.gd !== a.gd) return b.gd - a.gd;
-    return b.gf - a.gf;
-  });
+  return sortGroupTableByFifaTieBreakers(
+    table,
+    groupName,
+    matches,
+    results,
+    originalOrder
+  );
 }
 function getBestThirdPlaceTeams(matches, groups, results, manualOverrides = {}) {
   const thirdPlaceTeams = Object.keys(groups)
