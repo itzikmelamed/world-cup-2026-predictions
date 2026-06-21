@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { Fragment } from "react";
 
 import { useMemo, useState, useRef } from "react";
@@ -723,12 +723,13 @@ async function loadAppSettings() {
         )
       : manualThirdPlaceData
   );
-  setOfficialBonus(
+setOfficialBonus(
   data.official_bonus || {
     champion: "",
     topScorer: "",
   }
 );
+  setLeaderboardSnapshot(data.leaderboard_snapshot || null);
 }
 async function upsertKnockoutMatchData(matchId, data) {
   const { error } = await supabase.from("knockout_matches").upsert(
@@ -1169,6 +1170,7 @@ const [manuallyUnlockedMatches, setManuallyUnlockedMatches] = useState([]);
 const [bonusManuallyUnlocked, setBonusManuallyUnlocked] = useState(false);
 const [adminBonusEditMode, setAdminBonusEditMode] = useState(false);
 const [manualThirdPlaceQualifiers, setManualThirdPlaceQualifiers] = useState({});
+const [leaderboardSnapshot, setLeaderboardSnapshot] = useState(null);
 const [serverTime, setServerTime] = useState(null);
 
 const qualifiedBonusTeamsByGroup = (() => {
@@ -2376,6 +2378,10 @@ function isBonusLocked(bonusManuallyUnlocked) {
   groups,
 ]);
 
+const getLeaderboardMovementLabel = (player) => {
+  return leaderboardSnapshot?.movements?.[player] || "";
+};
+
 const dailyTopPerformer = useMemo(() => {
   return getDailyTopPerformer(activePlayers, predictions, results, matches, serverTime);
 }, [activePlayers, predictions, results, matches, serverTime]);
@@ -2633,6 +2639,70 @@ async function saveManualThirdPlaceQualifiers(qualifiers) {
   }
   
   setManualThirdPlaceQualifiers(qualifiers);
+  return true;
+}
+async function saveLeaderboardSnapshot() {
+  const previousPositions = leaderboardSnapshot?.positions || {};
+  const currentPositions = Object.fromEntries(
+    leaderboard.map((row, index) => [row.player, index + 1])
+  );
+  const hasPositionChange = leaderboard.some(
+    (row) => previousPositions[row.player] !== currentPositions[row.player]
+  );
+
+  if (!hasPositionChange && Object.keys(previousPositions).length > 0) {
+    showMessage("אין שינוי בדירוג מאז השמירה האחרונה");
+    return false;
+  }
+
+  const movements = Object.fromEntries(
+    leaderboard.map((row) => {
+      const currentPosition = currentPositions[row.player];
+      const previousPosition = previousPositions[row.player];
+
+      if (!previousPosition) return [row.player, "חדש"];
+
+      const movement = previousPosition - currentPosition;
+      if (movement > 0) return [row.player, `↑${movement}`];
+      if (movement < 0) return [row.player, `↓${Math.abs(movement)}`];
+      return [row.player, "→"];
+    })
+  );
+  const snapshot = {
+    savedAt: new Date().toISOString(),
+    positions: currentPositions,
+    movements,
+  };
+
+  const { error } = await supabase
+    .from("app_settings")
+    .update({ leaderboard_snapshot: snapshot })
+    .eq("id", 1);
+
+  if (error) {
+    console.error("Error saving leaderboard snapshot:", error);
+    showMessage("שגיאה בשמירת מצב הדירוג: " + error.message, "error");
+    return false;
+  }
+
+  setLeaderboardSnapshot(snapshot);
+  showMessage("מצב הדירוג נשמר בהצלחה");
+  return true;
+}
+async function clearLeaderboardSnapshot() {
+  const { error } = await supabase
+    .from("app_settings")
+    .update({ leaderboard_snapshot: null })
+    .eq("id", 1);
+
+  if (error) {
+    console.error("Error clearing leaderboard snapshot:", error);
+    showMessage("שגיאה בניקוי מצב הדירוג: " + error.message, "error");
+    return false;
+  }
+
+  setLeaderboardSnapshot(null);
+  showMessage("מצב הדירוג נוקה בהצלחה");
   return true;
 }
 const filteredAllBetsMatches = matches.filter((match) => {
@@ -5192,11 +5262,32 @@ function isPlayerOnline(lastSeen) {
     </div>
   </div>
 
-  <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
-    מוביל כרגע:{" "}
-    <span className="text-yellow-300">
-      {leaderboard[0]?.player || "-"}
-    </span>
+  <div className="flex flex-col sm:flex-row gap-2">
+    {role === "admin" && (
+      <>
+        <button
+          type="button"
+          onClick={saveLeaderboardSnapshot}
+          className="rounded-2xl bg-yellow-400 px-4 py-3 font-black text-slate-950 hover:bg-yellow-300"
+        >
+          שמור מצב דירוג נוכחי
+        </button>
+        <button
+          type="button"
+          onClick={clearLeaderboardSnapshot}
+          className="rounded-2xl border border-slate-700 bg-slate-800 px-4 py-3 font-black text-slate-200 hover:bg-slate-700"
+        >
+          נקה Snapshot דירוג
+        </button>
+      </>
+    )}
+
+    <div className="rounded-2xl bg-slate-950 border border-slate-700 px-4 py-3 font-black text-slate-300">
+      מוביל כרגע:{" "}
+      <span className="text-yellow-300">
+        {leaderboard[0]?.player || "-"}
+      </span>
+    </div>
   </div>
 </div>
 
@@ -5681,6 +5772,11 @@ function isPlayerOnline(lastSeen) {
     : index === 2
     ? "🥉"
     : index + 1}
+  {getLeaderboardMovementLabel(row.player) && (
+    <div className="mt-1 text-[10px] font-black text-sky-300">
+      {getLeaderboardMovementLabel(row.player)}
+    </div>
+  )}
 </td>
 
               <td
