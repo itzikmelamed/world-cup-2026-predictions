@@ -100,7 +100,7 @@ const matches = [
   { id: 73, date: "28.06.2026", time: "22:00", stage: "32 האחרונות", group: "", home: "A2", away: "B2" },
   { id: 74, date: "29.06.2026", time: "23:30", stage: "32 האחרונות", group: "", home: "E1", away: "3rd A/B/C/D/F" },
   { id: 75, date: "30.06.2026", time: "04:00", stage: "32 האחרונות", group: "", home: "F1", away: "C2" },
-  { id: 76, date: "30.06.2026", time: "20:00", stage: "32 האחרונות", group: "", home: "C1", away: "F2" },
+  { id: 76, date: "29.06.2026", time: "20:00", stage: "32 האחרונות", group: "", home: "C1", away: "F2" },
   { id: 77, date: "01.07.2026", time: "00:00", stage: "32 האחרונות", group: "", home: "I1", away: "3rd C/D/F/G/H" },
   { id: 78, date: "30.06.2026", time: "20:00", stage: "32 האחרונות", group: "", home: "E2", away: "I2" },
   { id: 79, date: "01.07.2026", time: "04:00", stage: "32 האחרונות", group: "", home: "A1", away: "3rd C/E/F/H/I" },
