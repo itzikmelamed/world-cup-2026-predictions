@@ -98,23 +98,23 @@ const matches = [
   { id: 71, date: "28.06.2026", time: "05:00", stage: "בתים", group: "J", home: "Algeria", away: "Austria" },
   { id: 72, date: "28.06.2026", time: "05:00", stage: "בתים", group: "J", home: "Jordan", away: "Argentina" },
   { id: 73, date: "28.06.2026", time: "22:00", stage: "32 האחרונות", group: "", home: "A2", away: "B2" },
-  { id: 74, date: "29.06.2026", time: "20:00", stage: "32 האחרונות", group: "", home: "E1", away: "3rd A/B/C/D/F" },
-  { id: 75, date: "29.06.2026", time: "23:30", stage: "32 האחרונות", group: "", home: "F1", away: "C2" },
-  { id: 76, date: "30.06.2026", time: "04:00", stage: "32 האחרונות", group: "", home: "C1", away: "F2" },
-  { id: 77, date: "30.06.2026", time: "20:00", stage: "32 האחרונות", group: "", home: "I1", away: "3rd C/D/F/G/H" },
-  { id: 78, date: "01.07.2026", time: "00:00", stage: "32 האחרונות", group: "", home: "E2", away: "I2" },
+  { id: 74, date: "29.06.2026", time: "23:30", stage: "32 האחרונות", group: "", home: "E1", away: "3rd A/B/C/D/F" },
+  { id: 75, date: "30.06.2026", time: "04:00", stage: "32 האחרונות", group: "", home: "F1", away: "C2" },
+  { id: 76, date: "30.06.2026", time: "20:00", stage: "32 האחרונות", group: "", home: "C1", away: "F2" },
+  { id: 77, date: "01.07.2026", time: "00:00", stage: "32 האחרונות", group: "", home: "I1", away: "3rd C/D/F/G/H" },
+  { id: 78, date: "30.06.2026", time: "20:00", stage: "32 האחרונות", group: "", home: "E2", away: "I2" },
   { id: 79, date: "01.07.2026", time: "04:00", stage: "32 האחרונות", group: "", home: "A1", away: "3rd C/E/F/H/I" },
   { id: 80, date: "01.07.2026", time: "19:00", stage: "32 האחרונות", group: "", home: "L1", away: "3rd E/H/I/J/K" },
-  { id: 81, date: "01.07.2026", time: "23:00", stage: "32 האחרונות", group: "", home: "D1", away: "3rd B/E/F/I/J" },
-  { id: 82, date: "02.07.2026", time: "03:00", stage: "32 האחרונות", group: "", home: "G1", away: "3rd A/E/H/I/J" },
-  { id: 83, date: "02.07.2026", time: "22:00", stage: "32 האחרונות", group: "", home: "K2", away: "L2" },
-  { id: 84, date: "03.07.2026", time: "02:00", stage: "32 האחרונות", group: "", home: "H1", away: "J2" },
+  { id: 81, date: "02.07.2026", time: "03:00", stage: "32 האחרונות", group: "", home: "D1", away: "3rd B/E/F/I/J" },
+  { id: 82, date: "01.07.2026", time: "23:00", stage: "32 האחרונות", group: "", home: "G1", away: "3rd A/E/H/I/J" },
+  { id: 83, date: "03.07.2026", time: "02:00", stage: "32 האחרונות", group: "", home: "K2", away: "L2" },
+  { id: 84, date: "02.07.2026", time: "22:00", stage: "32 האחרונות", group: "", home: "H1", away: "J2" },
   { id: 85, date: "03.07.2026", time: "06:00", stage: "32 האחרונות", group: "", home: "B1", away: "3rd E/F/G/I/J" },
-  { id: 86, date: "03.07.2026", time: "21:00", stage: "32 האחרונות", group: "", home: "J1", away: "H2" },
-  { id: 87, date: "04.07.2026", time: "01:00", stage: "32 האחרונות", group: "", home: "K1", away: "3rd D/E/I/J/L" },
-  { id: 88, date: "04.07.2026", time: "04:30", stage: "32 האחרונות", group: "", home: "D2", away: "G2" },
-  { id: 89, date: "04.07.2026", time: "20:00", stage: "שמינית", group: "", home: "Winner M74", away: "Winner M77" },
-  { id: 90, date: "05.07.2026", time: "00:00", stage: "שמינית", group: "", home: "Winner M73", away: "Winner M75" },
+  { id: 86, date: "04.07.2026", time: "01:00", stage: "32 האחרונות", group: "", home: "J1", away: "H2" },
+  { id: 87, date: "04.07.2026", time: "04:30", stage: "32 האחרונות", group: "", home: "K1", away: "3rd D/E/I/J/L" },
+  { id: 88, date: "03.07.2026", time: "21:00", stage: "32 האחרונות", group: "", home: "D2", away: "G2" },
+  { id: 89, date: "05.07.2026", time: "00:00", stage: "שמינית", group: "", home: "Winner M74", away: "Winner M77" },
+  { id: 90, date: "04.07.2026", time: "20:00", stage: "שמינית", group: "", home: "Winner M73", away: "Winner M75" },
   { id: 91, date: "05.07.2026", time: "23:00", stage: "שמינית", group: "", home: "Winner M76", away: "Winner M78" },
   { id: 92, date: "06.07.2026", time: "03:00", stage: "שמינית", group: "", home: "Winner M79", away: "Winner M80" },
   { id: 93, date: "06.07.2026", time: "22:00", stage: "שמינית", group: "", home: "Winner M83", away: "Winner M84" },
@@ -4424,6 +4424,9 @@ function isPlayerOnline(lastSeen) {
                 <div className="rounded-3xl border border-slate-800 bg-slate-900 p-2 shadow-xl">
                   <div className="mb-1.5 text-[11px] uppercase tracking-[0.3em] text-slate-500">
                     משחק {match.id}
+                  </div>
+                  <div className="mb-2 text-xs font-bold text-sky-300">
+                    {match.date} | {match.time}
                   </div>
 
                   <div className="space-y-1.5">
