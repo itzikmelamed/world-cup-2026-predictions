@@ -113,8 +113,8 @@ const matches = [
   { id: 86, date: "03.07.2026", time: "21:00", stage: "32 האחרונות", group: "", home: "D2", away: "G2" },
   { id: 87, date: "04.07.2026", time: "01:00", stage: "32 האחרונות", group: "", home: "J1", away: "H2" },
   { id: 88, date: "04.07.2026", time: "04:30", stage: "32 האחרונות", group: "", home: "K1", away: "3rd D/E/I/J/L" },
-  { id: 89, date: "04.07.2026", time: "20:00", stage: "שמינית", group: "", home: "Winner M73", away: "Winner M75" },
-  { id: 90, date: "05.07.2026", time: "00:00", stage: "שמינית", group: "", home: "Winner M74", away: "Winner M77" },
+  { id: 89, date: "04.07.2026", time: "20:00", stage: "שמינית", group: "", home: "Winner M74", away: "Winner M77" },
+  { id: 90, date: "05.07.2026", time: "00:00", stage: "שמינית", group: "", home: "Winner M73", away: "Winner M75" },
   { id: 91, date: "05.07.2026", time: "23:00", stage: "שמינית", group: "", home: "Winner M76", away: "Winner M78" },
   { id: 92, date: "06.07.2026", time: "03:00", stage: "שמינית", group: "", home: "Winner M79", away: "Winner M80" },
   { id: 93, date: "06.07.2026", time: "22:00", stage: "שמינית", group: "", home: "Winner M83", away: "Winner M84" },
@@ -3083,11 +3083,11 @@ const getMatchPredictionDistribution = (match) => {
 };
 
 const knockoutProgression = {
-  73: { nextMatch: 89, side: "home" },
-  75: { nextMatch: 89, side: "away" },
+  73: { nextMatch: 90, side: "home" },
+  75: { nextMatch: 90, side: "away" },
 
-  74: { nextMatch: 90, side: "home" },
-  77: { nextMatch: 90, side: "away" },
+  74: { nextMatch: 89, side: "home" },
+  77: { nextMatch: 89, side: "away" },
 
   76: { nextMatch: 91, side: "home" },
   78: { nextMatch: 91, side: "away" },
