@@ -3984,8 +3984,7 @@ function isPlayerOnline(lastSeen) {
       </div>
     </div>
     {(() => {
-  const nextMatch = matches
-  .filter((match) => {
+  const nextMatchCandidates = matches.filter((match) => {
     const locked = isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results);
 
     if (matchCardsFilter === "open") return !locked;
@@ -3995,7 +3994,9 @@ function isPlayerOnline(lastSeen) {
 
     return true;
   })
-  .find((match) => !isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results));
+  .filter((match) => !isMatchLocked(match, manuallyUnlockedMatches, knockoutMatches, results));
+
+  const nextMatch = getJumpTargetMatch(nextMatchCandidates, serverTime, results);
 
   if (!nextMatch) return null;
 
