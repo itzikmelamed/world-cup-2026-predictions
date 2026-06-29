@@ -2810,7 +2810,7 @@ async function clearLeaderboardSnapshot() {
   showMessage("מצב הדירוג נוקה בהצלחה");
   return true;
 }
-const filteredAllBetsMatches = matches.filter((match) => {
+const filteredAllBetsMatches = [...matches].filter((match) => {
   const searchText = allBetsSearch.trim().toLowerCase();
 
   const matchesSearch =
@@ -2831,6 +2831,11 @@ const filteredAllBetsMatches = matches.filter((match) => {
     (allBetsStatusFilter === "locked" && locked);
 
   return matchesSearch && matchesStage && matchesStatus;
+}).sort((a, b) => {
+  const kickoffDiff =
+    parseMatchDateTime(a).getTime() - parseMatchDateTime(b).getTime();
+
+  return kickoffDiff || a.id - b.id;
 });
 const scrollToNextOpenMatch = () => {
   if (nextOpenMatchRef.current) {
