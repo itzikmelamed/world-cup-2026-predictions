@@ -4098,6 +4098,12 @@ function isPlayerOnline(lastSeen) {
 
     return true;
   })
+  .sort((a, b) => {
+    const kickoffDiff =
+      parseMatchDateTime(a).getTime() - parseMatchDateTime(b).getTime();
+
+    return kickoffDiff || a.id - b.id;
+  })
   .map((match) => {
         const prediction =
           predictions[selectedPlayer]?.[match.id] || {
