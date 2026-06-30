@@ -235,15 +235,73 @@ function getDailyDidYouKnowFact(date = new Date()) {
   return didYouKnowFacts[factIndex];
 }
 
+const DID_YOU_KNOW_SEEN_FACT_IDS_KEY = "didYouKnowSeenFactIds";
+
+function getStoredDidYouKnowSeenFactIds() {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const storedValue = window.localStorage.getItem(
+      DID_YOU_KNOW_SEEN_FACT_IDS_KEY
+    );
+    const parsedValue = JSON.parse(storedValue || "[]");
+
+    if (!Array.isArray(parsedValue)) return [];
+
+    const validFactIds = new Set(didYouKnowFacts.map((fact) => fact.id));
+
+    return parsedValue.filter(
+      (factId, index) =>
+        Number.isInteger(factId) &&
+        validFactIds.has(factId) &&
+        parsedValue.indexOf(factId) === index
+    );
+  } catch {
+    return [];
+  }
+}
+
+function storeDidYouKnowSeenFactIds(seenFactIds) {
+  if (typeof window === "undefined") return;
+
+  window.localStorage.setItem(
+    DID_YOU_KNOW_SEEN_FACT_IDS_KEY,
+    JSON.stringify(seenFactIds)
+  );
+}
+
+function rememberDidYouKnowFact(factId) {
+  const seenFactIds = getStoredDidYouKnowSeenFactIds();
+
+  if (seenFactIds.includes(factId)) return seenFactIds;
+
+  const updatedSeenFactIds = [...seenFactIds, factId];
+  storeDidYouKnowSeenFactIds(updatedSeenFactIds);
+
+  return updatedSeenFactIds;
+}
+
 function getRandomDidYouKnowFact(currentFactId) {
-  if (didYouKnowFacts.length <= 1) return didYouKnowFacts[0];
+  if (didYouKnowFacts.length <= 1) {
+    rememberDidYouKnowFact(didYouKnowFacts[0]?.id);
+    return didYouKnowFacts[0];
+  }
 
-  let randomFact = didYouKnowFacts[0];
+  let seenFactIds = rememberDidYouKnowFact(currentFactId);
+  let candidateFacts = didYouKnowFacts.filter(
+    (fact) => !seenFactIds.includes(fact.id)
+  );
 
-  do {
-    randomFact =
-      didYouKnowFacts[Math.floor(Math.random() * didYouKnowFacts.length)];
-  } while (randomFact.id === currentFactId);
+  if (candidateFacts.length === 0) {
+    seenFactIds = [currentFactId];
+    storeDidYouKnowSeenFactIds(seenFactIds);
+    candidateFacts = didYouKnowFacts.filter((fact) => fact.id !== currentFactId);
+  }
+
+  const randomFact =
+    candidateFacts[Math.floor(Math.random() * candidateFacts.length)];
+
+  storeDidYouKnowSeenFactIds([...seenFactIds, randomFact.id]);
 
   return randomFact;
 }
@@ -288,6 +346,10 @@ const activePlayers = dbPlayers.filter(
  const loggedInPlayer = dbPlayers.find(
   (player) => player.email === authUser?.email
 );
+useEffect(() => {
+  rememberDidYouKnowFact(didYouKnowFact.id);
+}, [didYouKnowFact.id]);
+
 useEffect(() => {
   async function loadSession() {
     const {
