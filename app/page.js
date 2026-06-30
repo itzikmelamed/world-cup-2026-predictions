@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { useMemo, useState, useRef } from "react";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { didYouKnowFacts } from "@/data/didYouKnowFacts";
 
 const players = [
   "איציק",
@@ -217,6 +218,36 @@ function hasCompletePrediction(prediction) {
   );
 }
 
+function getDailyDidYouKnowFact(date = new Date()) {
+  const tournamentStartDate = new Date("2026-06-11T00:00:00");
+  const currentDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+  const daysFromStart = Math.floor(
+    (currentDate - tournamentStartDate) / (1000 * 60 * 60 * 24)
+  );
+  const factIndex =
+    ((daysFromStart % didYouKnowFacts.length) + didYouKnowFacts.length) %
+    didYouKnowFacts.length;
+
+  return didYouKnowFacts[factIndex];
+}
+
+function getRandomDidYouKnowFact(currentFactId) {
+  if (didYouKnowFacts.length <= 1) return didYouKnowFacts[0];
+
+  let randomFact = didYouKnowFacts[0];
+
+  do {
+    randomFact =
+      didYouKnowFacts[Math.floor(Math.random() * didYouKnowFacts.length)];
+  } while (randomFact.id === currentFactId);
+
+  return randomFact;
+}
+
 export default function Home() {
  const [selectedPlayer, setSelectedPlayer] = useState("");
  const [openMatchId, setOpenMatchId] = useState(null);
@@ -243,6 +274,8 @@ const [allBetsStageFilter, setAllBetsStageFilter] = useState("all");
 const [allBetsStatusFilter, setAllBetsStatusFilter] = useState("all");
 const [allBetsSearch, setAllBetsSearch] = useState("");
 const [matchCardsFilter, setMatchCardsFilter] = useState("all");
+const [didYouKnowFact, setDidYouKnowFact] = useState(getDailyDidYouKnowFact);
+const [showDidYouKnowModal, setShowDidYouKnowModal] = useState(false);
 const activePlayers = dbPlayers.filter(
   (player) =>
     player.is_active &&
@@ -3490,6 +3523,35 @@ function isPlayerOnline(lastSeen) {
             <div className="font-black text-green-400">
               {activePlayers.length}
             </div>
+          </div>
+        </div>
+
+        <div
+          dir="rtl"
+          className="rounded-2xl border border-yellow-400/25 bg-yellow-400/10 p-4"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="font-black text-yellow-300">💡 הידעת?</div>
+              <p
+                className="mt-1 overflow-hidden text-sm font-bold leading-6 text-slate-200"
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                }}
+              >
+                {didYouKnowFact.text}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowDidYouKnowModal(true)}
+              className="shrink-0 rounded-full bg-yellow-400 px-3 py-2 text-sm font-black text-slate-950 hover:bg-yellow-300"
+            >
+              קרא עוד
+            </button>
           </div>
         </div>
       </div>
@@ -6897,6 +6959,47 @@ if (pts === 4.5) {
 )}
 </div>
 </div>
+{showDidYouKnowModal ? (
+  <div
+    dir="rtl"
+    className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 pb-24 sm:items-center sm:pb-0"
+  >
+    <div className="w-full max-w-lg rounded-3xl border border-slate-800 bg-slate-950 p-5 text-slate-100 shadow-2xl">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-2xl font-black">💡 הידעת?</h3>
+          <div className="mt-1 text-sm font-bold text-slate-400">
+            {didYouKnowFact.id} / {didYouKnowFacts.length}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setShowDidYouKnowModal(false)}
+          className="rounded-full bg-slate-800 px-4 py-2 text-sm font-black text-white hover:bg-slate-700"
+        >
+          סגור
+        </button>
+      </div>
+
+      <p className="mt-5 text-base font-bold leading-8 text-slate-200">
+        {didYouKnowFact.text}
+      </p>
+
+      <button
+        type="button"
+        onClick={() =>
+          setDidYouKnowFact((currentFact) =>
+            getRandomDidYouKnowFact(currentFact.id)
+          )
+        }
+        className="mt-6 w-full rounded-2xl bg-yellow-400 px-4 py-3 font-black text-slate-950 hover:bg-yellow-300"
+      >
+        🎲 הצג עובדה אקראית נוספת
+      </button>
+    </div>
+  </div>
+) : null}
 <footer className="mt-10 border-t border-slate-800 pt-6 pb-2 text-center">
   <div className="text-slate-400 font-bold">
     World Cup Predictor 2026
