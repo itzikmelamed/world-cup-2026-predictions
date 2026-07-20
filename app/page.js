@@ -1351,19 +1351,20 @@ const hallOfFameTournaments = [
   },
   {
     year: "מונדיאל 2026",
-    gold: "—",
-    silver: "—",
-    bronze: "—"
+    gold: "נתנאל",
+    silver: "איציק",
+    bronze: "טל טובי"
   }
 ];
 
 const hallOfFameAllTimeData = [
   { name: "ארז", gold: 2, silver: 1, bronze: 0 },
-  { name: "איציק", gold: 1, silver: 2, bronze: 1 },
+  { name: "איציק", gold: 1, silver: 3, bronze: 1 },
   { name: "מוטי", gold: 1, silver: 0, bronze: 2 },
   { name: "טל קן דרור", gold: 1, silver: 0, bronze: 2 },
   { name: "אליאור", gold: 1, silver: 0, bronze: 0 },
-  { name: "טל טובי", gold: 1, silver: 0, bronze: 0 },
+  { name: "טל טובי", gold: 1, silver: 0, bronze: 1 },
+  { name: "נתנאל", gold: 1, silver: 0, bronze: 0 },
   { name: "שלום", gold: 0, silver: 1, bronze: 1 },
   { name: "טל מלמד", gold: 0, silver: 1, bronze: 1 },
   { name: "אוהד", gold: 0, silver: 1, bronze: 0 },
